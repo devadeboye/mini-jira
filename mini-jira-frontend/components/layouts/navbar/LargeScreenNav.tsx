@@ -1,6 +1,6 @@
 import { NavProps } from "@/types/nav";
 import MoreMenu from "./MoreMenu";
-import MenuIcon from "@/components/ui/icons/MenuIcon";
+import MoreIcon from "@/components/ui/icons/MoreIcon";
 import JiraLogo from "@/components/ui/icons/JiraLogo";
 import SearchIcon from "@/components/ui/icons/SearchIcon";
 import Button from "@/components/ui/Button";

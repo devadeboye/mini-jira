@@ -1,6 +1,6 @@
 import { SvgProp } from "@/types/icons";
 
-const MenuIcon = ({ className, fill }: SvgProp) => {
+const MoreIcon = ({ className, fill }: SvgProp) => {
 	return (
 		<svg
 			fill={fill}
@@ -18,4 +18,4 @@ const MenuIcon = ({ className, fill }: SvgProp) => {
 	);
 };
 
-export default MenuIcon;
+export default MoreIcon;

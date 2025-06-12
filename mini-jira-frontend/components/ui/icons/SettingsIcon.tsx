@@ -1,8 +1,10 @@
 import { SvgProp } from "@/types/icons";
 
-export default function SettingsIcon({ className, fill }: SvgProp) {
+export default function SettingsIcon({ className = "", fill }: SvgProp) {
 	return (
 		<svg
+			width="100%"
+			height="100%"
 			fill={fill}
 			viewBox="0 0 16 16"
 			role="presentation"

@@ -1,7 +1,8 @@
 import { SvgProp } from "@/types/icons";
 
-const SearchIcon = ({ className, fill }: SvgProp) => (
+const SearchIcon = ({ className = "", fill }: SvgProp) => (
 	<svg
+		width="100%"
 		height="100%"
 		fill={fill}
 		viewBox="0 0 16 16"

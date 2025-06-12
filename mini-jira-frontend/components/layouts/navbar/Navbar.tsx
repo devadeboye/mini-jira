@@ -21,6 +21,7 @@ export default function Navbar() {
 					Download mobile app
 				</a>
 			</div>
+
 			<div className="flex w-full border border-gray-300">
 				<MobileNavbar className="h-12 py-3 px-4 lg:hidden" />
 				<LargeScreenNav className="hidden h-12 lg:flex lg:px-4" />

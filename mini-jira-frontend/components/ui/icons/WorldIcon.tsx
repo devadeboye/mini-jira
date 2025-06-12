@@ -1,10 +1,12 @@
 import { SvgProp } from "@/types/icons";
 
-const WorldIcon = ({ className, fill }: SvgProp) => {
+const WorldIcon = ({ className = "", fill }: SvgProp) => {
 	return (
 		<svg
+			width="100%"
+			height="100%"
 			fill={fill}
-			viewBox="-4 -4 24 24"
+			viewBox="0 0 16 16"
 			role="presentation"
 			className={className}
 		>

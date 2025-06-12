@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "@/styles/globals.css";
 import Navbar from "@/components/layouts/navbar/Navbar";
+import SideNav from "@/components/layouts/sidenav/SideNav";
 import { inter } from "@/lib/fonts";
 
 export const metadata: Metadata = {
@@ -16,10 +17,15 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={`${inter.className} antialiased`}>
-				<header>
+				<header className="fixed top-0 left-0 right-0 z-50 bg-white">
 					<Navbar />
 				</header>
-				{children}
+				<div className="pt-[64px] lg:pt-[50px] flex">
+					<SideNav />
+					<main className="min-h-screen flex-1 lg:ml-[240px] ml-[64px]">
+						{children}
+					</main>
+				</div>
 			</body>
 		</html>
 	);

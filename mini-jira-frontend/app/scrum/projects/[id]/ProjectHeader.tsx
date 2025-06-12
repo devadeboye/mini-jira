@@ -1,10 +1,16 @@
+"use client";
+
 import MoreIcon from "@/components/ui/icons/MoreIcon";
 import Image from "next/image";
 import ExpandIcon from "@/components/ui/icons/ExpandIcon";
 import ShareIcon from "@/components/ui/icons/ShareIcon";
 import HotIcon from "@/components/ui/icons/HotIcon";
+import { useParams } from "next/navigation";
 
 export default function ProjectHeader() {
+	const params = useParams();
+	const projectId = params.id;
+
 	return (
 		<div className="flex flex-col gap-1 px-4 py-3 box-border">
 			<div className="text-sm">Projects</div>
@@ -17,7 +23,7 @@ export default function ProjectHeader() {
 						width={24}
 						className="h-4 w-4 lg:h-6 lg:w-6 rounded-sm"
 					/>
-					<div>Project 1</div>
+					<div>Project {projectId}</div>
 
 					{/* More Icon */}
 					<button className="h-8 w-8 p-[7px]">

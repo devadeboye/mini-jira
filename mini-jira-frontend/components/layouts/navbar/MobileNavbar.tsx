@@ -1,15 +1,29 @@
+"use client";
+
 import { NavProps } from "@/types/nav";
 import JiraLogo from "@/components/ui/icons/JiraLogo";
 import SearchIcon from "@/components/ui/icons/SearchIcon";
 import Button from "@/components/ui/Button";
 import AddIcon from "@/components/ui/icons/AddIcon";
 import MenuIcon from "@/components/ui/icons/MenuIcon";
+import NotificationIcon from "@/components/ui/icons/NotificationIcon";
+import Image from "next/image";
+import { useState, useEffect, useRef } from "react";
+import MoreMenu from "./MoreMenu";
 
 export default function MobileNavbar({ className }: NavProps) {
+	const [moreOpen, setMoreOpen] = useState(false);
+
+	const toggleMore = () => {
+		setMoreOpen((prev) => !prev);
+	};
+
 	return (
 		<div className={`${className} w-full flex items-center`}>
 			<div className="h-full w-full flex items-center gap-3">
 				<JiraLogo />
+
+				{/* Search Icon */}
 				<button className="border box-border border-gray-300 rounded-md border-solid h-8 w-8 p-[7px]">
 					<SearchIcon
 						height={24}
@@ -20,7 +34,8 @@ export default function MobileNavbar({ className }: NavProps) {
 				</button>
 			</div>
 
-			<div className="flex items-center w-full justify-end gap-3">
+			<div className="flex items-center w-full justify-end gap-3 relative">
+				{/* Create Button */}
 				<Button
 					label="Create"
 					icon={AddIcon}
@@ -28,7 +43,11 @@ export default function MobileNavbar({ className }: NavProps) {
 					iconClassName="h-full w-full"
 				/>
 
-				<button className="border box-border border-gray-300 rounded-md border-solid h-8 w-8 p-[7px]">
+				{/* More Icon */}
+				<button
+					onClick={toggleMore}
+					className="border box-border border-gray-300 rounded-md border-solid h-8 w-8 p-[7px] md:hidden"
+				>
 					<MenuIcon
 						height={24}
 						width={24}
@@ -36,6 +55,14 @@ export default function MobileNavbar({ className }: NavProps) {
 						fill="var(--text-subtle)"
 					/>
 				</button>
+
+				{moreOpen && (
+					<div className="absolute top-12 right-0 bg-white shadow-md px-3 py-1">
+						<MoreMenu className="flex md:hidden" />
+					</div>
+				)}
+
+				<MoreMenu className="hidden md:flex" />
 			</div>
 		</div>
 	);

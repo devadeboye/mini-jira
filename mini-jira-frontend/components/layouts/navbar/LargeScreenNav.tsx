@@ -20,7 +20,7 @@ export default function LargeScreenNav({ className }: NavProps) {
 					<SearchIcon
 						height={24}
 						width={24}
-						className="h-6 w-6"
+						className="h-6 w-6 xl:h-4 xl:w-4"
 						fill="var(--text-subtle)"
 					/>
 
@@ -36,7 +36,7 @@ export default function LargeScreenNav({ className }: NavProps) {
 					label="Create"
 					icon={AddIcon}
 					className="text-white rounded-[3px] h-8 font-semibold"
-					iconClassName="h-full w-full"
+					iconClassName="h-full w-full xl:h-4 xl:w-4"
 					iconFill="white"
 				/>
 			</div>

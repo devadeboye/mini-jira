@@ -1,0 +1,13 @@
+{
+	"name": "mini-jira",
+	"version": "1.0.0",
+	"private": true,
+	"scripts": {
+		"prepare": "husky install"
+	},
+	"devDependencies": {
+		"@commitlint/cli": "^19.8.1",
+		"@commitlint/config-conventional": "^19.8.1",
+		"husky": "^8.0.3"
+	}
+}

@@ -21,9 +21,9 @@ export default function ProjectHeader() {
 						alt="project1"
 						height={24}
 						width={24}
-						className="h-4 w-4 lg:h-6 lg:w-6 rounded-sm"
+						className="h-4 w-4 lg:h-5 lg:w-5 rounded-sm"
 					/>
-					<div>Project {projectId}</div>
+					<div className="text-lg font-semibold">Project {projectId}</div>
 
 					{/* More Icon */}
 					<button className="h-8 w-8 p-[7px]">

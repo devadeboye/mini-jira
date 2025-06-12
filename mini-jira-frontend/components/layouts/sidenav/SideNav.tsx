@@ -64,7 +64,7 @@ const SideNav = () => {
 				</SideNavSection>
 			</div>
 
-			<div className="flex flex-col border-t">
+			<div className="flex flex-col border-t border-gray-300">
 				<button className="flex h-10 w-full items-center px-3 hover:bg-gray-100 overflow-hidden">
 					<FeedbackIcon className="h-5 w-5 text-gray-600" />
 					<span className="ml-3 text-sm text-gray-700 hidden lg:block whitespace-nowrap overflow-hidden text-ellipsis">

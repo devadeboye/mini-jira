@@ -1,10 +1,15 @@
-import { SvgProp } from "@/types/icons";
+import { IconProps } from "@/types/icon";
 
-export default function SettingsIcon({ className = "", fill }: SvgProp) {
+export default function SettingsIcon({
+	className = "",
+	width = 24,
+	height = 24,
+	fill = "currentColor",
+}: IconProps) {
 	return (
 		<svg
-			width="100%"
-			height="100%"
+			width={width}
+			height={height}
 			fill={fill}
 			viewBox="0 0 16 16"
 			role="presentation"

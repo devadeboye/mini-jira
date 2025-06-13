@@ -29,6 +29,8 @@ const setAuthData = (data: AuthResponse) => {
 
 const clearAuthData = () => {
 	Cookies.remove(TOKEN_COOKIE);
+	Cookies.remove(TOKEN_COOKIE, { path: "/" });
+	Cookies.remove(TOKEN_COOKIE, { path: "/", domain: window.location.hostname });
 	localStorage.removeItem(USER_STORAGE);
 };
 
@@ -95,7 +97,6 @@ export function useRegister() {
 
 export function useLogout() {
 	const queryClient = useQueryClient();
-	const router = useRouter();
 
 	return useMutation({
 		mutationFn: async () => {
@@ -105,7 +106,11 @@ export function useLogout() {
 		onSuccess: () => {
 			clearAuthData();
 			queryClient.clear();
-			router.push("/auth/login");
+			// Use window.location.href for more reliable redirect
+			window.location.href = "/auth/login";
+		},
+		onError: (error) => {
+			console.error("Logout onError called:", error);
 		},
 	});
 }

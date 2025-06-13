@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import "@/styles/globals.css";
-import Navbar from "@/components/layouts/navbar/Navbar";
-import SideNav from "@/components/layouts/sidenav/SideNav";
 import { inter } from "@/lib/fonts";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { QueryProvider } from "@/contexts/QueryProvider";
+import ConditionalLayout from "@/components/layouts/ConditionalLayout";
 
 export const metadata: Metadata = {
 	title: "Mini Jira",
@@ -21,15 +20,7 @@ export default function RootLayout({
 			<body className={`${inter.className} antialiased`}>
 				<QueryProvider>
 					<AuthProvider>
-						<header className="fixed top-0 left-0 right-0 z-50 bg-white">
-							<Navbar />
-						</header>
-						<div className="pt-[64px] lg:pt-[50px] flex">
-							<SideNav />
-							<main className="min-h-screen flex-1 lg:ml-[240px] ml-[64px]">
-								{children}
-							</main>
-						</div>
+						<ConditionalLayout>{children}</ConditionalLayout>
 					</AuthProvider>
 				</QueryProvider>
 			</body>

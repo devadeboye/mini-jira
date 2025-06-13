@@ -1,6 +1,6 @@
-import ProjectHeader from "./ProjectHeader";
-import ProjectNav from "./ProjectNav";
-import SprintPanel from "./SprintPanel";
+import ProjectHeader from "../project/ProjectHeader";
+import ProjectNav from "../project/ProjectNav";
+import SprintPanel from "../sprintPanel/SprintPanel";
 
 export default function Projects() {
 	return (

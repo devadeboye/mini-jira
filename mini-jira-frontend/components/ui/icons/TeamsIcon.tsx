@@ -3,6 +3,8 @@ import { SvgProp } from "@/types/icons";
 const TeamsIcon = ({ className, fill }: SvgProp) => {
 	return (
 		<svg
+			width="100%"
+			height="100%"
 			fill={fill}
 			viewBox="-4 -4 24 24"
 			role="presentation"

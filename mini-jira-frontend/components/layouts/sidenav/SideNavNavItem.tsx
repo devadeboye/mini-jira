@@ -3,6 +3,7 @@ import ExpandIcon from "@/components/ui/icons/ExpandIcon";
 
 interface SideNavNavItemProps {
 	icon: React.ElementType;
+	iconClassName?: string;
 	label: string;
 	href: string;
 	expandable?: boolean;
@@ -14,6 +15,7 @@ interface SideNavNavItemProps {
 
 const SideNavNavItem = ({
 	icon: Icon,
+	iconClassName = "h-6 w-6",
 	label,
 	href,
 	expandable,
@@ -34,7 +36,7 @@ const SideNavNavItem = ({
 			}
 		}}
 	>
-		<Icon className="h-6 w-6 text-gray-600 shrink-0" />
+		<Icon className={`text-gray-600 shrink-0 ${iconClassName}`} />
 		<span className="ml-3 text-sm text-gray-700 hidden lg:block truncate">
 			{label}
 		</span>

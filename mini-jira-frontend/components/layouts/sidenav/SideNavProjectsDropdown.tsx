@@ -33,6 +33,7 @@ export default function SideNavProjectsDropdown({
 						<SideNavNavItem
 							key={project.id}
 							icon={SearchIcon}
+							iconClassName="h-4 w-4"
 							label={project.name}
 							href={project.href}
 							isNested
@@ -43,6 +44,7 @@ export default function SideNavProjectsDropdown({
 			)}
 			<SideNavNavItem
 				icon={ViewAllProjects}
+				iconClassName="h-4 w-4"
 				label="View all projects"
 				href="/scrum/projects/all"
 				isNested

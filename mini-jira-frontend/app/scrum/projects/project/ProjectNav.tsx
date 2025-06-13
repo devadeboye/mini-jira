@@ -14,7 +14,7 @@ export default function ProjectNav() {
 						icon={WorldIcon}
 						iconFill="currentColor"
 						className="py-1 pl-0 text-sm font-semibold text-subtle"
-						iconClassName="h-6 w-6"
+						iconClassName="h-4 w-4"
 					/>
 				</li>
 				<li>

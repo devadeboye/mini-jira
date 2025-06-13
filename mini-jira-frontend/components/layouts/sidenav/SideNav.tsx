@@ -28,6 +28,7 @@ const SideNav = () => {
 					/>
 					<SideNavNavItem
 						icon={RecentIcon}
+						iconClassName="h-4 w-4"
 						label="Recent"
 						href="/recent"
 						active={pathname === "/recent"}

@@ -32,11 +32,9 @@ export default function LargeScreenNav({ className }: NavProps) {
 
 				{/* Create Button */}
 				<Button
-					label="Create"
-					icon={AddIcon}
-					className="text-white rounded-[3px] h-8 font-semibold"
-					iconClassName="h-full w-full xl:h-4 xl:w-4"
-					iconFill="white"
+					variant="outline"
+					className="p-2"
+					icon={<AddIcon width={24} height={24} fill="currentColor" />}
 				/>
 			</div>
 

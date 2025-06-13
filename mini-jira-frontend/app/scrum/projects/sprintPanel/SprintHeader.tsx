@@ -33,13 +33,12 @@ const SprintHeader = ({
 					<h2 className="text-sm font-semibold text-gray-900">{sprintName}</h2>
 
 					<Button
-						label="Add dates"
-						icon={EditIcon}
-						iconClassName="w-4 h-4"
+						variant="outline"
 						className="text-xs"
-						color="transparent"
-						iconFill="var(--text)"
-					/>
+						icon={<EditIcon width={16} height={16} fill="currentColor" />}
+					>
+						Add dates
+					</Button>
 				</div>
 
 				<span className="text-sm text-gray-600">

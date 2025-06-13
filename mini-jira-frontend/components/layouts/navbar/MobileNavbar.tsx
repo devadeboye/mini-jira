@@ -46,10 +46,9 @@ export default function MobileNavbar({ className }: NavProps) {
 			<div className="flex items-center w-full justify-end gap-3 relative">
 				{/* Create Button */}
 				<Button
-					label="Create"
-					icon={AddIcon}
-					className="text-white rounded-[3px] h-8 font-semibold"
-					iconClassName="h-full w-full"
+					variant="outline"
+					className="p-2"
+					icon={<AddIcon width={24} height={24} fill="currentColor" />}
 				/>
 
 				{/* More Icon */}

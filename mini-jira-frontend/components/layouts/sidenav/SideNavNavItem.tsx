@@ -1,56 +1,45 @@
 import Link from "next/link";
-import ExpandIcon from "@/components/ui/icons/ExpandIcon";
+import { IconType } from "@/types/icon";
 
 interface SideNavNavItemProps {
-	icon: React.ElementType;
-	iconClassName?: string;
-	label: string;
 	href: string;
-	expandable?: boolean;
-	expanded?: boolean;
-	isNested?: boolean;
-	onClick?: () => void;
+	icon: IconType;
+	className?: string;
 	active?: boolean;
+	children?: React.ReactNode;
+	onClick?: () => void;
 }
 
-const SideNavNavItem = ({
-	icon: Icon,
-	iconClassName = "h-6 w-6",
-	label,
+export default function SideNavNavItem({
 	href,
-	expandable,
-	expanded,
-	isNested = false,
-	onClick,
+	icon: Icon,
+	className = "",
 	active = false,
-}: SideNavNavItemProps) => (
-	<Link
-		href={href}
-		className={`flex h-8 w-full items-center px-3 hover:bg-gray-100 relative group ${
-			active ? "bg-blue-50" : ""
-		} ${isNested ? "pl-12" : ""}`}
-		onClick={(e) => {
-			if (onClick) {
-				e.preventDefault();
-				onClick();
-			}
-		}}
-	>
-		<Icon className={`text-gray-600 shrink-0 ${iconClassName}`} />
-		<span className="ml-3 text-sm text-gray-700 hidden lg:block truncate">
-			{label}
-		</span>
-		{expandable && (
-			<ExpandIcon
-				className={`ml-auto h-4 w-4 text-gray-500 transition-transform ${
-					expanded ? "rotate-180" : ""
-				}`}
-			/>
-		)}
-		<span className="absolute left-16 bg-gray-800 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 whitespace-nowrap lg:hidden">
-			{label}
-		</span>
-	</Link>
-);
+	children,
+	onClick,
+}: SideNavNavItemProps) {
+	const handleClick = (e: React.MouseEvent) => {
+		if (onClick) {
+			e.preventDefault();
+			onClick();
+		}
+	};
 
-export default SideNavNavItem;
+	return (
+		<Link
+			href={href}
+			onClick={handleClick}
+			className={`flex h-8 w-full items-center px-3 hover:bg-gray-100 relative group ${
+				active ? "bg-blue-50" : ""
+			} ${className}`}
+		>
+			<Icon className="text-gray-600 shrink-0 h-5 w-5" />
+			<span className="ml-3 text-sm text-gray-700 hidden lg:block truncate">
+				{children}
+			</span>
+			<span className="absolute left-16 bg-gray-800 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 whitespace-nowrap lg:hidden z-50">
+				{children}
+			</span>
+		</Link>
+	);
+}

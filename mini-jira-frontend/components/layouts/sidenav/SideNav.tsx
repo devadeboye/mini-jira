@@ -1,9 +1,8 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import SettingsIcon from "@/components/ui/icons/SettingsIcon";
-import SideNavNavItem from "./SideNavNavItem";
 import SideNavSection from "./SideNavSection";
+import SideNavNavItem from "./SideNavNavItem";
 import SideNavProjectsDropdown from "./SideNavProjectsDropdown";
 import Avatar from "@/components/ui/icons/Avatar";
 import RecentIcon from "@/components/ui/icons/RecentIcon";
@@ -28,61 +27,71 @@ const SideNav = () => {
 				{/* Quick Access Section */}
 				<SideNavSection>
 					<SideNavNavItem
+						href="/your-work"
 						icon={Avatar}
-						label="For you"
-						href="/for-you"
-						active={pathname === "/for-you"}
-					/>
+						active={pathname === "/your-work"}
+					>
+						For you
+					</SideNavNavItem>
+
 					<SideNavNavItem
-						icon={RecentIcon}
-						iconClassName="h-4 w-4"
-						label="Recent"
 						href="/recent"
+						icon={RecentIcon}
 						active={pathname === "/recent"}
-					/>
+					>
+						Recent
+					</SideNavNavItem>
+
 					<SideNavNavItem
-						icon={StarIcon}
-						label="Starred"
 						href="/starred"
+						icon={StarIcon}
 						active={pathname === "/starred"}
-					/>
+					>
+						Starred
+					</SideNavNavItem>
+
 					<SideNavNavItem
-						icon={AppsIcon}
-						label="Apps"
 						href="/apps"
+						icon={AppsIcon}
 						active={pathname === "/apps"}
-					/>
+					>
+						Apps
+					</SideNavNavItem>
+
 					<SideNavNavItem
-						icon={PlanIcon}
-						label="Plans"
 						href="/plans"
+						icon={PlanIcon}
 						active={pathname === "/plans"}
-					/>
+					>
+						Plans
+					</SideNavNavItem>
 				</SideNavSection>
 
 				{/* Projects Section */}
 				<SideNavSection title="Recent">
-					<SideNavProjectsDropdown pathname={pathname} />
+					<SideNavProjectsDropdown />
 				</SideNavSection>
 
 				{/* Teams Section */}
 				<SideNavSection>
 					<SideNavNavItem
-						icon={TeamsIcon}
-						label="Teams"
 						href="/teams"
+						icon={TeamsIcon}
 						active={pathname === "/teams"}
-					/>
+					>
+						Teams
+					</SideNavNavItem>
 				</SideNavSection>
 			</div>
 
 			<div className="flex flex-col border-t border-gray-300">
-				<button className="flex h-10 w-full items-center px-3 hover:bg-gray-100 overflow-hidden">
-					<FeedbackIcon className="h-5 w-5 text-gray-600" />
-					<span className="ml-3 text-sm text-gray-700 hidden lg:block whitespace-nowrap overflow-hidden text-ellipsis">
-						Give feedback on the new navigation
-					</span>
-				</button>
+				<SideNavNavItem
+					href="/feedback"
+					icon={FeedbackIcon}
+					active={pathname === "/feedback"}
+				>
+					Give feedback on the new navigation
+				</SideNavNavItem>
 			</div>
 		</nav>
 	);

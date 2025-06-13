@@ -1,5 +1,5 @@
 import { type Sprint } from "./sprintStore";
-import { type WorkItem } from "./workItemStore";
+import { WorkItem } from "./workItemStore";
 
 export const initialProjects = [
 	{

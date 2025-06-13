@@ -1,67 +1,94 @@
 "use client";
 
+import { useProjects } from "@/lib/hooks/useProjects";
+import { useNavigationStore } from "@/lib/stores";
 import SideNavNavItem from "./SideNavNavItem";
-import SearchIcon from "@/components/ui/icons/SearchIcon";
 import ProjectsIcon from "@/components/ui/icons/ProjectsIcon";
+import SearchIcon from "@/components/ui/icons/SearchIcon";
 import ViewAllProjects from "@/components/ui/icons/ViewAllProjects";
-import { useProjectStore } from "@/lib/stores";
-import { useEffect } from "react";
+import ExpandIcon from "@/components/ui/icons/ExpandIcon";
+import { usePathname } from "next/navigation";
 
-export default function SideNavProjectsDropdown({
-	pathname,
-}: {
-	pathname: string;
-}) {
-	const {
-		projects,
-		isProjectsDropdownOpen,
-		toggleProjectsDropdown,
-		setProjectsDropdownOpen,
-	} = useProjectStore();
-
-	// Debug log
-	useEffect(() => {
-		console.log("Projects in dropdown:", {
-			projects,
-			isOpen: isProjectsDropdownOpen,
-		});
-	}, [projects, isProjectsDropdownOpen]);
+export default function SideNavProjectsDropdown() {
+	const pathname = usePathname();
+	const { data: projects = [], isLoading, error } = useProjects();
+	const { isProjectsDropdownOpen, toggleProjectsDropdown } =
+		useNavigationStore();
 
 	return (
-		<div className="space-y-1">
-			<SideNavNavItem
-				icon={ProjectsIcon}
-				iconClassName="h-5 w-5"
-				label={`Projects (${projects.length})`}
-				href="/scrum/projects"
-				expandable
-				expanded={isProjectsDropdownOpen}
+		<div className="space-y-0.5">
+			<div
+				className="flex h-8 w-full items-center px-3 hover:bg-gray-100 relative group cursor-pointer"
 				onClick={toggleProjectsDropdown}
-				active={pathname.startsWith("/scrum/projects")}
-			/>
-			{isProjectsDropdownOpen && projects.length > 0 && (
+			>
+				<ProjectsIcon className="text-gray-600 shrink-0 h-5 w-5" />
+				<span className="ml-3 text-sm text-gray-700 hidden lg:block truncate">
+					Projects ({isLoading ? "..." : projects.length})
+				</span>
+				<ExpandIcon
+					className={`ml-auto h-4 w-4 text-gray-500 transition-transform ${
+						isProjectsDropdownOpen ? "rotate-180" : ""
+					}`}
+				/>
+				<span className="absolute left-16 bg-gray-800 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 whitespace-nowrap lg:hidden z-50">
+					Projects ({isLoading ? "..." : projects.length})
+				</span>
+			</div>
+
+			{isProjectsDropdownOpen && (
 				<div className="space-y-0.5">
-					{projects.map((project) => (
-						<SideNavNavItem
-							key={project.id}
-							icon={SearchIcon}
-							iconClassName="h-4 w-4"
-							label={`${project.name} (${project.key})`}
-							href={`/scrum/projects/${project.id}`}
-							isNested
-							active={pathname === `/scrum/projects/${project.id}`}
-						/>
-					))}
+					<SideNavNavItem
+						href="/projects/search"
+						icon={SearchIcon}
+						className="pl-12"
+					>
+						Search projects
+					</SideNavNavItem>
+
+					<SideNavNavItem
+						href="/projects/all"
+						icon={ViewAllProjects}
+						className="pl-12"
+						active={pathname === "/projects/all"}
+					>
+						View all projects
+					</SideNavNavItem>
+
+					{isLoading && (
+						<div className="pl-12 py-1 text-xs text-gray-500 hidden lg:block">
+							Loading projects...
+						</div>
+					)}
+
+					{error && (
+						<div className="pl-12 py-1 text-xs text-red-500 hidden lg:block">
+							Failed to load projects
+						</div>
+					)}
+
+					{!isLoading && !error && projects.length > 0 && (
+						<>
+							{projects.map((project) => (
+								<SideNavNavItem
+									key={project.id}
+									href={`/scrum/projects/${project.id}`}
+									icon={SearchIcon}
+									className="pl-12"
+									active={pathname === `/scrum/projects/${project.id}`}
+								>
+									{project.name} ({project.key})
+								</SideNavNavItem>
+							))}
+						</>
+					)}
+
+					{!isLoading && !error && projects.length === 0 && (
+						<div className="pl-12 py-1 text-xs text-gray-500 hidden lg:block">
+							No projects found
+						</div>
+					)}
 				</div>
 			)}
-			<SideNavNavItem
-				icon={ViewAllProjects}
-				iconClassName="h-4 w-4"
-				label="View all projects"
-				href="/scrum/projects/all"
-				isNested
-				active={pathname === "/scrum/projects/all"}
-			/>
 		</div>
 	);
 }

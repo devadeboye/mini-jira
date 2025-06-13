@@ -9,35 +9,36 @@ export default function ProjectNav() {
 			<ul className="flex flex-row gap-2 items-center">
 				<li>
 					<Button
-						label="Summary"
-						color="white"
-						icon={WorldIcon}
-						iconFill="currentColor"
-						className="py-1 pl-0 text-sm font-semibold text-subtle"
-						iconClassName="h-4 w-4"
-					/>
+						variant="outline"
+						className="py-1 pl-0 text-sm font-semibold text-gray-600"
+						icon={<WorldIcon height={16} width={16} fill="currentColor" />}
+					>
+						Summary
+					</Button>
 				</li>
 				<li>
 					<Button
-						label="Backlog"
-						color="white"
-						icon={BacklogIcon}
-						iconFill="currentColor"
-						className="py-1 text-sm font-semibold text-subtle"
-						iconClassName="h-6 w-6"
-					/>
+						variant="outline"
+						className="py-1 text-sm font-semibold text-gray-600"
+						icon={<BacklogIcon height={24} width={24} fill="currentColor" />}
+					>
+						Backlog
+					</Button>
 				</li>
 				<li>
 					<Button
-						label="More"
-						color="white"
-						className="py-1 text-sm font-semibold text-subtle"
-					/>
+						variant="outline"
+						className="py-1 text-sm font-semibold text-gray-600"
+					>
+						More
+					</Button>
 				</li>
 				<li>
-					<button className="h-6 w-6 p-1">
-						<AddIcon height={24} width={24} fill="var(--text-subtle)" />
-					</button>
+					<Button
+						variant="outline"
+						className="p-1 min-w-[24px] h-6"
+						icon={<AddIcon height={24} width={24} fill="currentColor" />}
+					/>
 				</li>
 			</ul>
 		</div>

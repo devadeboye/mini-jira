@@ -44,3 +44,4 @@ export const useProjectStore = create<ProjectState>((set) => ({
 		set((state) => ({ isProjectsDropdownOpen: !state.isProjectsDropdownOpen })),
 	setProjectsDropdownOpen: (isOpen) => set({ isProjectsDropdownOpen: isOpen }),
 }));
+ 

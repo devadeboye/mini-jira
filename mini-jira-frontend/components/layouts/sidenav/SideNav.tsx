@@ -12,13 +12,20 @@ import AppsIcon from "@/components/ui/icons/AppsIcon";
 import PlanIcon from "@/components/ui/icons/PlanIcon";
 import TeamsIcon from "@/components/ui/icons/TeamsIcon";
 import FeedbackIcon from "@/components/ui/icons/FeedbackIcon";
+import { useNavigationStore } from "@/lib/stores";
 
 const SideNav = () => {
 	const pathname = usePathname();
+	const { isMobileNavOpen } = useNavigationStore();
 
 	return (
-		<nav className="fixed left-0 top-[64px] lg:top-[50px] h-[calc(100vh-64px)] w-[64px] lg:w-[240px] flex-col border-r border-gray-300 bg-white flex font-semibold">
+		<nav
+			className={`fixed left-0 top-[64px] lg:top-[50px] h-[calc(100vh-64px)] w-[64px] lg:w-[240px] flex-col border-r border-gray-300 bg-white font-semibold ${
+				isMobileNavOpen ? "flex" : "hidden lg:flex"
+			}`}
+		>
 			<div className="flex flex-col flex-1 overflow-y-auto">
+				{/* Quick Access Section */}
 				<SideNavSection>
 					<SideNavNavItem
 						icon={Avatar}
@@ -51,11 +58,15 @@ const SideNav = () => {
 						href="/plans"
 						active={pathname === "/plans"}
 					/>
+				</SideNavSection>
 
-					<SideNavSection title="Recent">
-						<SideNavProjectsDropdown pathname={pathname} />
-					</SideNavSection>
+				{/* Projects Section */}
+				<SideNavSection title="Recent">
+					<SideNavProjectsDropdown pathname={pathname} />
+				</SideNavSection>
 
+				{/* Teams Section */}
+				<SideNavSection>
 					<SideNavNavItem
 						icon={TeamsIcon}
 						label="Teams"

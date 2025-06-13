@@ -1,6 +1,6 @@
-export interface SvgProp {
+export interface IconProps {
 	className?: string;
-	fill?: string;
 	width?: number;
 	height?: number;
+	fill?: string;
 }

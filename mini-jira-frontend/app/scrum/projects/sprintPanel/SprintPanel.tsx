@@ -1,30 +1,36 @@
 "use client";
 
-import { useState } from "react";
 import SprintHeader from "./SprintHeader";
 import SprintContent from "./SprintContent";
 import SprintFooter from "./SprintFooter";
+import { useSprintStore } from "@/lib/stores";
 
 const SprintPanel = () => {
-	const [isCollapsed, setIsCollapsed] = useState(false);
+	const { isSprintPanelExpanded, setSprintPanelExpanded, sprints } =
+		useSprintStore();
+	const activeSprint = sprints.find((sprint) => sprint.status === "active");
 
 	const toggleCollapse = () => {
-		setIsCollapsed(!isCollapsed);
+		setSprintPanelExpanded(!isSprintPanelExpanded);
 	};
+
+	if (!activeSprint) {
+		return null;
+	}
 
 	return (
 		<div className="border border-gray-200 rounded-lg bg-gray-50">
 			<SprintHeader
-				isCollapsed={isCollapsed}
+				isCollapsed={!isSprintPanelExpanded}
 				onToggleCollapse={toggleCollapse}
-				sprintName="SCRUM Sprint 1"
+				sprintName={activeSprint.name}
 				workItemsCount={0}
 			/>
 
-			{!isCollapsed && (
+			{isSprintPanelExpanded && (
 				<>
-					<SprintContent />
-					<SprintFooter />
+					<SprintContent sprint={activeSprint} />
+					<SprintFooter sprint={activeSprint} />
 				</>
 			)}
 		</div>

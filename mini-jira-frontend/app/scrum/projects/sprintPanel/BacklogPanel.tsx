@@ -1,15 +1,18 @@
 "use client";
 
-import { useState } from "react";
 import BacklogContent from "./BacklogContent";
 import BacklogFooter from "./BacklogFooter";
 import BacklogHeader from "./BacklogHeader";
+import { useSprintStore } from "@/lib/stores";
 
 const BacklogPanel = () => {
-	const [isCollapsed, setIsCollapsed] = useState(false);
+	const { expandedSprintIds, toggleSprintExpanded } = useSprintStore();
+	const BACKLOG_ID = "backlog"; // Constant ID for backlog section
+
+	const isCollapsed = !expandedSprintIds.includes(BACKLOG_ID);
 
 	const toggleCollapse = () => {
-		setIsCollapsed(!isCollapsed);
+		toggleSprintExpanded(BACKLOG_ID);
 	};
 
 	return (

@@ -1,6 +1,5 @@
 import { NavProps } from "@/types/nav";
 import MoreMenu from "./MoreMenu";
-import MoreIcon from "@/components/ui/icons/MoreIcon";
 import JiraLogo from "@/components/ui/icons/JiraLogo";
 import SearchIcon from "@/components/ui/icons/SearchIcon";
 import Button from "@/components/ui/Button";
@@ -16,7 +15,7 @@ export default function LargeScreenNav({ className }: NavProps) {
 
 			<div className="lg:flex lg:w-full lg:items-center lg:justify-center lg:gap-2">
 				{/* Search box */}
-				<div className="lg:hover:bg-gray-50 lg:cursor-text lg:text-gray-500 lg:flex lg:items-center lg:gap-2 lg:border lg:border-gray-400 lg:rounded lg:focus-within:border-primary lg:focus-within:ring-1 lg:focus-within:ring-primary lg:px-2 lg:py-1 lg:w-full">
+				<div className="lg:hover:bg-gray-50 lg:cursor-text lg:text-text lg:flex lg:items-center lg:gap-2 lg:border lg:border-gray-400 lg:rounded lg:focus-within:border-primary lg:focus-within:ring-1 lg:focus-within:ring-primary lg:px-2 lg:py-1 lg:w-full">
 					<SearchIcon
 						height={24}
 						width={24}

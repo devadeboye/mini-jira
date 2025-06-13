@@ -1,47 +1,58 @@
-import { useState } from "react";
+"use client";
+
 import SideNavNavItem from "./SideNavNavItem";
 import SearchIcon from "@/components/ui/icons/SearchIcon";
 import ProjectsIcon from "@/components/ui/icons/ProjectsIcon";
 import ViewAllProjects from "@/components/ui/icons/ViewAllProjects";
-
-const projects = [
-	{ id: "1", name: "Project1", href: "/scrum/projects/1" },
-	// Add more projects here as needed
-];
+import { useProjectStore } from "@/lib/stores";
+import { useEffect } from "react";
 
 export default function SideNavProjectsDropdown({
 	pathname,
 }: {
 	pathname: string;
 }) {
-	const [expanded, setExpanded] = useState(true);
+	const {
+		projects,
+		isProjectsDropdownOpen,
+		toggleProjectsDropdown,
+		setProjectsDropdownOpen,
+	} = useProjectStore();
+
+	// Debug log
+	useEffect(() => {
+		console.log("Projects in dropdown:", {
+			projects,
+			isOpen: isProjectsDropdownOpen,
+		});
+	}, [projects, isProjectsDropdownOpen]);
 
 	return (
-		<>
+		<div className="space-y-1">
 			<SideNavNavItem
 				icon={ProjectsIcon}
 				iconClassName="h-5 w-5"
-				label="Projects"
+				label={`Projects (${projects.length})`}
 				href="/scrum/projects"
 				expandable
-				expanded={expanded}
-				onClick={() => setExpanded((e) => !e)}
-				active={pathname === "/projects"}
+				expanded={isProjectsDropdownOpen}
+				onClick={toggleProjectsDropdown}
+				active={pathname.startsWith("/scrum/projects")}
 			/>
-			{expanded && (
-				<>
+			{isProjectsDropdownOpen && projects.length > 0 && (
+				<div className="space-y-0.5">
 					{projects.map((project) => (
 						<SideNavNavItem
 							key={project.id}
 							icon={SearchIcon}
 							iconClassName="h-4 w-4"
-							label={project.name}
-							href={project.href}
+							label={`${project.name} (${project.key})`}
+							href={`/scrum/projects/${project.id}`}
 							isNested
-							active={pathname === project.href}
+							active={pathname === `/scrum/projects/${project.id}`}
 						/>
 					))}
-				</>
+				</div>
 			)}
 			<SideNavNavItem
 				icon={ViewAllProjects}
@@ -49,8 +60,8 @@ export default function SideNavProjectsDropdown({
 				label="View all projects"
 				href="/scrum/projects/all"
 				isNested
-				active={pathname === "/projects/all"}
+				active={pathname === "/scrum/projects/all"}
 			/>
-		</>
+		</div>
 	);
 }

@@ -20,6 +20,7 @@ export default function SideNavProjectsDropdown({
 		<>
 			<SideNavNavItem
 				icon={ProjectsIcon}
+				iconClassName="h-5 w-5"
 				label="Projects"
 				href="/scrum/projects"
 				expandable

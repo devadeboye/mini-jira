@@ -21,7 +21,7 @@ const SprintContent = () => {
 							Plan your sprint
 						</h3>
 
-						<p className="text-gray-600 text-sm mb-6 leading-relaxed">
+						<p className="text-text text-sm mb-6 leading-relaxed">
 							Drag work items from the <strong>Backlog</strong> section or
 							create new ones to plan the work for this sprint. Select{" "}
 							<strong>Start sprint</strong> when you're ready.

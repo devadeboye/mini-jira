@@ -1,9 +1,12 @@
+"use client";
+
 import ProjectHeader from "../project/ProjectHeader";
-import ProjectNav from "../project/ProjectNav";
+import { ProjectNav } from "./ProjectNav";
 import SprintPanel from "../sprintPanel/SprintPanel";
 import BacklogPanel from "../sprintPanel/BacklogPanel";
+import ProjectCreationGuard from "@/components/guards/ProjectCreationGuard";
 
-export default function Projects() {
+function ProjectContent() {
 	return (
 		<>
 			<ProjectHeader />
@@ -13,5 +16,13 @@ export default function Projects() {
 				<BacklogPanel />
 			</div>
 		</>
+	);
+}
+
+export default function Projects() {
+	return (
+		<ProjectCreationGuard>
+			<ProjectContent />
+		</ProjectCreationGuard>
 	);
 }

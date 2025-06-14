@@ -36,7 +36,7 @@ export class WorkItemController {
     private sprintService: SprintService,
   ) {}
 
-  @Post()
+  @Post('create')
   @Roles(UserRole.ADMIN, UserRole.USER)
   @UsePipes(new ObjectValidationPipe(createWorkItemSchema))
   async create(
@@ -56,31 +56,31 @@ export class WorkItemController {
     return this.workItemService.update(workItem);
   }
 
-  @Get()
+  @Get('all')
   @Roles(UserRole.ADMIN, UserRole.USER)
   findAll() {
     return this.workItemService.findAll();
   }
 
-  @Get(':id')
+  @Get('find-by-id/:id')
   @Roles(UserRole.ADMIN, UserRole.USER)
   findOne(@Param('id') id: string) {
     return this.workItemService.findOne(id);
   }
 
-  @Get('project/:projectId')
+  @Get('find-by-project/:projectId')
   @Roles(UserRole.ADMIN, UserRole.USER)
   findByProject(@Param('projectId') projectId: string) {
     return this.workItemService.findByProject(projectId);
   }
 
-  @Get('sprint/:sprintId')
+  @Get('find-by-sprint/:sprintId')
   @Roles(UserRole.ADMIN, UserRole.USER)
   findBySprint(@Param('sprintId') sprintId: string) {
     return this.workItemService.findBySprint(sprintId);
   }
 
-  @Patch(':id')
+  @Patch('update/:id')
   @Roles(UserRole.ADMIN, UserRole.USER)
   @UsePipes(new ObjectValidationPipe(updateWorkItemSchema))
   async update(
@@ -105,7 +105,7 @@ export class WorkItemController {
     return this.workItemService.update(workItem);
   }
 
-  @Delete(':id')
+  @Delete('delete/:id')
   @Roles(UserRole.ADMIN, UserRole.USER)
   remove(@Param('id') id: string) {
     return this.workItemService.remove(id);

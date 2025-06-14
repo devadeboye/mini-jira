@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthState } from "@/lib/hooks/useAuth";
 
@@ -15,10 +15,16 @@ export default function ProjectCreationGuard({
 }: ProjectCreationGuardProps) {
 	const { user, isAuthenticated, isLoading } = useAuthState();
 	const router = useRouter();
+	const [isMounted, setIsMounted] = useState(false);
+
+	// Ensure component is mounted on client side
+	useEffect(() => {
+		setIsMounted(true);
+	}, []);
 
 	useEffect(() => {
-		// Don't redirect if still loading
-		if (isLoading) return;
+		// Don't redirect if not mounted or still loading
+		if (!isMounted || isLoading) return;
 
 		// Redirect to login if not authenticated
 		if (!isAuthenticated) {
@@ -31,10 +37,10 @@ export default function ProjectCreationGuard({
 			router.push(fallbackPath);
 			return;
 		}
-	}, [user, isAuthenticated, isLoading, router, fallbackPath]);
+	}, [user, isAuthenticated, isLoading, router, fallbackPath, isMounted]);
 
-	// Show loading state while checking auth
-	if (isLoading) {
+	// Show loading state while checking auth or not mounted (prevents hydration mismatch)
+	if (!isMounted || isLoading) {
 		return (
 			<div className="min-h-screen flex items-center justify-center">
 				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>

@@ -1,6 +1,5 @@
 "use client";
 
-import { Suspense } from "react";
 import MoreIcon from "@/components/ui/icons/MoreIcon";
 import Image from "next/image";
 import ExpandIcon from "@/components/ui/icons/ExpandIcon";
@@ -14,7 +13,7 @@ function LoadingProjectName() {
 	return <div className="h-7 w-32 bg-gray-200 animate-pulse rounded" />;
 }
 
-function ProjectHeaderContent() {
+export default function ProjectHeader() {
 	const params = useParams();
 	const projectId = params.id as string;
 	const { data: project, isLoading } = useProject(projectId);
@@ -58,13 +57,5 @@ function ProjectHeaderContent() {
 				</div>
 			</div>
 		</header>
-	);
-}
-
-export default function ProjectHeader() {
-	return (
-		<Suspense>
-			<ProjectHeaderContent />
-		</Suspense>
 	);
 }

@@ -62,20 +62,17 @@ const BacklogFooter = () => {
 		}
 	};
 
-	const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-		const value = e.target.value;
+	const handleBlur = () => {
 		setIsEditing(false);
-		if (value.trim()) {
-			handleSubmit(value);
-		}
 	};
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === "Enter") {
 			const value = e.currentTarget.value;
-			setIsEditing(false);
 			if (value.trim()) {
 				handleSubmit(value);
+			} else {
+				setIsEditing(false);
 			}
 		} else if (e.key === "Escape") {
 			setIsEditing(false);

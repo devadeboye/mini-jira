@@ -17,40 +17,17 @@ export class ProjectService implements IProjectService {
   constructor(
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
   ) {}
+
+  async findOneByKey(key: string): Promise<Project | null> {
+    return this.projectRepository.findOne({ where: { key } });
+  }
 
   /**
    * Create a new project
    */
-  async create(data: { ownerId: string } & CreateProjectDto): Promise<Project> {
-    const { ownerId, ...projectData } = data;
-
-    // Check if owner exists
-    const owner = await this.userRepository.findOne({
-      where: { id: ownerId },
-    });
-
-    if (!owner) {
-      throw new NotFoundException('Owner not found');
-    }
-
-    // Check if project key is unique
-    const existingProject = await this.projectRepository.findOne({
-      where: { key: projectData.key },
-    });
-
-    if (existingProject) {
-      throw new ConflictException('Project key already exists');
-    }
-
-    // Validate project key format (should be uppercase, 2-10 characters)
-    if (!/^[A-Z]{2,10}$/.test(projectData.key)) {
-      throw new BadRequestException(
-        'Project key must be 2-10 uppercase letters',
-      );
-    }
+  async create(data: { owner: User } & CreateProjectDto): Promise<Project> {
+    const { owner, ...projectData } = data;
 
     // Create project
     const project = this.projectRepository.create({
@@ -63,7 +40,11 @@ export class ProjectService implements IProjectService {
 
     // Mark user as having created a project
     if (!owner.hasCreatedProject) {
-      await this.userRepository.update(ownerId, { hasCreatedProject: true });
+      await this.projectRepository
+        .createQueryBuilder()
+        .relation(User, 'hasCreatedProject')
+        .of(owner)
+        .set(true);
     }
 
     return savedProject;
@@ -137,28 +118,8 @@ export class ProjectService implements IProjectService {
   /**
    * Update a project (admin only)
    */
-  async update(id: string, data: UpdateProjectDto): Promise<Project> {
-    const project = await this.findOne(id);
-
-    // Validate project key if being updated
-    if (data.key && data.key !== project.key) {
-      if (!/^[A-Z]{2,10}$/.test(data.key)) {
-        throw new BadRequestException(
-          'Project key must be 2-10 uppercase letters',
-        );
-      }
-
-      const existingProject = await this.projectRepository.findOne({
-        where: { key: data.key },
-      });
-
-      if (existingProject) {
-        throw new ConflictException('Project key already exists');
-      }
-    }
-
-    Object.assign(project, data);
-    return await this.projectRepository.save(project);
+  async update(project: Project): Promise<Project> {
+    return this.projectRepository.save(project);
   }
 
   /**
@@ -279,48 +240,6 @@ export class ProjectService implements IProjectService {
       mostActiveProjects: activeProjects,
       lastUpdated: new Date(),
     };
-  }
-
-  /**
-   * Add a member to a project
-   */
-  async addMember(
-    projectId: string,
-    userId: string,
-    requesterId: string,
-  ): Promise<Project> {
-    const project = await this.projectRepository.findOne({
-      where: { id: projectId },
-      relations: ['owner', 'members'],
-    });
-
-    if (!project) {
-      throw new NotFoundException('Project not found');
-    }
-
-    // Check if requester is the owner
-    if (project.owner.id !== requesterId) {
-      throw new ForbiddenException('Only project owner can add members');
-    }
-
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-    });
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    // Check if user is already a member
-    const isAlreadyMember = project.members.some(
-      (member) => member.id === userId,
-    );
-    if (isAlreadyMember) {
-      throw new ConflictException('User is already a project member');
-    }
-
-    project.members.push(user);
-    return await this.projectRepository.save(project);
   }
 
   /**

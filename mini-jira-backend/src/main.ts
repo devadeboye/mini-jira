@@ -1,7 +1,8 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger } from '@nestjs/common';
 import express from 'express';
+import { RolesGuard } from './auth/guards/roles.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -10,6 +11,10 @@ async function bootstrap() {
 
   // Enable CORS
   app.enableCors();
+
+  const reflector = app.get(Reflector);
+  // use guards needed for access control
+  app.useGlobalGuards(new RolesGuard(reflector));
 
   // Configure body parser
   app.use(express.json());

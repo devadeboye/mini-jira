@@ -21,16 +21,6 @@ export interface SprintService {
   startSprint(id: string, userId: string): Promise<Sprint>;
   completeSprint(id: string, userId: string): Promise<Sprint>;
   getSprintWorkItems(id: string, userId: string): Promise<WorkItem[]>;
-  addWorkItemToSprint(
-    sprintId: string,
-    workItemId: string,
-    userId: string,
-  ): Promise<Sprint>;
-  removeWorkItemFromSprint(
-    sprintId: string,
-    workItemId: string,
-    userId: string,
-  ): Promise<Sprint>;
 
   // Analytics
   getSprintStats(id: string, userId: string): Promise<Record<string, any>>;

@@ -6,63 +6,60 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import type { Project } from 'src/project/entities/project.entity';
-import type { Sprint } from 'src/sprint/entities/sprint.entity';
-import type { User } from 'src/user/entities/user.entity';
-
-export type WorkItemType = 'story' | 'task' | 'bug' | 'epic';
-export type WorkItemStatus = 'todo' | 'in-progress' | 'done';
-export type WorkItemPriority = 'highest' | 'high' | 'medium' | 'low' | 'lowest';
+import { Project } from 'src/project/entities/project.entity';
+import { Sprint } from 'src/sprint/entities/sprint.entity';
+import { User } from 'src/user/entities/user.entity';
+import {
+  WorkItemPriority,
+  WorkItemStatus,
+  WorkItemType,
+} from '../enums/work-item.enum';
 
 @Entity()
 export class WorkItem {
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
-  @Column({ type: 'varchar' })
+  @Column()
   public title: string;
 
-  @Column({ type: 'enum', enum: ['story', 'task', 'bug', 'epic'] })
+  @Column({ type: 'text', nullable: true })
+  public description: string;
+
+  @Column({
+    type: 'enum',
+    enum: WorkItemType,
+    default: WorkItemType.TASK,
+  })
   public type: WorkItemType;
 
-  @Column({ type: 'enum', enum: ['todo', 'in-progress', 'done'] })
+  @Column({
+    type: 'enum',
+    enum: WorkItemStatus,
+    default: WorkItemStatus.TODO,
+  })
   public status: WorkItemStatus;
 
   @Column({
     type: 'enum',
-    enum: ['highest', 'high', 'medium', 'low', 'lowest'],
+    enum: WorkItemPriority,
+    default: WorkItemPriority.MEDIUM,
   })
   public priority: WorkItemPriority;
 
-  @Column({ type: 'text', nullable: true })
-  public description?: string;
+  @Column({ type: 'int', default: 0 })
+  public storyPoints: number;
 
-  @Column({ type: 'int' })
-  public estimate: number;
-
-  @Column({ type: 'int' })
-  public order: number;
-
-  @ManyToOne('User', {
-    nullable: true,
-    onDelete: 'SET NULL',
-  })
-  public assignee?: User;
-
-  @ManyToOne('User', {
-    onDelete: 'CASCADE',
-  })
-  public createdBy: User;
-
-  @ManyToOne('Project', {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(() => Project, (project) => project.workItems)
   public project: Project;
 
-  @ManyToOne('Sprint', {
-    nullable: true,
-    onDelete: 'SET NULL',
-  })
+  @ManyToOne(() => User, (user) => user.assignedWorkItems, { nullable: true })
+  public assignee?: User;
+
+  @ManyToOne(() => User, (user) => user.createdWorkItems)
+  public creator: User;
+
+  @ManyToOne(() => Sprint, (sprint) => sprint.workItems, { nullable: true })
   public sprint?: Sprint;
 
   @CreateDateColumn()

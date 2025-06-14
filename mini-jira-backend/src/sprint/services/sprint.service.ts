@@ -8,23 +8,18 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Sprint } from '../entities/sprint.entity';
-import { Project } from '../../project/entities/project.entity';
 import { WorkItem } from '../../work-item/entities/work-item.entity';
-import { User } from '../../user/entities/user.entity';
+import { ProjectService } from '../../project/services/project.service';
 import { SprintService as ISprintService } from '../interfaces/sprint-service.interface';
 import { CreateSprintDto, UpdateSprintDto } from '../dto/sprint.dto';
+import { WorkItemStatus } from '../../work-item/enums/work-item.enum';
 
 @Injectable()
 export class SprintService implements ISprintService {
   constructor(
     @InjectRepository(Sprint)
     private readonly sprintRepository: Repository<Sprint>,
-    @InjectRepository(Project)
-    private readonly projectRepository: Repository<Project>,
-    @InjectRepository(WorkItem)
-    private readonly workItemRepository: Repository<WorkItem>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly projectService: ProjectService,
   ) {}
 
   /**
@@ -34,14 +29,7 @@ export class SprintService implements ISprintService {
     const { projectId, ...sprintData } = data;
 
     // Check if project exists and user has access
-    const project = await this.projectRepository.findOne({
-      where: { id: projectId },
-      relations: ['owner', 'members'],
-    });
-
-    if (!project) {
-      throw new NotFoundException('Project not found');
-    }
+    const project = await this.projectService.findOne(projectId);
 
     // Validate dates if provided
     if (sprintData.startDate && sprintData.endDate) {
@@ -87,18 +75,7 @@ export class SprintService implements ISprintService {
     userId: string,
   ): Promise<Sprint[]> {
     // Check if user has access to the project
-    const project = await this.projectRepository
-      .createQueryBuilder('project')
-      .leftJoin('project.members', 'members')
-      .where('project.id = :projectId', { projectId })
-      .andWhere('(project.owner.id = :userId OR members.id = :userId)', {
-        userId,
-      })
-      .getOne();
-
-    if (!project) {
-      throw new NotFoundException('Project not found or access denied');
-    }
+    await this.projectService.findUserProject(projectId, userId);
 
     return await this.sprintRepository.find({
       where: { project: { id: projectId } },
@@ -131,7 +108,7 @@ export class SprintService implements ISprintService {
   /**
    * Find a sprint that user has access to
    */
-  async findUserSprint(id: string, userId: string): Promise<Sprint> {
+  async findUserSprint(sprintId: string, userId: string): Promise<Sprint> {
     const sprint = await this.sprintRepository
       .createQueryBuilder('sprint')
       .leftJoinAndSelect('sprint.project', 'project')
@@ -140,13 +117,15 @@ export class SprintService implements ISprintService {
       .leftJoinAndSelect('sprint.workItems', 'workItems')
       .leftJoinAndSelect('workItems.assignee', 'assignee')
       .leftJoinAndSelect('workItems.createdBy', 'createdBy')
-      .where('sprint.id = :id', { id })
-      .andWhere('(owner.id = :userId OR members.id = :userId)', { userId })
+      .where('sprint.id = :id', { id: sprintId })
       .getOne();
 
     if (!sprint) {
-      throw new NotFoundException('Sprint not found or access denied');
+      throw new NotFoundException('Sprint not found');
     }
+
+    // Check if user has access to the project
+    await this.projectService.findUserProject(sprint.project.id, userId);
 
     return sprint;
   }
@@ -187,10 +166,12 @@ export class SprintService implements ISprintService {
     const sprint = await this.findUserSprint(id, userId);
 
     // Check if user is project owner or member
-    const isOwner = sprint.project.owner.id === userId;
-    const isMember = sprint.project.members.some(
-      (member) => member.id === userId,
+    const project = await this.projectService.findUserProject(
+      sprint.project.id,
+      userId,
     );
+    const isOwner = project.owner.id === userId;
+    const isMember = project.members.some((member) => member.id === userId);
 
     if (!isOwner && !isMember) {
       throw new ForbiddenException('Access denied');
@@ -234,8 +215,12 @@ export class SprintService implements ISprintService {
   async removeUserSprint(id: string, userId: string): Promise<void> {
     const sprint = await this.findUserSprint(id, userId);
 
-    // Only project owner can delete sprints
-    if (sprint.project.owner.id !== userId) {
+    // Check if user is project owner
+    const project = await this.projectService.findUserProject(
+      sprint.project.id,
+      userId,
+    );
+    if (project.owner.id !== userId) {
       throw new ForbiddenException('Only project owner can delete sprints');
     }
 
@@ -300,58 +285,6 @@ export class SprintService implements ISprintService {
   }
 
   /**
-   * Add work item to sprint
-   */
-  async addWorkItemToSprint(
-    sprintId: string,
-    workItemId: string,
-    userId: string,
-  ): Promise<Sprint> {
-    const sprint = await this.findUserSprint(sprintId, userId);
-
-    const workItem = await this.workItemRepository.findOne({
-      where: { id: workItemId, project: { id: sprint.project.id } },
-    });
-
-    if (!workItem) {
-      throw new NotFoundException('Work item not found in this project');
-    }
-
-    if (workItem.sprint?.id === sprintId) {
-      throw new ConflictException('Work item is already in this sprint');
-    }
-
-    workItem.sprint = sprint;
-    await this.workItemRepository.save(workItem);
-
-    return await this.findUserSprint(sprintId, userId);
-  }
-
-  /**
-   * Remove work item from sprint
-   */
-  async removeWorkItemFromSprint(
-    sprintId: string,
-    workItemId: string,
-    userId: string,
-  ): Promise<Sprint> {
-    await this.findUserSprint(sprintId, userId);
-
-    const workItem = await this.workItemRepository.findOne({
-      where: { id: workItemId, sprint: { id: sprintId } },
-    });
-
-    if (!workItem) {
-      throw new NotFoundException('Work item not found in this sprint');
-    }
-
-    workItem.sprint = undefined;
-    await this.workItemRepository.save(workItem);
-
-    return await this.findUserSprint(sprintId, userId);
-  }
-
-  /**
    * Get sprint statistics
    */
   async getSprintStats(
@@ -362,22 +295,22 @@ export class SprintService implements ISprintService {
 
     const totalWorkItems = sprint.workItems.length;
     const completedWorkItems = sprint.workItems.filter(
-      (item) => item.status === 'done',
+      (item) => item.status === WorkItemStatus.DONE,
     ).length;
     const inProgressWorkItems = sprint.workItems.filter(
-      (item) => item.status === 'in-progress',
+      (item) => item.status === WorkItemStatus.IN_PROGRESS,
     ).length;
     const todoWorkItems = sprint.workItems.filter(
-      (item) => item.status === 'todo',
+      (item) => item.status === WorkItemStatus.TODO,
     ).length;
 
     const totalEstimate = sprint.workItems.reduce(
-      (sum, item) => sum + item.estimate,
+      (sum, item) => sum + item.storyPoints,
       0,
     );
     const completedEstimate = sprint.workItems
-      .filter((item) => item.status === 'done')
-      .reduce((sum, item) => sum + item.estimate, 0);
+      .filter((item) => item.status === WorkItemStatus.DONE)
+      .reduce((sum, item) => sum + item.storyPoints, 0);
 
     const completionPercentage =
       totalEstimate > 0 ? (completedEstimate / totalEstimate) * 100 : 0;
@@ -431,7 +364,9 @@ export class SprintService implements ISprintService {
     );
     const completedWorkItems = sprints.reduce(
       (sum, sprint) =>
-        sum + sprint.workItems.filter((item) => item.status === 'done').length,
+        sum +
+        sprint.workItems.filter((item) => item.status === WorkItemStatus.DONE)
+          .length,
       0,
     );
 

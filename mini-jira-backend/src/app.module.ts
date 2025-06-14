@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
@@ -12,6 +12,8 @@ import { WorkItem } from './work-item/entities/work-item.entity';
 import { AuthModule } from './auth/auth.module';
 import { environmentValidator } from './config/env.validator';
 import { EnvironmentEnum } from './config/enums/config.enum';
+import { AuthMiddleware } from './common/middleware/auth.middleware';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -40,5 +42,13 @@ import { EnvironmentEnum } from './config/enums/config.enum';
     WorkItemModule,
     AuthModule,
   ],
+  providers: [JwtService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware)
+      .exclude('/auth/login', '/auth/register', '/auth/refresh')
+      .forRoutes('*');
+  }
+}

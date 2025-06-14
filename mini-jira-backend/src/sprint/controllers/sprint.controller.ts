@@ -6,32 +6,33 @@ import {
   Delete,
   Param,
   Body,
-  UseGuards,
   Request,
-  Inject,
   BadRequestException,
   Query,
+  ConflictException,
+  UsePipes,
+  NotFoundException,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { UserRole } from '../../user/enums/user.enum';
 import { Sprint } from '../entities/sprint.entity';
 import { WorkItem } from '../../work-item/entities/work-item.entity';
-import type { SprintService } from '../interfaces/sprint-service.interface';
 import {
   validateCreateSprint,
   validateUpdateSprint,
-  validateAddWorkItemToSprint,
+  addWorkItemToSprintSchema,
+  AddWorkItemToSprintDto,
 } from '../dto/sprint.dto';
 import { AuthenticatedRequest } from '../../auth/types/request.type';
+import { WorkItemService } from '../../work-item/services/work-item.service';
+import { ObjectValidationPipe } from '../../common/pipes/joi-validation.pipe';
+import { SprintService } from '../services/sprint.service';
 
 @Controller('sprints')
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class SprintController {
   constructor(
-    @Inject('SprintService')
     private readonly sprintService: SprintService,
+    private readonly workItemService: WorkItemService,
   ) {}
 
   @Post()
@@ -47,8 +48,11 @@ export class SprintController {
         ...createSprintDto,
         projectId,
       });
-    } catch (error) {
-      throw new BadRequestException(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Invalid request');
     }
   }
 
@@ -89,8 +93,11 @@ export class SprintController {
       return req.user.role === UserRole.ADMIN
         ? this.sprintService.update(id, updateSprintDto)
         : this.sprintService.updateUserSprint(id, updateSprintDto, req.user.id);
-    } catch (error) {
-      throw new BadRequestException(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        throw new BadRequestException(error.message);
+      }
+      throw new BadRequestException('Invalid request');
     }
   }
 
@@ -136,35 +143,65 @@ export class SprintController {
 
   @Post(':id/work-items')
   @Roles(UserRole.ADMIN, UserRole.USER)
+  @UsePipes(new ObjectValidationPipe(addWorkItemToSprintSchema))
   async addWorkItem(
     @Request() req: AuthenticatedRequest,
-    @Param('id') id: string,
-    @Body() body: unknown,
+    @Param('id') sprintId: string,
+    @Body() addWorkItemDto: AddWorkItemToSprintDto,
   ): Promise<Sprint> {
-    try {
-      const addWorkItemDto = validateAddWorkItemToSprint(body);
-      return this.sprintService.addWorkItemToSprint(
-        id,
-        addWorkItemDto.workItemId,
-        req.user.id,
+    // Get sprint and verify user access
+    const sprint = await this.sprintService.findUserSprint(
+      sprintId,
+      req.user.id,
+    );
+
+    // Get work item and verify it exists
+    const workItem = await this.workItemService.findOne(
+      addWorkItemDto.workItemId,
+    );
+
+    // Verify work item belongs to the same project
+    if (workItem.project.id !== sprint.project.id) {
+      throw new BadRequestException(
+        'Work item does not belong to this project',
       );
-    } catch (error) {
-      throw new BadRequestException(error.message);
     }
+
+    // Check if work item is already in this sprint
+    if (workItem.sprint?.id === sprintId) {
+      throw new ConflictException('Work item is already in this sprint');
+    }
+
+    // Update work item's sprint reference
+    await this.workItemService.update({ ...workItem, sprint: sprint });
+
+    // Return updated sprint
+    return this.sprintService.findUserSprint(sprintId, req.user.id);
   }
 
   @Delete(':id/work-items/:workItemId')
   @Roles(UserRole.ADMIN, UserRole.USER)
   async removeWorkItem(
     @Request() req: AuthenticatedRequest,
-    @Param('id') id: string,
+    @Param('id') sprintId: string,
     @Param('workItemId') workItemId: string,
   ): Promise<Sprint> {
-    return this.sprintService.removeWorkItemFromSprint(
-      id,
-      workItemId,
-      req.user.id,
-    );
+    // Get sprint and verify user access
+    await this.sprintService.findUserSprint(sprintId, req.user.id);
+
+    // Get work item and verify it exists
+    const workItem = await this.workItemService.findOne(workItemId);
+
+    // Verify work item is in this sprint
+    if (workItem.sprint?.id !== sprintId) {
+      throw new NotFoundException('Work item not found in this sprint');
+    }
+
+    // Remove work item's sprint reference
+    await this.workItemService.update({ ...workItem, sprint: undefined });
+
+    // Return updated sprint
+    return this.sprintService.findUserSprint(sprintId, req.user.id);
   }
 
   // Analytics

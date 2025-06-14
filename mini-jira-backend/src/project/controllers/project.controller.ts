@@ -2,14 +2,15 @@ import {
   Controller,
   Get,
   Post,
-  Put,
   Delete,
   Param,
   Body,
   UseGuards,
   Request,
-  Inject,
   UsePipes,
+  NotFoundException,
+  ForbiddenException,
+  ConflictException,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
@@ -17,36 +18,37 @@ import { Roles } from '../../auth/decorators/roles.decorator';
 import { UserRole } from '../../user/enums/user.enum';
 import { Project } from '../entities/project.entity';
 import { User } from '../../user/entities/user.entity';
-import type { ProjectService } from '../interfaces/project-service.interface';
+import { ProjectService } from '../services/project.service';
 import {
   CreateProjectDto,
-  UpdateProjectDto,
   AddMemberDto,
   createProjectSchema,
-  updateProjectSchema,
   addMemberSchema,
 } from '../dtos/project.dto';
 import { AuthenticatedRequest } from '../../auth/types/request.type';
 import { ObjectValidationPipe } from 'src/common/pipes/joi-validation.pipe';
+import { UserService } from 'src/user/services/user.service';
+import { AddMemberPipe, CreateProjectPipe } from '../pipes/project.pipe';
 
 @Controller('projects')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ProjectController {
   constructor(
-    @Inject('ProjectService')
     private readonly projectService: ProjectService,
+    private readonly userService: UserService,
   ) {}
 
   @Post('create')
   @Roles(UserRole.ADMIN, UserRole.USER)
-  @UsePipes(new ObjectValidationPipe(createProjectSchema))
+  @UsePipes(new ObjectValidationPipe(createProjectSchema), CreateProjectPipe)
   async create(
     @Request() req: AuthenticatedRequest,
     @Body() createProjectDto: CreateProjectDto,
   ): Promise<Project> {
+    const owner = await this.userService.findById(req.user.id);
     return this.projectService.create({
       ...createProjectDto,
-      ownerId: req.user.id,
+      owner,
     });
   }
 
@@ -69,23 +71,6 @@ export class ProjectController {
       : this.projectService.findUserProject(id, req.user.id);
   }
 
-  @Put('update/:id')
-  @Roles(UserRole.ADMIN, UserRole.USER)
-  @UsePipes(new ObjectValidationPipe(updateProjectSchema))
-  async update(
-    @Request() req: AuthenticatedRequest,
-    @Param('id') id: string,
-    @Body() updateProjectDto: UpdateProjectDto,
-  ): Promise<Project> {
-    return req.user.role === UserRole.ADMIN
-      ? this.projectService.update(id, updateProjectDto)
-      : this.projectService.updateUserProject(
-          id,
-          updateProjectDto,
-          req.user.id,
-        );
-  }
-
   @Delete('delete/:id')
   @Roles(UserRole.ADMIN, UserRole.USER)
   async remove(
@@ -99,13 +84,32 @@ export class ProjectController {
 
   @Post('add-member/:id')
   @Roles(UserRole.ADMIN, UserRole.USER)
-  @UsePipes(new ObjectValidationPipe(addMemberSchema))
+  @UsePipes(new ObjectValidationPipe(addMemberSchema), AddMemberPipe)
   async addMember(
     @Request() req: AuthenticatedRequest,
-    @Param('id') id: string,
+    @Param('id') projectId: string,
     @Body() addMemberDto: AddMemberDto,
   ): Promise<Project> {
-    return this.projectService.addMember(id, addMemberDto.userId, req.user.id);
+    const project = await this.projectService.findOne(projectId);
+
+    if (!project) {
+      throw new NotFoundException('Project not found');
+    }
+    const isProjectOwner = project.owner.id !== req.user.id;
+    if (isProjectOwner) {
+      throw new ForbiddenException('Only project owner can add members');
+    }
+
+    const user = await this.userService.findById(addMemberDto.userId);
+    const isAlreadyMember = project.members.some(
+      (member) => member.id === addMemberDto.userId,
+    );
+    if (isAlreadyMember) {
+      throw new ConflictException('User is already a project member');
+    }
+
+    project.members.push(user);
+    return this.projectService.update(project);
   }
 
   @Delete('remove-member/:id/:userId')

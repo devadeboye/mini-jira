@@ -67,8 +67,8 @@ export class UserService {
     });
   }
 
-  updateLastActivity(id: string): void {
-    this.userRepository.update(id, {
+  async updateLastActivity(id: string): Promise<void> {
+    await this.userRepository.update(id, {
       lastActivityAt: new Date(),
     });
   }

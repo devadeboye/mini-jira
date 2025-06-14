@@ -2,12 +2,12 @@ import { Project } from '../entities/project.entity';
 import { User } from '../../user/entities/user.entity';
 
 export interface ProjectService {
-  create(data: { ownerId: string } & Record<string, any>): Promise<Project>;
+  create(data: { owner: User } & Record<string, any>): Promise<Project>;
   findAll(): Promise<Project[]>;
   findUserProjects(userId: string): Promise<Project[]>;
   findOne(id: string): Promise<Project>;
   findUserProject(id: string, userId: string): Promise<Project>;
-  update(id: string, data: Record<string, any>): Promise<Project>;
+  update(project: Project): Promise<Project>;
   updateUserProject(
     id: string,
     data: Record<string, any>,
@@ -19,11 +19,6 @@ export interface ProjectService {
   getSystemStats(): Promise<Record<string, any>>;
 
   // Member management methods
-  addMember(
-    projectId: string,
-    userId: string,
-    requesterId: string,
-  ): Promise<Project>;
   removeMember(
     projectId: string,
     userId: string,

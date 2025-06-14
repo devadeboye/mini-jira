@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
+import { API_CONFIG, buildApiUrl } from "@/lib/config/api.config";
 
-const API_URL = "http://localhost:4000";
 const TOKEN_COOKIE = "token";
 
 export interface LoginCredentials {
@@ -37,7 +37,8 @@ export interface User {
 
 // Create axios instance with interceptors
 const authApi = axios.create({
-	baseURL: `${API_URL}/auth`,
+	baseURL: API_CONFIG.BASE_URL,
+	timeout: API_CONFIG.TIMEOUT,
 });
 
 // Request interceptor to add auth token
@@ -68,17 +69,23 @@ authApi.interceptors.response.use(
 
 export const authAPI = {
 	login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
-		const response = await authApi.post("/login", credentials);
+		const response = await authApi.post(
+			API_CONFIG.ENDPOINTS.AUTH.LOGIN,
+			credentials
+		);
 		return response.data;
 	},
 
 	register: async (credentials: RegisterCredentials): Promise<AuthResponse> => {
-		const response = await authApi.post("/register", credentials);
+		const response = await authApi.post(
+			API_CONFIG.ENDPOINTS.AUTH.REGISTER,
+			credentials
+		);
 		return response.data;
 	},
 
 	refreshToken: async (): Promise<AuthResponse> => {
-		const response = await authApi.post("/refresh");
+		const response = await authApi.post(API_CONFIG.ENDPOINTS.AUTH.REFRESH);
 		return response.data;
 	},
 

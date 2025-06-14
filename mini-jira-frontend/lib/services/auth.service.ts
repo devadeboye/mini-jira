@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
+import { API_CONFIG, buildApiUrl } from "@/lib/config/api.config";
 
-const API_URL = "http://localhost:4000";
 const TOKEN_COOKIE = "token";
 const USER_STORAGE = "user";
 
@@ -30,7 +30,10 @@ export interface AuthResponse {
 class AuthService {
 	async login(credentials: LoginCredentials): Promise<AuthResponse> {
 		try {
-			const response = await axios.post(`${API_URL}/auth/login`, credentials);
+			const response = await axios.post(
+				buildApiUrl(API_CONFIG.ENDPOINTS.AUTH.LOGIN),
+				credentials
+			);
 			this.setAuthData(response.data);
 			return response.data;
 		} catch (error) {
@@ -44,7 +47,7 @@ class AuthService {
 	async register(credentials: RegisterCredentials): Promise<AuthResponse> {
 		try {
 			const response = await axios.post(
-				`${API_URL}/auth/register`,
+				buildApiUrl(API_CONFIG.ENDPOINTS.AUTH.REGISTER),
 				credentials
 			);
 			this.setAuthData(response.data);
@@ -59,7 +62,9 @@ class AuthService {
 
 	async refreshToken(): Promise<AuthResponse> {
 		try {
-			const response = await axios.post(`${API_URL}/auth/refresh`);
+			const response = await axios.post(
+				buildApiUrl(API_CONFIG.ENDPOINTS.AUTH.REFRESH)
+			);
 			this.setAuthData(response.data);
 			return response.data;
 		} catch (error) {

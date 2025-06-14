@@ -7,7 +7,9 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"prepare": "husky install"
+		"prepare": "husky install",
+		"check-env": "node scripts/check-env.js",
+		"setup": "cp .env.example .env.local && npm run check-env"
 	},
 	"dependencies": {
 		"@tanstack/react-query": "^5.80.7",

@@ -1,5 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import { API_CONFIG } from "@/lib/config/api.config";
 import {
 	Sprint,
 	SprintStatus,
@@ -9,12 +10,12 @@ import {
 	SprintWithDetails,
 } from "../types/sprint.types";
 
-const API_URL = "http://localhost:4000";
 const TOKEN_COOKIE = "token";
 
 // Create axios instance for sprints
 const sprintsApi = axios.create({
-	baseURL: `${API_URL}/sprints`,
+	baseURL: API_CONFIG.BASE_URL,
+	timeout: API_CONFIG.TIMEOUT,
 	headers: {
 		"Content-Type": "application/json",
 	},
@@ -34,7 +35,9 @@ export const sprintsAPI = {
 	 * Get all sprints for a project
 	 */
 	getProjectSprints: async (projectId: string): Promise<Sprint[]> => {
-		const response = await sprintsApi.get(`/all?projectId=${projectId}`);
+		const response = await sprintsApi.get(
+			`/sprints/all?projectId=${projectId}`
+		);
 		return response.data;
 	},
 
@@ -42,7 +45,7 @@ export const sprintsAPI = {
 	 * Get a single sprint by ID
 	 */
 	getById: async (id: string): Promise<Sprint> => {
-		const response = await sprintsApi.get(`/find-by-id/${id}`);
+		const response = await sprintsApi.get(`/sprints/find-by-id/${id}`);
 		return response.data;
 	},
 
@@ -56,7 +59,7 @@ export const sprintsAPI = {
 		payload: CreateSprintPayload
 	): Promise<Sprint> => {
 		const response = await sprintsApi.post(
-			`/create?projectId=${projectId}`,
+			`/sprints/create?projectId=${projectId}`,
 			payload
 		);
 		return response.data;
@@ -66,7 +69,7 @@ export const sprintsAPI = {
 	 * Update an existing sprint
 	 */
 	update: async (id: string, payload: UpdateSprintPayload): Promise<Sprint> => {
-		const response = await sprintsApi.put(`/update/${id}`, payload);
+		const response = await sprintsApi.put(`/sprints/update/${id}`, payload);
 		return response.data;
 	},
 
@@ -74,14 +77,14 @@ export const sprintsAPI = {
 	 * Delete a sprint
 	 */
 	delete: async (id: string): Promise<void> => {
-		await sprintsApi.delete(`/delete/${id}`);
+		await sprintsApi.delete(`/sprints/delete/${id}`);
 	},
 
 	/**
 	 * Start a sprint (change status to active)
 	 */
 	start: async (id: string): Promise<Sprint> => {
-		const response = await sprintsApi.post(`/start/${id}`);
+		const response = await sprintsApi.post(`/sprints/start/${id}`);
 		return response.data;
 	},
 
@@ -89,7 +92,7 @@ export const sprintsAPI = {
 	 * Complete a sprint (change status to completed)
 	 */
 	complete: async (id: string): Promise<Sprint> => {
-		const response = await sprintsApi.post(`/complete/${id}`);
+		const response = await sprintsApi.post(`/sprints/complete/${id}`);
 		return response.data;
 	},
 
@@ -97,7 +100,7 @@ export const sprintsAPI = {
 	 * Get work items for a sprint
 	 */
 	getWorkItems: async (sprintId: string): Promise<any[]> => {
-		const response = await sprintsApi.get(`/work-items/${sprintId}`);
+		const response = await sprintsApi.get(`/sprints/work-items/${sprintId}`);
 		return response.data;
 	},
 
@@ -108,7 +111,7 @@ export const sprintsAPI = {
 		sprintId: string,
 		workItemId: string
 	): Promise<Sprint> => {
-		const response = await sprintsApi.post(`/work-items/${sprintId}`, {
+		const response = await sprintsApi.post(`/sprints/work-items/${sprintId}`, {
 			workItemId,
 		});
 		return response.data;
@@ -122,7 +125,7 @@ export const sprintsAPI = {
 		workItemId: string
 	): Promise<Sprint> => {
 		const response = await sprintsApi.delete(
-			`/${sprintId}/work-items/${workItemId}`
+			`/sprints/${sprintId}/work-items/${workItemId}`
 		);
 		return response.data;
 	},
@@ -131,7 +134,7 @@ export const sprintsAPI = {
 	 * Get sprint statistics
 	 */
 	getStats: async (sprintId: string): Promise<SprintStats> => {
-		const response = await sprintsApi.get(`/${sprintId}/stats`);
+		const response = await sprintsApi.get(`/sprints/${sprintId}/stats`);
 		return response.data;
 	},
 
@@ -139,7 +142,9 @@ export const sprintsAPI = {
 	 * Get project sprint statistics
 	 */
 	getProjectStats: async (projectId: string): Promise<any> => {
-		const response = await sprintsApi.get(`/projects/${projectId}/stats`);
+		const response = await sprintsApi.get(
+			`/sprints/projects/${projectId}/stats`
+		);
 		return response.data;
 	},
 };

@@ -1,7 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import { API_CONFIG } from "@/lib/config/api.config";
 
-const API_URL = "http://localhost:4000";
 const TOKEN_COOKIE = "token";
 
 export interface Project {
@@ -30,7 +30,8 @@ export interface UpdateProjectDto {
 
 // Create axios instance for projects
 const projectsApi = axios.create({
-	baseURL: `${API_URL}/projects`,
+	baseURL: API_CONFIG.BASE_URL,
+	timeout: API_CONFIG.TIMEOUT,
 });
 
 // Request interceptor to add auth token
@@ -44,26 +45,26 @@ projectsApi.interceptors.request.use((config) => {
 
 export const projectsAPI = {
 	getAll: async (): Promise<Project[]> => {
-		const response = await projectsApi.get("/all");
+		const response = await projectsApi.get("/projects/all");
 		return response.data;
 	},
 
 	getById: async (id: string): Promise<Project> => {
-		const response = await projectsApi.get(`/get/${id}`);
+		const response = await projectsApi.get(`/projects/get/${id}`);
 		return response.data;
 	},
 
 	create: async (data: CreateProjectDto): Promise<Project> => {
-		const response = await projectsApi.post("/create", data);
+		const response = await projectsApi.post("/projects/create", data);
 		return response.data;
 	},
 
 	update: async (id: string, data: UpdateProjectDto): Promise<Project> => {
-		const response = await projectsApi.patch(`/update/${id}`, data);
+		const response = await projectsApi.patch(`/projects/update/${id}`, data);
 		return response.data;
 	},
 
 	delete: async (id: string): Promise<void> => {
-		await projectsApi.delete(`/delete/${id}`);
+		await projectsApi.delete(`/projects/delete/${id}`);
 	},
 };

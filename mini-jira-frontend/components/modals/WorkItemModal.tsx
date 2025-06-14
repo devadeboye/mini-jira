@@ -46,13 +46,13 @@ const WorkItemModal = () => {
 	useEffect(() => {
 		if (workItem) {
 			setFormData({
-				title: workItem.title,
-				description: workItem.description || "",
-				type: workItem.type,
-				status: workItem.status,
-				priority: workItem.priority,
-				storyPoints: workItem.estimate,
-				sprintId: workItem.sprintId || null,
+				title: workItem.title ?? "",
+				description: workItem.description ?? "",
+				type: workItem.type ?? "task",
+				status: workItem.status ?? "todo",
+				priority: workItem.priority ?? "medium",
+				storyPoints: workItem.estimate ?? 0,
+				sprintId: workItem.sprintId ?? null,
 			});
 		}
 	}, [workItem]);
@@ -264,7 +264,7 @@ const WorkItemModal = () => {
 										id="title-input"
 										ref={firstFocusableRef}
 										type="text"
-										value={formData.title}
+										value={formData.title ?? ""}
 										onChange={(e) => handleInputChange("title", e.target.value)}
 										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 										required
@@ -285,7 +285,7 @@ const WorkItemModal = () => {
 									</label>
 									<textarea
 										id="description-input"
-										value={formData.description}
+										value={formData.description ?? ""}
 										onChange={(e) =>
 											handleInputChange("description", e.target.value)
 										}
@@ -407,7 +407,7 @@ const WorkItemModal = () => {
 										<input
 											id="story-points-input"
 											type="number"
-											value={formData.storyPoints}
+											value={formData.storyPoints ?? 0}
 											onChange={(e) =>
 												handleInputChange(
 													"storyPoints",
@@ -435,7 +435,7 @@ const WorkItemModal = () => {
 										</label>
 										<select
 											id="sprint-select"
-											value={formData.sprintId || ""}
+											value={formData.sprintId ?? ""}
 											onChange={(e) =>
 												handleInputChange("sprintId", e.target.value || null)
 											}

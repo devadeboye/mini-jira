@@ -34,7 +34,7 @@ const SprintHeader = ({
 
 					<Button
 						variant="primary"
-						className="text-xs text-text-subtle! bg-transparent"
+						className="text-xs text-text-subtle! bg-transparent hover:bg-transparent"
 						icon={
 							<EditIcon
 								width={16}

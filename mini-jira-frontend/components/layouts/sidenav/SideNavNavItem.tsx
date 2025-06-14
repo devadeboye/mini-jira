@@ -1,9 +1,11 @@
+import React from "react";
 import Link from "next/link";
 import { IconType } from "@/types/icon";
+import { ReactElement } from "react";
 
 interface SideNavNavItemProps {
 	href: string;
-	icon: IconType;
+	icon: IconType | ReactElement;
 	className?: string;
 	active?: boolean;
 	children?: React.ReactNode;
@@ -33,7 +35,11 @@ export default function SideNavNavItem({
 				active ? "bg-blue-50" : ""
 			} ${className}`}
 		>
-			<Icon className="text-gray-600 shrink-0 h-5 w-5" />
+			{React.isValidElement(Icon) ? (
+				Icon
+			) : (
+				<Icon className="text-gray-600 shrink-0 h-5 w-5" />
+			)}
 			<span className="ml-3 text-sm text-gray-700 hidden lg:block truncate">
 				{children}
 			</span>

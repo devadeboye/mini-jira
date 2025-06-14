@@ -32,9 +32,12 @@ export default function LargeScreenNav({ className }: NavProps) {
 
 				{/* Create Button */}
 				<Button
-					variant="outline"
-					className="p-2"
-					icon={<AddIcon width={24} height={24} fill="currentColor" />}
+					children="Create"
+					variant="primary"
+					className="py-2 px-2.5! text-white h-8 rounded-sm font-semibold bg-primary text-sm"
+					icon={
+						<AddIcon width={24} height={24} fill="white" className="h-4 w-4" />
+					}
 				/>
 			</div>
 

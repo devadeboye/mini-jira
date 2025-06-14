@@ -24,7 +24,7 @@ function NavLink({
 
 export function ProjectNav() {
 	return (
-		<nav className="border-b">
+		<nav className="border-b border-gray-300">
 			<div className="container mx-auto">
 				<ul className="flex items-center">
 					<li>

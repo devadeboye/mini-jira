@@ -8,6 +8,7 @@ import SearchIcon from "@/components/ui/icons/SearchIcon";
 import ViewAllProjects from "@/components/ui/icons/ViewAllProjects";
 import ExpandIcon from "@/components/ui/icons/ExpandIcon";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 export default function SideNavProjectsDropdown() {
 	const pathname = usePathname();
@@ -38,14 +39,6 @@ export default function SideNavProjectsDropdown() {
 			{isProjectsDropdownOpen && (
 				<div className="space-y-0.5">
 					<SideNavNavItem
-						href="/projects/search"
-						icon={SearchIcon}
-						className="pl-12"
-					>
-						Search projects
-					</SideNavNavItem>
-
-					<SideNavNavItem
 						href="/projects/all"
 						icon={ViewAllProjects}
 						className="pl-12"
@@ -72,7 +65,15 @@ export default function SideNavProjectsDropdown() {
 								<SideNavNavItem
 									key={project.id}
 									href={`/scrum/projects/${project.id}`}
-									icon={SearchIcon}
+									icon={
+										<Image
+											src="/assets/svg/10415.svg"
+											alt="Project icon"
+											height={20}
+											width={20}
+											className="rounded-sm"
+										/>
+									}
 									className="pl-12"
 									active={pathname === `/scrum/projects/${project.id}`}
 								>

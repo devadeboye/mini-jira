@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { initialWorkItems } from "./initialData";
 
-export type WorkItemType = "story" | "task" | "bug" | "epic";
-export type WorkItemStatus = "todo" | "in-progress" | "done";
-export type WorkItemPriority = "highest" | "high" | "medium" | "low" | "lowest";
+export type WorkItemType = "story" | "task" | "bug";
+export type WorkItemStatus = "todo" | "in_progress" | "in_review" | "done";
+export type WorkItemPriority = "low" | "medium" | "high" | "urgent";
 
 export interface WorkItem {
 	id: string;

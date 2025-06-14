@@ -4,9 +4,9 @@ import Cookies from "js-cookie";
 const API_URL = "http://localhost:4000";
 const TOKEN_COOKIE = "token";
 
-export type WorkItemType = "story" | "task" | "bug" | "epic";
-export type WorkItemStatus = "todo" | "in-progress" | "done";
-export type WorkItemPriority = "highest" | "high" | "medium" | "low" | "lowest";
+export type WorkItemType = "story" | "task" | "bug";
+export type WorkItemStatus = "todo" | "in_progress" | "in_review" | "done";
+export type WorkItemPriority = "low" | "medium" | "high" | "urgent";
 
 export interface WorkItem {
 	id: string;
@@ -41,7 +41,7 @@ export interface UpdateWorkItemDto {
 	status?: WorkItemStatus;
 	priority?: WorkItemPriority;
 	description?: string;
-	estimate?: number;
+	storyPoints?: number;
 	order?: number;
 	assigneeId?: string;
 	sprintId?: string;
@@ -50,6 +50,9 @@ export interface UpdateWorkItemDto {
 // Create axios instance for work items
 const workItemsApi = axios.create({
 	baseURL: `${API_URL}/work-items`,
+	headers: {
+		"Content-Type": "application/json",
+	},
 });
 
 // Request interceptor to add auth token
@@ -58,6 +61,15 @@ workItemsApi.interceptors.request.use((config) => {
 	if (token) {
 		config.headers.Authorization = `Bearer ${token}`;
 	}
+
+	// Log the request data for debugging
+	if (config.method === "patch" && config.url?.includes("update")) {
+		console.log("Axios request config:", config);
+		console.log("Request data:", config.data);
+		console.log("Request data type:", typeof config.data);
+		console.log("Request headers:", config.headers);
+	}
+
 	return config;
 });
 
@@ -78,7 +90,7 @@ export const workItemsAPI = {
 	},
 
 	getById: async (id: string): Promise<WorkItem> => {
-		const response = await workItemsApi.get(`/${id}`);
+		const response = await workItemsApi.get(`/find-by-id/${id}`);
 		return response.data;
 	},
 
@@ -91,7 +103,10 @@ export const workItemsAPI = {
 	},
 
 	update: async (id: string, data: UpdateWorkItemDto): Promise<WorkItem> => {
-		const response = await workItemsApi.put(`/${id}`, data);
+		console.log("Sending update data:", data);
+		console.log("Data type:", typeof data);
+		console.log("Data stringified:", JSON.stringify(data));
+		const response = await workItemsApi.patch(`/update/${id}`, data);
 		return response.data;
 	},
 

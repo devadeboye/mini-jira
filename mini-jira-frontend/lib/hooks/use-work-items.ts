@@ -36,6 +36,14 @@ export function useBacklogItems(projectId: string) {
 	});
 }
 
+export function useWorkItem(id: string) {
+	return useQuery({
+		queryKey: workItemKeys.detail(id),
+		queryFn: () => workItemsAPI.getById(id),
+		enabled: !!id,
+	});
+}
+
 export function useCreateWorkItem(
 	projectId: string,
 	options?: { onSuccess?: (data: WorkItem) => void }
@@ -68,8 +76,13 @@ export function useUpdateWorkItem() {
 		mutationFn: ({ id, data }: { id: string; data: UpdateWorkItemDto }) =>
 			workItemsAPI.update(id, data),
 		onSuccess: (data) => {
+			// Invalidate the specific work item detail
 			queryClient.invalidateQueries({
 				queryKey: workItemKeys.detail(data.id),
+			});
+			// Invalidate all lists to ensure consistency
+			queryClient.invalidateQueries({
+				queryKey: workItemKeys.lists(),
 			});
 		},
 	});

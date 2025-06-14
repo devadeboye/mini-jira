@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   Req,
-  UsePipes,
 } from '@nestjs/common';
 import { WorkItemService } from '../services/work-item.service';
 import { ObjectValidationPipe } from '../../common/pipes/joi-validation.pipe';
@@ -38,9 +37,9 @@ export class WorkItemController {
 
   @Post('create')
   @Roles(UserRole.ADMIN, UserRole.USER)
-  @UsePipes(new ObjectValidationPipe(createWorkItemSchema))
   async create(
-    @Body() createWorkItemDto: CreateWorkItemData,
+    @Body(new ObjectValidationPipe(createWorkItemSchema))
+    createWorkItemDto: CreateWorkItemData,
     @Req() req: AuthenticatedRequest,
   ) {
     const workItem = this.workItemService.create(createWorkItemDto);
@@ -82,10 +81,10 @@ export class WorkItemController {
 
   @Patch('update/:id')
   @Roles(UserRole.ADMIN, UserRole.USER)
-  @UsePipes(new ObjectValidationPipe(updateWorkItemSchema))
   async update(
     @Param('id') id: string,
-    @Body() updateWorkItemDto: UpdateWorkItemData,
+    @Body(new ObjectValidationPipe(updateWorkItemSchema))
+    updateWorkItemDto: UpdateWorkItemData,
   ) {
     const { assigneeId, sprintId, ...updateData } = updateWorkItemDto;
     const workItem = await this.workItemService.findOne(id);

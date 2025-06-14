@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { type WorkItem, useWorkItemStore } from "@/lib/stores/workItemStore";
+import { useModalStore } from "@/lib/stores/modalStore";
 
 interface WorkItemCardProps {
 	workItem: WorkItem;
@@ -10,6 +11,7 @@ const WorkItemCard = ({ workItem }: WorkItemCardProps) => {
 	const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const updateWorkItem = useWorkItemStore((state) => state.updateWorkItem);
+	const openWorkItemModal = useModalStore((state) => state.openWorkItemModal);
 
 	const statusOptions = [
 		{ value: "todo", label: "TO DO", color: "bg-gray-100 text-gray-800" },
@@ -28,6 +30,15 @@ const WorkItemCard = ({ workItem }: WorkItemCardProps) => {
 	const handleStatusChange = (newStatus: string) => {
 		updateWorkItem(workItem.id, { status: newStatus as any });
 		setIsStatusDropdownOpen(false);
+	};
+
+	const handleCardClick = (e: React.MouseEvent) => {
+		// Don't open modal if clicking on interactive elements
+		const target = e.target as HTMLElement;
+		if (target.closest("input, button, select")) {
+			return;
+		}
+		openWorkItemModal(workItem.id);
 	};
 
 	// Close dropdown when clicking outside
@@ -61,7 +72,10 @@ const WorkItemCard = ({ workItem }: WorkItemCardProps) => {
 	};
 
 	return (
-		<div className="flex items-center gap-3 px-3 py-2 bg-white border border-gray-200 rounded-xs hover:bg-[#E4EFFE] cursor-pointer">
+		<div
+			className="flex items-center gap-3 px-3 py-2 bg-white border border-gray-200 rounded-md hover:bg-[#E4EFFE] cursor-pointer"
+			onClick={handleCardClick}
+		>
 			{/* Checkbox */}
 			<input
 				type="checkbox"

@@ -5,6 +5,7 @@ import { ProjectNav } from "./ProjectNav";
 import SprintPanel from "../sprintPanel/SprintPanel";
 import BacklogPanel from "../sprintPanel/BacklogPanel";
 import ProjectCreationGuard from "@/components/guards/ProjectCreationGuard";
+import WorkItemModal from "@/components/modals/WorkItemModal";
 
 function ProjectContent() {
 	return (
@@ -15,6 +16,7 @@ function ProjectContent() {
 				<SprintPanel />
 				<BacklogPanel />
 			</div>
+			<WorkItemModal />
 		</>
 	);
 }

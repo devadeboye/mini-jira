@@ -53,7 +53,7 @@ export const initialWorkItems: WorkItem[] = [
 		id: "SCRUM-2",
 		title: "Design database schema",
 		type: "task",
-		status: "in-progress",
+		status: "in_progress",
 		priority: "medium",
 		assignee: "Jane Smith",
 		description: "Create database schema for projects, sprints, and work items",

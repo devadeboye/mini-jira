@@ -2,8 +2,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
 	sprintsAPI,
 	Sprint,
-	CreateSprintDto,
-	UpdateSprintDto,
+	CreateSprintPayload,
+	UpdateSprintPayload,
 } from "../api/sprints.api";
 
 export const sprintKeys = {
@@ -18,6 +18,7 @@ export function useProjectSprints(projectId: string) {
 	return useQuery({
 		queryKey: sprintKeys.list(projectId),
 		queryFn: () => sprintsAPI.getProjectSprints(projectId),
+		enabled: !!projectId,
 	});
 }
 
@@ -30,9 +31,13 @@ export function useCreateSprint(projectId: string) {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: (data: CreateSprintDto) => sprintsAPI.create(projectId, data),
+		mutationFn: (payload: CreateSprintPayload) =>
+			sprintsAPI.create(projectId, payload),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: sprintKeys.list(projectId) });
+		},
+		onError: (error) => {
+			console.error("Failed to create sprint:", error);
 		},
 	});
 }
@@ -41,10 +46,20 @@ export function useUpdateSprint() {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: ({ id, data }: { id: string; data: UpdateSprintDto }) =>
-			sprintsAPI.update(id, data),
-		onSuccess: (_, { id }) => {
-			queryClient.invalidateQueries({ queryKey: sprintKeys.detail(id) });
+		mutationFn: ({
+			id,
+			payload,
+		}: {
+			id: string;
+			payload: UpdateSprintPayload;
+		}) => sprintsAPI.update(id, payload),
+		onSuccess: (data) => {
+			queryClient.invalidateQueries({ queryKey: sprintKeys.detail(data.id) });
+			// Also invalidate the project list to update the sprint in lists
+			queryClient.invalidateQueries({ queryKey: sprintKeys.lists() });
+		},
+		onError: (error) => {
+			console.error("Failed to update sprint:", error);
 		},
 	});
 }
@@ -57,6 +72,9 @@ export function useDeleteSprint(projectId: string) {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: sprintKeys.list(projectId) });
 		},
+		onError: (error) => {
+			console.error("Failed to delete sprint:", error);
+		},
 	});
 }
 
@@ -67,6 +85,10 @@ export function useStartSprint() {
 		mutationFn: (id: string) => sprintsAPI.start(id),
 		onSuccess: (data) => {
 			queryClient.invalidateQueries({ queryKey: sprintKeys.detail(data.id) });
+			queryClient.invalidateQueries({ queryKey: sprintKeys.lists() });
+		},
+		onError: (error) => {
+			console.error("Failed to start sprint:", error);
 		},
 	});
 }
@@ -78,6 +100,10 @@ export function useCompleteSprint() {
 		mutationFn: (id: string) => sprintsAPI.complete(id),
 		onSuccess: (data) => {
 			queryClient.invalidateQueries({ queryKey: sprintKeys.detail(data.id) });
+			queryClient.invalidateQueries({ queryKey: sprintKeys.lists() });
+		},
+		onError: (error) => {
+			console.error("Failed to complete sprint:", error);
 		},
 	});
 }

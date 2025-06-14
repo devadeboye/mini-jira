@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 import { useModalStore } from "@/lib/stores/modalStore";
 import { useWorkItem, useUpdateWorkItem } from "@/lib/hooks/use-work-items";
+import { useProjectSprints } from "@/lib/hooks/use-sprints";
 import {
 	WorkItemType,
 	WorkItemStatus,
@@ -11,6 +13,8 @@ import {
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 const WorkItemModal = () => {
+	const params = useParams();
+	const projectId = typeof params.id === "string" ? params.id : "";
 	const { isWorkItemModalOpen, selectedWorkItemId, closeWorkItemModal } =
 		useModalStore();
 	const {
@@ -19,6 +23,7 @@ const WorkItemModal = () => {
 		error,
 	} = useWorkItem(selectedWorkItemId || "");
 	const updateWorkItemMutation = useUpdateWorkItem();
+	const { data: sprints } = useProjectSprints(projectId);
 
 	// Form state
 	const [formData, setFormData] = useState({
@@ -28,6 +33,7 @@ const WorkItemModal = () => {
 		status: "todo" as WorkItemStatus,
 		priority: "medium" as WorkItemPriority,
 		storyPoints: 0,
+		sprintId: null as string | null,
 	});
 
 	// Update form data when work item loads
@@ -40,6 +46,7 @@ const WorkItemModal = () => {
 				status: workItem.status,
 				priority: workItem.priority,
 				storyPoints: workItem.estimate,
+				sprintId: workItem.sprintId || null,
 			});
 		}
 	}, [workItem]);
@@ -68,9 +75,15 @@ const WorkItemModal = () => {
 		if (!selectedWorkItemId) return;
 
 		try {
+			// Convert null to undefined for API compatibility
+			const updateData = {
+				...formData,
+				sprintId: formData.sprintId || undefined,
+			};
+
 			await updateWorkItemMutation.mutateAsync({
 				id: selectedWorkItemId,
-				data: formData,
+				data: updateData,
 			});
 			closeWorkItemModal();
 		} catch (error) {
@@ -78,7 +91,7 @@ const WorkItemModal = () => {
 		}
 	};
 
-	const handleInputChange = (field: string, value: any) => {
+	const handleInputChange = (field: string, value: string | number | null) => {
 		setFormData((prev) => ({ ...prev, [field]: value }));
 	};
 
@@ -230,24 +243,48 @@ const WorkItemModal = () => {
 									</div>
 								</div>
 
-								{/* Story Points */}
-								<div>
-									<label className="block text-sm font-medium text-gray-700 mb-2">
-										Story Points
-									</label>
-									<input
-										type="number"
-										value={formData.storyPoints}
-										onChange={(e) =>
-											handleInputChange(
-												"storyPoints",
-												parseInt(e.target.value) || 0
-											)
-										}
-										min="0"
-										max="100"
-										className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-									/>
+								{/* Story Points and Sprint - Grid layout */}
+								<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+									{/* Story Points */}
+									<div>
+										<label className="block text-sm font-medium text-gray-700 mb-2">
+											Story Points
+										</label>
+										<input
+											type="number"
+											value={formData.storyPoints}
+											onChange={(e) =>
+												handleInputChange(
+													"storyPoints",
+													parseInt(e.target.value) || 0
+												)
+											}
+											min="0"
+											max="100"
+											className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+										/>
+									</div>
+
+									{/* Sprint */}
+									<div>
+										<label className="block text-sm font-medium text-gray-700 mb-2">
+											Sprint
+										</label>
+										<select
+											value={formData.sprintId || ""}
+											onChange={(e) =>
+												handleInputChange("sprintId", e.target.value || null)
+											}
+											className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+										>
+											<option value="">Backlog</option>
+											{sprints?.map((sprint) => (
+												<option key={sprint.id} value={sprint.id}>
+													{sprint.name} ({sprint.status})
+												</option>
+											))}
+										</select>
+									</div>
 								</div>
 
 								{/* Actions */}

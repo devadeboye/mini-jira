@@ -3,7 +3,7 @@ import { WorkItem } from '../entities/work-item.entity';
 export interface WorkItemService {
   // Basic CRUD operations
   create(
-    data: { projectId: string; createdById: string } & Record<string, any>,
+    data: { projectId: string; creatorId: string } & Record<string, any>,
   ): Promise<WorkItem>;
   findAll(): Promise<WorkItem[]>;
   findProjectWorkItems(projectId: string, userId: string): Promise<WorkItem[]>;

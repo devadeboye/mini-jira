@@ -1,5 +1,5 @@
 import AddIcon from "@/components/ui/icons/AddIcon";
-import { type Sprint } from "@/lib/stores/sprintStore";
+import { Sprint } from "@/lib/api/sprints.api";
 
 interface SprintFooterProps {
 	sprint: Sprint;

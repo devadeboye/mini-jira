@@ -45,16 +45,18 @@ export function SprintContent({ items }: SprintContentProps) {
 								className={`px-2 py-1 text-xs rounded ${
 									item.status === "todo"
 										? "bg-gray-100"
-										: item.status === "in-progress"
+										: item.status === "in_progress"
 										? "bg-blue-100 text-blue-700"
+										: item.status === "in_review"
+										? "bg-yellow-100 text-yellow-700"
 										: "bg-green-100 text-green-700"
 								}`}
 							>
-								{item.status}
+								{item.status.replace("_", " ").toUpperCase()}
 							</span>
 							<span
 								className={`px-2 py-1 text-xs rounded ${
-									item.priority === "highest"
+									item.priority === "urgent"
 										? "bg-red-100 text-red-700"
 										: item.priority === "high"
 										? "bg-orange-100 text-orange-700"
@@ -63,7 +65,7 @@ export function SprintContent({ items }: SprintContentProps) {
 										: "bg-gray-100"
 								}`}
 							>
-								{item.priority}
+								{item.priority.toUpperCase()}
 							</span>
 						</div>
 					</div>

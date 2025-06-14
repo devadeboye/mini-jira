@@ -35,7 +35,7 @@ export class SprintController {
     private readonly workItemService: WorkItemService,
   ) {}
 
-  @Post()
+  @Post('create')
   @Roles(UserRole.ADMIN, UserRole.USER)
   async create(
     @Request() req: AuthenticatedRequest,
@@ -56,7 +56,7 @@ export class SprintController {
     }
   }
 
-  @Get()
+  @Get('all')
   @Roles(UserRole.ADMIN, UserRole.USER)
   async findAll(
     @Request() req: AuthenticatedRequest,
@@ -70,7 +70,7 @@ export class SprintController {
     return req.user.role === UserRole.ADMIN ? this.sprintService.findAll() : []; // Users must specify a project
   }
 
-  @Get(':id')
+  @Get('find-by-id/:id')
   @Roles(UserRole.ADMIN, UserRole.USER)
   async findOne(
     @Request() req: AuthenticatedRequest,
@@ -81,7 +81,7 @@ export class SprintController {
       : this.sprintService.findUserSprint(id, req.user.id);
   }
 
-  @Put(':id')
+  @Put('update/:id')
   @Roles(UserRole.ADMIN, UserRole.USER)
   async update(
     @Request() req: AuthenticatedRequest,
@@ -101,7 +101,7 @@ export class SprintController {
     }
   }
 
-  @Delete(':id')
+  @Delete('delete/:id')
   @Roles(UserRole.ADMIN, UserRole.USER)
   async remove(
     @Request() req: AuthenticatedRequest,
@@ -113,7 +113,7 @@ export class SprintController {
   }
 
   // Sprint lifecycle management
-  @Post(':id/start')
+  @Post('start/:id')
   @Roles(UserRole.ADMIN, UserRole.USER)
   async startSprint(
     @Request() req: AuthenticatedRequest,
@@ -122,7 +122,7 @@ export class SprintController {
     return this.sprintService.startSprint(id, req.user.id);
   }
 
-  @Post(':id/complete')
+  @Post('complete/:id')
   @Roles(UserRole.ADMIN, UserRole.USER)
   async completeSprint(
     @Request() req: AuthenticatedRequest,
@@ -132,7 +132,7 @@ export class SprintController {
   }
 
   // Work item management
-  @Get(':id/work-items')
+  @Get('work-items/:id')
   @Roles(UserRole.ADMIN, UserRole.USER)
   async getWorkItems(
     @Request() req: AuthenticatedRequest,
@@ -141,7 +141,7 @@ export class SprintController {
     return this.sprintService.getSprintWorkItems(id, req.user.id);
   }
 
-  @Post(':id/work-items')
+  @Post('work-items/:id')
   @Roles(UserRole.ADMIN, UserRole.USER)
   @UsePipes(new ObjectValidationPipe(addWorkItemToSprintSchema))
   async addWorkItem(

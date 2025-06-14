@@ -22,6 +22,6 @@ export interface UpdateWorkItemData {
   status?: WorkItemStatus;
   priority?: WorkItemPriority;
   storyPoints?: number;
-  assigneeId?: string;
-  sprintId?: string;
+  assigneeId?: string | null;
+  sprintId?: string | null;
 }

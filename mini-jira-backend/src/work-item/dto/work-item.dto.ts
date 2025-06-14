@@ -61,7 +61,7 @@ export interface WorkItemResponseDto {
     fullName: string;
     avatar?: string;
   };
-  createdBy: {
+  creator: {
     id: string;
     username: string;
     fullName: string;

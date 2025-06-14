@@ -18,7 +18,7 @@ export interface WorkItem {
 	estimate: number;
 	order: number;
 	assigneeId?: string;
-	createdById: string;
+	creatorId: string;
 	projectId: string;
 	sprintId?: string;
 	createdAt: string;
@@ -80,7 +80,7 @@ export const workItemsAPI = {
 	},
 
 	getSprintWorkItems: async (sprintId: string): Promise<WorkItem[]> => {
-		const response = await workItemsApi.get(`/sprint/${sprintId}`);
+		const response = await workItemsApi.get(`/find-by-sprint/${sprintId}`);
 		return response.data;
 	},
 

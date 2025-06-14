@@ -26,6 +26,7 @@ export function useSprintWorkItems(sprintId: string) {
 	return useQuery({
 		queryKey: workItemKeys.list({ sprintId }),
 		queryFn: () => workItemsAPI.getSprintWorkItems(sprintId),
+		enabled: !!sprintId,
 	});
 }
 

@@ -94,7 +94,7 @@ export class SprintService implements ISprintService {
         'project',
         'workItems',
         'workItems.assignee',
-        'workItems.createdBy',
+        'workItems.creator',
       ],
     });
 
@@ -116,7 +116,7 @@ export class SprintService implements ISprintService {
       .leftJoinAndSelect('project.members', 'members')
       .leftJoinAndSelect('sprint.workItems', 'workItems')
       .leftJoinAndSelect('workItems.assignee', 'assignee')
-      .leftJoinAndSelect('workItems.createdBy', 'createdBy')
+      .leftJoinAndSelect('workItems.creator', 'creator')
       .where('sprint.id = :id', { id: sprintId })
       .getOne();
 

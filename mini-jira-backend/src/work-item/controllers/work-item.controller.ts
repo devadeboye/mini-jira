@@ -88,17 +88,25 @@ export class WorkItemController {
   ) {
     const { assigneeId, sprintId, ...updateData } = updateWorkItemDto;
     const workItem = await this.workItemService.findOne(id);
+
     // Update assignee if provided
     if (assigneeId) {
       const assignee = await this.userService.findById(assigneeId);
       workItem.assignee = assignee;
+    } else if (assigneeId === null || assigneeId === undefined) {
+      // Remove assignee if explicitly set to null/undefined
+      workItem.assignee = undefined;
     }
 
-    // Update sprint if provided
+    // Update sprint if provided or remove if null
     if (sprintId) {
       const sprint = await this.sprintService.findOne(sprintId);
       workItem.sprint = sprint;
+    } else if (sprintId === null || sprintId === undefined) {
+      // Remove from sprint (move to backlog) if explicitly set to null/undefined
+      workItem.sprint = undefined;
     }
+
     Object.assign(workItem, updateData);
 
     return this.workItemService.update(workItem);

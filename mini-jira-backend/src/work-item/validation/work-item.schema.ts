@@ -24,7 +24,7 @@ export const createWorkItemSchema = Joi.object({
 
 export const updateWorkItemSchema = Joi.object({
   title: Joi.string().optional(),
-  description: Joi.string().optional(),
+  description: Joi.string().optional().allow(''),
   type: Joi.string()
     .valid(...Object.values(WorkItemType))
     .optional(),
@@ -34,7 +34,7 @@ export const updateWorkItemSchema = Joi.object({
   priority: Joi.string()
     .valid(...Object.values(WorkItemPriority))
     .optional(),
-  storyPoints: Joi.number().optional(),
-  assigneeId: Joi.string().uuid().optional(),
-  sprintId: Joi.string().uuid().optional(),
+  storyPoints: Joi.number().optional().default(0),
+  assigneeId: Joi.string().uuid().optional().allow(null),
+  sprintId: Joi.string().uuid().optional().allow(null),
 });

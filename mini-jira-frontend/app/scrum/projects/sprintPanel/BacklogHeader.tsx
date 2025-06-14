@@ -1,4 +1,8 @@
 import DropdownIcon from "@/components/ui/icons/DropdownIcon";
+import { useParams } from "next/navigation";
+import { useCreateSprint, useProjectSprints } from "@/lib/hooks/use-sprints";
+import { CreateSprintPayload, SPRINT_DEFAULTS } from "@/lib/types/sprint.types";
+import { useState } from "react";
 
 interface BacklogHeaderProps {
 	isCollapsed: boolean;
@@ -11,6 +15,43 @@ const BacklogHeader = ({
 	onToggleCollapse,
 	workItemsCount,
 }: BacklogHeaderProps) => {
+	const params = useParams();
+	const projectId = typeof params.id === "string" ? params.id : "";
+	const { data: sprints } = useProjectSprints(projectId);
+	const createSprintMutation = useCreateSprint(projectId);
+	const [isCreating, setIsCreating] = useState(false);
+
+	// Generate next sprint name
+	const getNextSprintName = () => {
+		if (!sprints) return "Sprint 1";
+		const sprintNumbers = sprints
+			.map((sprint) => {
+				const match = sprint.name.match(/Sprint (\d+)/);
+				return match ? parseInt(match[1]) : 0;
+			})
+			.filter((num) => num > 0);
+
+		const maxNumber = sprintNumbers.length > 0 ? Math.max(...sprintNumbers) : 0;
+		return `Sprint ${maxNumber + 1}`;
+	};
+
+	const handleCreateSprint = async () => {
+		if (!projectId || isCreating) return;
+
+		setIsCreating(true);
+		try {
+			const payload: CreateSprintPayload = {
+				name: getNextSprintName(),
+				goal: SPRINT_DEFAULTS.GOAL,
+			};
+			await createSprintMutation.mutateAsync(payload);
+		} catch (error) {
+			console.error("Failed to create sprint:", error);
+		} finally {
+			setIsCreating(false);
+		}
+	};
+
 	return (
 		<div className="flex items-center justify-between p-4 bg-gray-100 rounded-t-lg">
 			<div className="flex items-center gap-3">
@@ -48,8 +89,14 @@ const BacklogHeader = ({
 					</div>
 				</div>
 
-				<button className="px-4 py-1 text-sm font-medium text-text transparent border border-gray-300 rounded hover:bg-blue-700">
-					Create sprint
+				<button
+					onClick={handleCreateSprint}
+					disabled={isCreating || createSprintMutation.isPending}
+					className="px-4 py-1 text-sm font-medium text-gray-700 bg-transparent border border-gray-300 rounded hover:bg-gray-50 hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+				>
+					{isCreating || createSprintMutation.isPending
+						? "Creating..."
+						: "Create sprint"}
 				</button>
 
 				<button className="p-2 hover:bg-gray-200 rounded">

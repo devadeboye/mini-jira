@@ -66,7 +66,7 @@ export class User {
   @OneToMany('WorkItem', 'assignee')
   public assignedWorkItems: WorkItem[];
 
-  @OneToMany('WorkItem', 'createdBy')
+  @OneToMany('WorkItem', 'creator')
   public createdWorkItems: WorkItem[];
 
   @CreateDateColumn()

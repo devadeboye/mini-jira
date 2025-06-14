@@ -2,7 +2,7 @@
 
 A modern, full-stack project management application inspired by Jira, built with Next.js and NestJS. Features sprint management, work item tracking, and team collaboration tools.
 ****
-## 🚀 Features
+## Features
 
 - **User Authentication** - Secure login/registration with JWT tokens
 - **Project Management** - Create and manage multiple projects
@@ -12,7 +12,7 @@ A modern, full-stack project management application inspired by Jira, built with
 - **Responsive Design** - Modern UI with accessibility features
 - **Real-time Updates** - Optimistic updates with React Query
 
-## 🏗️ Architecture
+## Architecture
 
 ### Frontend (Next.js 15)
 - **Framework**: Next.js 15 with App Router
@@ -28,13 +28,13 @@ A modern, full-stack project management application inspired by Jira, built with
 - **Validation**: Joi schema validation
 - **Architecture**: Modular with services, controllers, and entities
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Node.js 18+ 
 - PostgreSQL 14+
 - npm or pnpm
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Clone the Repository
 ```bash
@@ -102,7 +102,7 @@ NODE_ENV=development
 NEXT_PUBLIC_API_URL=http://localhost:4000
 ```
 
-## 📡 API Endpoints
+## API Endpoints
 
 ### Authentication
 - `POST /auth/login` - User login
@@ -139,7 +139,7 @@ NEXT_PUBLIC_API_URL=http://localhost:4000
 
 
 
-## 🎯 Key Features Implemented
+## Key Features Implemented
 
 ### Sprint Management
 - Create, update, and delete sprints
@@ -161,7 +161,7 @@ NEXT_PUBLIC_API_URL=http://localhost:4000
 - Loading states and error handling
 - Optimistic UI updates
 
-## 🔒 Security Features
+## Security Features
 
 - JWT-based authentication
 - Role-based access control
@@ -169,7 +169,7 @@ NEXT_PUBLIC_API_URL=http://localhost:4000
 - CORS configuration
 - Environment variable protection
 
-## 🧪 Development Scripts
+## Development Scripts
 
 ### Backend
 ```bash
@@ -188,7 +188,7 @@ pnpm run lint         # ESLint check
 pnpm run check-env    # Validate environment variables
 ```
 
-## 🚀 Deployment
+## Deployment
 
 ### Backend Deployment
 1. Set production environment variables
@@ -200,7 +200,7 @@ pnpm run check-env    # Validate environment variables
 2. Build the application: `pnpm run build`
 3. Deploy to your preferred platform (Vercel, Netlify, etc.)
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/amazing-feature`
@@ -212,7 +212,7 @@ pnpm run check-env    # Validate environment variables
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 👨‍💻 Developer
+## Developer
 
 **Devadeboye**
 - GitHub: [@devadeboye](https://github.com/devadeboye)

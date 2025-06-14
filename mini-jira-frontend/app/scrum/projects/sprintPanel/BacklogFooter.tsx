@@ -21,14 +21,14 @@ const BacklogFooter = () => {
 	// Transform API WorkItem to store WorkItem
 	const transformWorkItem = (apiWorkItem: APIWorkItem): WorkItem => ({
 		...apiWorkItem,
-		assignee: apiWorkItem.assigneeId || null,
+		assignee: apiWorkItem.assignee || null,
 		description: apiWorkItem.description || "",
 		sprintId: apiWorkItem.sprintId || null,
 	});
 
 	// Use React Query mutation with onSuccess callback
-	const createWorkItemMutation = useCreateWorkItem(projectId, {
-		onSuccess: (newWorkItem) => {
+	const createWorkItemMutation = useCreateWorkItem({
+		onSuccess: (newWorkItem: APIWorkItem) => {
 			// Transform and update local state with the new work item
 			addWorkItem(transformWorkItem(newWorkItem));
 		},

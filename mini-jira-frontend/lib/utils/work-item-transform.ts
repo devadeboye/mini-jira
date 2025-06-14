@@ -12,7 +12,7 @@ export function transformWorkItem(apiWorkItem: APIWorkItem): StoreWorkItem {
 		type: apiWorkItem.type,
 		status: apiWorkItem.status,
 		priority: apiWorkItem.priority,
-		assignee: apiWorkItem.assigneeId || null, // Transform assigneeId to assignee
+		assignee: apiWorkItem.assignee || null, // Transform assignee
 		description: apiWorkItem.description || "", // Provide default empty string
 		sprintId: apiWorkItem.sprintId || null,
 		projectId: apiWorkItem.projectId,

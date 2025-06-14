@@ -2,8 +2,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
 	workItemsAPI,
 	WorkItem,
-	CreateWorkItemDto,
-	UpdateWorkItemDto,
+	CreateWorkItemPayload,
+	UpdateWorkItemPayload,
 } from "../api/work-items.api";
 
 export const workItemKeys = {
@@ -45,19 +45,17 @@ export function useWorkItem(id: string) {
 	});
 }
 
-export function useCreateWorkItem(
-	projectId: string,
-	options?: { onSuccess?: (data: WorkItem) => void }
-) {
+export function useCreateWorkItem(options?: {
+	onSuccess?: (data: WorkItem) => void;
+}) {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: (data: CreateWorkItemDto) =>
-			workItemsAPI.create(projectId, data),
+		mutationFn: (data: CreateWorkItemPayload) => workItemsAPI.create(data),
 		onSuccess: (data) => {
 			// Invalidate both project and sprint lists
 			queryClient.invalidateQueries({
-				queryKey: workItemKeys.list({ projectId }),
+				queryKey: workItemKeys.list({ projectId: data.projectId }),
 			});
 			if (data.sprintId) {
 				queryClient.invalidateQueries({
@@ -74,7 +72,7 @@ export function useUpdateWorkItem() {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: ({ id, data }: { id: string; data: UpdateWorkItemDto }) =>
+		mutationFn: ({ id, data }: { id: string; data: UpdateWorkItemPayload }) =>
 			workItemsAPI.update(id, data),
 		onSuccess: (data) => {
 			// Invalidate the specific work item detail
@@ -89,7 +87,7 @@ export function useUpdateWorkItem() {
 	});
 }
 
-export function useDeleteWorkItem(projectId: string) {
+export function useDeleteWorkItem() {
 	const queryClient = useQueryClient();
 
 	return useMutation({
@@ -102,27 +100,13 @@ export function useDeleteWorkItem(projectId: string) {
 	});
 }
 
-export function useUpdateWorkItemOrder() {
-	const queryClient = useQueryClient();
-
-	return useMutation({
-		mutationFn: ({ id, order }: { id: string; order: number }) =>
-			workItemsAPI.updateOrder(id, order),
-		onSuccess: (data) => {
-			queryClient.invalidateQueries({
-				queryKey: workItemKeys.lists(),
-			});
-		},
-	});
-}
-
-export function useMoveToSprint() {
+export function useAddToSprint() {
 	const queryClient = useQueryClient();
 
 	return useMutation({
 		mutationFn: ({ id, sprintId }: { id: string; sprintId: string }) =>
-			workItemsAPI.moveToSprint(id, sprintId),
-		onSuccess: (data) => {
+			workItemsAPI.addToSprint(id, sprintId),
+		onSuccess: () => {
 			queryClient.invalidateQueries({
 				queryKey: workItemKeys.lists(),
 			});
@@ -130,12 +114,12 @@ export function useMoveToSprint() {
 	});
 }
 
-export function useMoveToBacklog() {
+export function useRemoveFromSprint() {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: (id: string) => workItemsAPI.moveToBacklog(id),
-		onSuccess: (data) => {
+		mutationFn: (id: string) => workItemsAPI.removeFromSprint(id),
+		onSuccess: () => {
 			queryClient.invalidateQueries({
 				queryKey: workItemKeys.lists(),
 			});

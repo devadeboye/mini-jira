@@ -1,73 +1,70 @@
 "use client";
 
+import { Suspense } from "react";
 import MoreIcon from "@/components/ui/icons/MoreIcon";
 import Image from "next/image";
 import ExpandIcon from "@/components/ui/icons/ExpandIcon";
 import ShareIcon from "@/components/ui/icons/ShareIcon";
 import HotIcon from "@/components/ui/icons/HotIcon";
 import { useParams } from "next/navigation";
+import { useProject } from "@/lib/hooks/useProjects";
 
-export default function ProjectHeader() {
+// Loading component for project name
+function LoadingProjectName() {
+	return <div className="h-7 w-32 bg-gray-200 animate-pulse rounded" />;
+}
+
+function ProjectHeaderContent() {
 	const params = useParams();
-	const projectId = params.id;
+	const projectId = params.id as string;
+	const { data: project, isLoading } = useProject(projectId);
 
 	return (
-		<div className="flex flex-col gap-1 px-4 py-3 box-border">
-			<div className="text-sm">Projects</div>
-			<div className="flex flex-row gap-1 items-center justify-between">
-				<div className="flex flex-row gap-2 items-center">
-					<Image
-						src="/assets/svg/10415.svg"
-						alt="project1"
-						height={24}
-						width={24}
-						className="h-4 w-4 lg:h-5 lg:w-5 rounded-sm"
-					/>
-					<div className="text-lg font-semibold">Project {projectId}</div>
-
-					{/* More Icon */}
-					<button className="h-8 w-8 p-[7px]">
-						<MoreIcon
-							height={24}
-							width={24}
-							className="h-full w-full"
-							fill="var(--text-subtle)"
+		<header className="bg-white">
+			<div className="px-4 py-3">
+				<div className="text-sm text-gray-600 mb-1">Projects</div>
+				<div className="flex items-center justify-between">
+					<div className="flex items-center gap-2">
+						<Image
+							src="/assets/svg/10415.svg"
+							alt="Project icon"
+							height={20}
+							width={20}
+							className="rounded-sm"
 						/>
-					</button>
-				</div>
+						{isLoading ? (
+							<LoadingProjectName />
+						) : (
+							<h1 className="text-lg font-semibold text-gray-900">
+								{project?.name}
+							</h1>
+						)}
+						<button className="h-8 w-8 p-[7px] hover:bg-gray-100 rounded-md transition-colors ml-1">
+							<MoreIcon className="h-full w-full text-gray-500" />
+						</button>
+					</div>
 
-				<div className="flex flex-row gap-2 items-center">
-					{/* Expand Icon */}
-					<button className="border box-border border-gray-300 rounded-md border-solid h-8 w-8 p-1">
-						<ExpandIcon
-							height={24}
-							width={24}
-							className="h-full w-full"
-							fill="var(--text-subtle)"
-						/>
-					</button>
-
-					{/* Share Icon */}
-					<button className="border box-border border-gray-300 rounded-md border-solid h-8 w-8 p-1">
-						<ShareIcon
-							height={24}
-							width={24}
-							className="h-full w-full"
-							fill="var(--text-subtle)"
-						/>
-					</button>
-
-					{/* Hot Icon */}
-					<button className="border box-border border-gray-300 rounded-md border-solid h-8 w-8 p-1">
-						<HotIcon
-							height={24}
-							width={24}
-							className="h-full w-full"
-							fill="var(--text-subtle)"
-						/>
-					</button>
+					<div className="flex items-center gap-2">
+						<button className="h-8 w-8 p-1.5 hover:bg-gray-100 rounded-md transition-colors border border-gray-300">
+							<ExpandIcon className="h-full w-full text-gray-500" />
+						</button>
+						<button className="h-8 w-8 p-1.5 hover:bg-gray-100 rounded-md transition-colors border border-gray-300">
+							<ShareIcon className="h-full w-full text-gray-500" />
+						</button>
+						<button className="h-8 w-8 p-1.5 hover:bg-gray-100 rounded-md transition-colors border border-gray-300">
+							<HotIcon className="h-full w-full text-gray-500" />
+						</button>
+					</div>
 				</div>
 			</div>
-		</div>
+		</header>
+	);
+}
+
+export default function ProjectHeader() {
+	return (
+		<Suspense>
+			<ProjectHeaderContent />
+		</Suspense>
 	);
 }

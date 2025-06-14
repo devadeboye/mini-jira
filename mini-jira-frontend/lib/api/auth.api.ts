@@ -23,6 +23,7 @@ export interface AuthResponse {
 		username: string;
 		email: string;
 		fullName: string;
+		hasCreatedProject: boolean;
 	};
 }
 
@@ -31,6 +32,7 @@ export interface User {
 	username: string;
 	email: string;
 	fullName: string;
+	hasCreatedProject: boolean;
 }
 
 // Create axios instance with interceptors

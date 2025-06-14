@@ -66,10 +66,17 @@ export function useLogin() {
 			queryClient.setQueryData(authKeys.user(), data.user);
 			queryClient.invalidateQueries({ queryKey: authKeys.all });
 
-			// Handle redirect
+			// Handle redirect based on project creation status
 			const urlParams = new URLSearchParams(window.location.search);
-			const redirect = urlParams.get("redirect") || "/projects";
-			router.push(redirect);
+			const redirect = urlParams.get("redirect");
+
+			if (redirect) {
+				router.push(redirect);
+			} else if (!data.user.hasCreatedProject) {
+				router.push("/onboarding/create-project");
+			} else {
+				router.push("/projects");
+			}
 		},
 		onError: (error) => {
 			console.error("Login failed:", error);
@@ -87,7 +94,9 @@ export function useRegister() {
 			setAuthData(data);
 			queryClient.setQueryData(authKeys.user(), data.user);
 			queryClient.invalidateQueries({ queryKey: authKeys.all });
-			router.push("/projects");
+
+			// Always redirect to project creation after registration
+			router.push("/onboarding/create-project");
 		},
 		onError: (error) => {
 			console.error("Registration failed:", error);

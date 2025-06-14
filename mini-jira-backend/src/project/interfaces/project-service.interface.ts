@@ -1,4 +1,5 @@
 import { Project } from '../entities/project.entity';
+import { User } from '../../user/entities/user.entity';
 
 export interface ProjectService {
   create(data: { ownerId: string } & Record<string, any>): Promise<Project>;
@@ -16,4 +17,17 @@ export interface ProjectService {
   removeUserProject(id: string, userId: string): Promise<void>;
   archiveProject(id: string): Promise<void>;
   getSystemStats(): Promise<Record<string, any>>;
+
+  // Member management methods
+  addMember(
+    projectId: string,
+    userId: string,
+    requesterId: string,
+  ): Promise<Project>;
+  removeMember(
+    projectId: string,
+    userId: string,
+    requesterId: string,
+  ): Promise<Project>;
+  getProjectMembers(projectId: string, userId: string): Promise<User[]>;
 }

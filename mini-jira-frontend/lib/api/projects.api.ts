@@ -44,26 +44,26 @@ projectsApi.interceptors.request.use((config) => {
 
 export const projectsAPI = {
 	getAll: async (): Promise<Project[]> => {
-		const response = await projectsApi.get("/");
+		const response = await projectsApi.get("/all");
 		return response.data;
 	},
 
 	getById: async (id: string): Promise<Project> => {
-		const response = await projectsApi.get(`/${id}`);
+		const response = await projectsApi.get(`/get/${id}`);
 		return response.data;
 	},
 
 	create: async (data: CreateProjectDto): Promise<Project> => {
-		const response = await projectsApi.post("/", data);
+		const response = await projectsApi.post("/create", data);
 		return response.data;
 	},
 
 	update: async (id: string, data: UpdateProjectDto): Promise<Project> => {
-		const response = await projectsApi.patch(`/${id}`, data);
+		const response = await projectsApi.patch(`/update/${id}`, data);
 		return response.data;
 	},
 
 	delete: async (id: string): Promise<void> => {
-		await projectsApi.delete(`/${id}`);
+		await projectsApi.delete(`/delete/${id}`);
 	},
 };

@@ -83,6 +83,7 @@ export class AuthService {
         email: user.email,
         role: user.role,
         fullName: user.fullName,
+        hasCreatedProject: user.hasCreatedProject,
       },
     };
   }

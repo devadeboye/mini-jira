@@ -5,6 +5,7 @@ import {
 	type CreateProjectDto,
 	type UpdateProjectDto,
 } from "@/lib/api/projects.api";
+import { authKeys } from "./useAuth";
 
 // Query keys
 export const projectKeys = {
@@ -44,8 +45,19 @@ export function useCreateProject() {
 				return old ? [...old, newProject] : [newProject];
 			});
 
-			// Invalidate and refetch projects list
-			queryClient.invalidateQueries({ queryKey: projectKeys.lists() });
+			// Invalidate and refetch projects list and user data
+			queryClient.invalidateQueries({
+				queryKey: projectKeys.lists(),
+				exact: true,
+			});
+			queryClient.invalidateQueries({
+				queryKey: authKeys.user(),
+				exact: true,
+			});
+		},
+		onError: (error) => {
+			console.error("Failed to create project:", error);
+			throw error; // Re-throw to be handled by the component
 		},
 	});
 }

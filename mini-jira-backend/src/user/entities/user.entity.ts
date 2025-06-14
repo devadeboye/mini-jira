@@ -54,6 +54,9 @@ export class User {
   @Column({ type: 'timestamp', nullable: true })
   public lastActivityAt?: Date;
 
+  @Column({ type: 'boolean', default: false })
+  public hasCreatedProject: boolean;
+
   @OneToMany('Project', 'owner')
   public ownedProjects: Project[];
 

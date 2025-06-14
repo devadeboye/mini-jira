@@ -37,12 +37,12 @@ export const initialSprints: Sprint[] = [
 
 export const initialWorkItems: WorkItem[] = [
 	{
-		id: "MJC-1",
-		title: "Set up authentication system",
+		id: "SCRUM-1",
+		title: "This is the first story",
 		type: "story",
 		status: "todo",
 		priority: "high",
-		assignee: null,
+		assignee: "John Doe",
 		description: "Implement user authentication using NextAuth.js",
 		sprintId: "1",
 		projectId: "1",
@@ -50,12 +50,12 @@ export const initialWorkItems: WorkItem[] = [
 		order: 0,
 	},
 	{
-		id: "MJC-2",
+		id: "SCRUM-2",
 		title: "Design database schema",
 		type: "task",
 		status: "in-progress",
 		priority: "medium",
-		assignee: null,
+		assignee: "Jane Smith",
 		description: "Create database schema for projects, sprints, and work items",
 		sprintId: "1",
 		projectId: "1",
@@ -63,12 +63,12 @@ export const initialWorkItems: WorkItem[] = [
 		order: 1,
 	},
 	{
-		id: "MJC-3",
+		id: "SCRUM-3",
 		title: "Implement drag and drop for work items",
 		type: "story",
 		status: "todo",
 		priority: "medium",
-		assignee: null,
+		assignee: "Alex Johnson",
 		description:
 			"Add drag and drop functionality for work items between sprints and backlog",
 		sprintId: null, // In backlog
@@ -77,7 +77,7 @@ export const initialWorkItems: WorkItem[] = [
 		order: 0,
 	},
 	{
-		id: "MJC-4",
+		id: "SCRUM-4",
 		title: "Create sprint planning interface",
 		type: "story",
 		status: "todo",

@@ -12,7 +12,7 @@ import {
 import { AuthService } from '../services/auth.service';
 import { Public } from '../decorators/public.decorator';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { JoiValidationPipe } from '../../common/pipes/joi-validation.pipe';
+import { ObjectValidationPipe } from '../../common/pipes/joi-validation.pipe';
 import { loginSchema, registerSchema } from '../schemas/auth.schema';
 import { AuthenticatedRequest } from '../types/request.type';
 import { LoginDto } from '../dto/login.dto';
@@ -25,7 +25,7 @@ export class AuthController {
   @Public()
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
-  @UsePipes(new JoiValidationPipe(registerSchema))
+  @UsePipes(new ObjectValidationPipe(registerSchema))
   register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
   }
@@ -33,13 +33,12 @@ export class AuthController {
   @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @UsePipes(new JoiValidationPipe(loginSchema))
+  @UsePipes(new ObjectValidationPipe(loginSchema))
   async login(@Body() loginBody: LoginDto) {
     Logger.log(
       `Login attempt with username: ${loginBody.username}`,
       'AuthController',
     );
-    Logger.debug('Login body:', JSON.stringify(loginBody));
 
     const user = await this.authService.validateUser(
       loginBody.username,

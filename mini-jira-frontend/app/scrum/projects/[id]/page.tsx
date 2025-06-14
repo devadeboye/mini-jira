@@ -12,10 +12,31 @@ function ProjectContent() {
 		<>
 			<ProjectHeader />
 			<ProjectNav />
-			<div className="p-6 space-y-8">
-				<SprintsContainer />
-				<BacklogPanel />
-			</div>
+			<main
+				id="main-content"
+				className="p-6 space-y-8"
+				role="main"
+				aria-label="Project management dashboard"
+			>
+				<div className="sr-only">
+					<h1>Project Dashboard</h1>
+					<p>Manage your project sprints and backlog items</p>
+				</div>
+
+				<section aria-labelledby="sprints-heading">
+					<h2 id="sprints-heading" className="sr-only">
+						Active Sprints
+					</h2>
+					<SprintsContainer />
+				</section>
+
+				<section aria-labelledby="backlog-heading">
+					<h2 id="backlog-heading" className="sr-only">
+						Product Backlog
+					</h2>
+					<BacklogPanel />
+				</section>
+			</main>
 			<WorkItemModal />
 		</>
 	);

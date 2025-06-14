@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { WorkItem } from '../entities/work-item.entity';
 import { CreateWorkItemData } from '../interfaces/work-item.interface';
 
@@ -55,5 +55,12 @@ export class WorkItemService {
   async remove(id: string) {
     const workItem = await this.findOne(id);
     return this.workItemRepository.remove(workItem);
+  }
+
+  async findBacklogs(projectId: string) {
+    return this.workItemRepository.find({
+      where: { project: { id: projectId }, sprint: { id: IsNull() } },
+      relations: ['project', 'creator', 'assignee', 'sprint'],
+    });
   }
 }

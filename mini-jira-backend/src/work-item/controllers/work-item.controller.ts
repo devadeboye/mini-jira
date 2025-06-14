@@ -110,4 +110,10 @@ export class WorkItemController {
   remove(@Param('id') id: string) {
     return this.workItemService.remove(id);
   }
+
+  @Get('backlogs/:projectId')
+  @Roles(UserRole.ADMIN, UserRole.USER)
+  findBacklogs(@Param('projectId') projectId: string) {
+    return this.workItemService.findBacklogs(projectId);
+  }
 }

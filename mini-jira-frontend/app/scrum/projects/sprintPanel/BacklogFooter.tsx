@@ -3,13 +3,36 @@
 import { useState, useRef, useEffect } from "react";
 import AddIcon from "@/components/ui/icons/AddIcon";
 import { useParams } from "next/navigation";
-import { useWorkItemsStore } from "@/lib/stores/work-items.store";
+import { useCreateWorkItem } from "@/lib/hooks/use-work-items";
+import {
+	WorkItemType,
+	useWorkItemStore,
+	WorkItem,
+} from "@/lib/stores/workItemStore";
+import { WorkItem as APIWorkItem } from "@/lib/api/work-items.api";
 
 const BacklogFooter = () => {
 	const [isEditing, setIsEditing] = useState(false);
 	const inputRef = useRef<HTMLInputElement>(null);
-	const { id: projectId } = useParams();
-	const createWorkItem = useWorkItemsStore((state) => state.createWorkItem);
+	const params = useParams();
+	const projectId = typeof params.id === "string" ? params.id : "";
+	const addWorkItem = useWorkItemStore((state) => state.addWorkItem);
+
+	// Transform API WorkItem to store WorkItem
+	const transformWorkItem = (apiWorkItem: APIWorkItem): WorkItem => ({
+		...apiWorkItem,
+		assignee: apiWorkItem.assigneeId || null,
+		description: apiWorkItem.description || "",
+		sprintId: apiWorkItem.sprintId || null,
+	});
+
+	// Use React Query mutation with onSuccess callback
+	const createWorkItemMutation = useCreateWorkItem(projectId, {
+		onSuccess: (newWorkItem) => {
+			// Transform and update local state with the new work item
+			addWorkItem(transformWorkItem(newWorkItem));
+		},
+	});
 
 	useEffect(() => {
 		if (isEditing && inputRef.current) {
@@ -21,13 +44,19 @@ const BacklogFooter = () => {
 		if (!title.trim() || !projectId) return;
 
 		try {
-			await createWorkItem(projectId as string, {
+			await createWorkItemMutation.mutateAsync({
 				title,
-				type: "task",
+				type: "task" as WorkItemType,
 				priority: "medium",
 				description: "",
-				estimate: 0,
+				projectId,
 			});
+
+			// Clear input
+			if (inputRef.current) {
+				inputRef.current.value = "";
+			}
+			setIsEditing(false);
 		} catch (error) {
 			console.error("Failed to create work item:", error);
 		}
@@ -55,7 +84,7 @@ const BacklogFooter = () => {
 
 	if (isEditing) {
 		return (
-			<div className="px-3 p-3">
+			<div className="px-3 p-3 bg-gray-50 rounded-b-lg">
 				<input
 					ref={inputRef}
 					type="text"
@@ -63,16 +92,18 @@ const BacklogFooter = () => {
 					className="w-full px-3 py-1 text-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent h-10"
 					onBlur={handleBlur}
 					onKeyDown={handleKeyDown}
+					disabled={createWorkItemMutation.isPending}
 				/>
 			</div>
 		);
 	}
 
 	return (
-		<div className="px-8 p-3">
+		<div className="px-8 p-3 bg-gray-50 rounded-b-lg">
 			<button
 				onClick={() => setIsEditing(true)}
 				className="flex items-center gap-2 text-text-subtle hover:text-blue-700 font-medium text-sm"
+				disabled={createWorkItemMutation.isPending}
 			>
 				<AddIcon className="h-4 w-4" />
 				Create

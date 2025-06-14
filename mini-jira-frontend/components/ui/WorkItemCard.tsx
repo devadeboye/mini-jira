@@ -61,7 +61,7 @@ const WorkItemCard = ({ workItem }: WorkItemCardProps) => {
 	};
 
 	return (
-		<div className="flex items-center gap-3 px-3 py-2 bg-[#E4EFFE] border border-gray-200 rounded-md hover:bg-[#d2e5ff] cursor-pointer">
+		<div className="flex items-center gap-3 px-3 py-2 bg-white border border-gray-200 rounded-xs hover:bg-[#E4EFFE] cursor-pointer">
 			{/* Checkbox */}
 			<input
 				type="checkbox"

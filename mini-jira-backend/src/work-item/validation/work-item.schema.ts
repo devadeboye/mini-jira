@@ -7,7 +7,7 @@ import {
 
 export const createWorkItemSchema = Joi.object({
   title: Joi.string().required(),
-  description: Joi.string().optional(),
+  description: Joi.string().allow(''),
   type: Joi.string()
     .valid(...Object.values(WorkItemType))
     .optional()

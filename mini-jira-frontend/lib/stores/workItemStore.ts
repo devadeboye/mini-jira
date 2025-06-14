@@ -33,6 +33,7 @@ interface WorkItemState {
 	setSelectedWorkItem: (workItemId: string | null) => void;
 	getSprintWorkItems: (sprintId: string) => WorkItem[];
 	getBacklogItems: (projectId: string) => WorkItem[];
+	setWorkItems: (workItems: WorkItem[]) => void;
 }
 
 export const useWorkItemStore = create<WorkItemState>((set, get) => ({
@@ -101,4 +102,5 @@ export const useWorkItemStore = create<WorkItemState>((set, get) => ({
 			.filter((item) => item.projectId === projectId && item.sprintId === null)
 			.sort((a, b) => a.order - b.order);
 	},
+	setWorkItems: (workItems) => set({ workItems }),
 }));

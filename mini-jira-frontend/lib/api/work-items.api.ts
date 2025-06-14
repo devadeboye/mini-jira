@@ -30,9 +30,9 @@ export interface CreateWorkItemDto {
 	type: WorkItemType;
 	priority: WorkItemPriority;
 	description?: string;
-	estimate: number;
 	assigneeId?: string;
 	sprintId?: string;
+	projectId: string;
 }
 
 export interface UpdateWorkItemDto {
@@ -73,7 +73,7 @@ export const workItemsAPI = {
 	},
 
 	getBacklogItems: async (projectId: string): Promise<WorkItem[]> => {
-		const response = await workItemsApi.get(`/backlog/${projectId}`);
+		const response = await workItemsApi.get(`/backlogs/${projectId}`);
 		return response.data;
 	},
 
@@ -86,7 +86,7 @@ export const workItemsAPI = {
 		projectId: string,
 		data: CreateWorkItemDto
 	): Promise<WorkItem> => {
-		const response = await workItemsApi.post(`?projectId=${projectId}`, data);
+		const response = await workItemsApi.post(`create`, data);
 		return response.data;
 	},
 

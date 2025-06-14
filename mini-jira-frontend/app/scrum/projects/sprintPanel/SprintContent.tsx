@@ -45,7 +45,7 @@ const SprintContent = ({ sprint }: SprintContentProps) => {
 					</div>
 				</div>
 			) : (
-				<div className="flex flex-col gap-4 py-4">
+				<div className="flex flex-col gap-0 py-4">
 					{workItems.length > 0 ? (
 						workItems.map((item: WorkItem) => (
 							<WorkItemCard key={item.id} workItem={item} />

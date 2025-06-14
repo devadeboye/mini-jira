@@ -36,7 +36,10 @@ export function useBacklogItems(projectId: string) {
 	});
 }
 
-export function useCreateWorkItem(projectId: string) {
+export function useCreateWorkItem(
+	projectId: string,
+	options?: { onSuccess?: (data: WorkItem) => void }
+) {
 	const queryClient = useQueryClient();
 
 	return useMutation({
@@ -52,6 +55,8 @@ export function useCreateWorkItem(projectId: string) {
 					queryKey: workItemKeys.list({ sprintId: data.sprintId }),
 				});
 			}
+			// Call the onSuccess callback if provided
+			options?.onSuccess?.(data);
 		},
 	});
 }

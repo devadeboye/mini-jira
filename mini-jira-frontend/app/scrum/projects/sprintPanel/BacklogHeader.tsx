@@ -12,7 +12,7 @@ const BacklogHeader = ({
 	workItemsCount,
 }: BacklogHeaderProps) => {
 	return (
-		<div className="flex items-center justify-between p-4 bg-white">
+		<div className="flex items-center justify-between p-4 bg-gray-100 rounded-t-lg">
 			<div className="flex items-center gap-3">
 				<button
 					onClick={onToggleCollapse}

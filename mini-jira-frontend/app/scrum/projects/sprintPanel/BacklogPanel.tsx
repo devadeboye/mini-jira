@@ -4,8 +4,13 @@ import BacklogContent from "./BacklogContent";
 import BacklogFooter from "./BacklogFooter";
 import BacklogHeader from "./BacklogHeader";
 import { useSprintStore } from "@/lib/stores";
+import { useParams } from "next/navigation";
+import { useBacklogItems } from "@/lib/hooks/use-work-items";
 
 const BacklogPanel = () => {
+	const params = useParams();
+	const projectId = params.id as string;
+	const { data: backlogItems } = useBacklogItems(projectId);
 	const { expandedSprintIds, toggleSprintExpanded } = useSprintStore();
 	const BACKLOG_ID = "backlog"; // Constant ID for backlog section
 
@@ -16,16 +21,16 @@ const BacklogPanel = () => {
 	};
 
 	return (
-		<div className="border border-gray-200 rounded-lg bg-white">
+		<div className="border border-gray-300 rounded-lg bg-gray-50">
 			<BacklogHeader
 				isCollapsed={isCollapsed}
 				onToggleCollapse={toggleCollapse}
-				workItemsCount={0}
+				workItemsCount={backlogItems?.length || 0}
 			/>
 
 			{!isCollapsed && (
 				<>
-					<BacklogContent />
+					<BacklogContent projectId={projectId} />
 					<BacklogFooter />
 				</>
 			)}
@@ -33,4 +38,4 @@ const BacklogPanel = () => {
 	);
 };
 
-export default BacklogPanel;
+export default BacklogPanel; 

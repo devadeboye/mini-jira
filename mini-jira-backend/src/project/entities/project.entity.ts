@@ -9,9 +9,9 @@ import {
   UpdateDateColumn,
   JoinTable,
 } from 'typeorm';
-import type { User } from 'src/user/entities/user.entity';
-import type { Sprint } from 'src/sprint/entities/sprint.entity';
-import type { WorkItem } from 'src/work-item/entities/work-item.entity';
+import type { User } from '../../user/entities/user.entity';
+import type { Sprint } from '../../sprint/entities/sprint.entity';
+import type { WorkItem } from '../../work-item/entities/work-item.entity';
 
 export type ProjectType = 'scrum' | 'kanban';
 

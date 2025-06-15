@@ -6,9 +6,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Project } from 'src/project/entities/project.entity';
-import { Sprint } from 'src/sprint/entities/sprint.entity';
-import { User } from 'src/user/entities/user.entity';
+import { Project } from '../../project/entities/project.entity';
+import { Sprint } from '../../sprint/entities/sprint.entity';
+import { User } from '../../user/entities/user.entity';
 import {
   WorkItemPriority,
   WorkItemStatus,

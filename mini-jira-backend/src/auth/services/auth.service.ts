@@ -5,9 +5,9 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PasswordService } from '../../user/services/password.service';
-import { JwtPayload } from '../interfaces/jwt-payload.interface';
-import { UserStatus } from '../../user/enums/user.enum';
 import { UserService } from '../../user/services/user.service';
+import { TokenService } from './token.service';
+import { UserStatus } from '../../user/enums/user.enum';
 import type { AuthenticatedUser } from '../types/authenticated-user.type';
 import type { RegisterDto } from '../dto/register.dto';
 
@@ -16,6 +16,7 @@ export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly passwordService: PasswordService,
+    private readonly tokenService: TokenService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -33,7 +34,18 @@ export class AuthService {
     const user = await this.userService.create(registerDto);
 
     // Return tokens and user info
-    return this.login(user);
+    const tokens = await this.tokenService.generateTokens(user);
+    return {
+      ...tokens,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        fullName: user.fullName,
+        hasCreatedProject: user.hasCreatedProject,
+      },
+    };
   }
 
   async validateUser(
@@ -67,16 +79,10 @@ export class AuthService {
     };
   }
 
-  login(user: AuthenticatedUser) {
-    const payload: JwtPayload = {
-      sub: user.id,
-      username: user.username,
-      email: user.email,
-      role: user.role,
-    };
-
+  async login(user: AuthenticatedUser) {
+    const tokens = await this.tokenService.generateTokens(user);
     return {
-      accessToken: this.jwtService.sign(payload),
+      ...tokens,
       user: {
         id: user.id,
         username: user.username,
@@ -88,16 +94,11 @@ export class AuthService {
     };
   }
 
-  refreshToken(user: AuthenticatedUser) {
-    const payload: JwtPayload = {
-      sub: user.id,
-      username: user.username,
-      email: user.email,
-      role: user.role,
-    };
+  async refreshTokens(refreshToken: string) {
+    return this.tokenService.refreshTokens(refreshToken);
+  }
 
-    return {
-      accessToken: this.jwtService.sign(payload),
-    };
+  async logout(userId: string) {
+    await this.tokenService.revokeRefreshTokensForUser(userId);
   }
 }

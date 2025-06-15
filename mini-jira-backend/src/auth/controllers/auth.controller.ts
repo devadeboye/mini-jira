@@ -5,9 +5,9 @@ import {
   Request,
   HttpCode,
   HttpStatus,
-  UsePipes,
   Logger,
   Body,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { Public } from '../decorators/public.decorator';
@@ -20,22 +20,26 @@ import { RegisterDto } from '../dto/register.dto';
 
 @Controller('auth')
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
+
   constructor(private readonly authService: AuthService) {}
 
   @Public()
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
-  @UsePipes(new ObjectValidationPipe(registerSchema))
-  register(@Body() registerDto: RegisterDto) {
+  register(
+    @Body(new ObjectValidationPipe(registerSchema)) registerDto: RegisterDto,
+  ) {
     return this.authService.register(registerDto);
   }
 
   @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @UsePipes(new ObjectValidationPipe(loginSchema))
-  async login(@Body() loginBody: LoginDto) {
-    Logger.log(
+  async login(
+    @Body(new ObjectValidationPipe(loginSchema)) loginBody: LoginDto,
+  ) {
+    this.logger.log(
       `Login attempt with username: ${loginBody.username}`,
       'AuthController',
     );
@@ -47,10 +51,21 @@ export class AuthController {
     return this.authService.login(user);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @Public()
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  refresh(@Request() req: AuthenticatedRequest) {
-    return this.authService.refreshToken(req.user);
+  async refresh(@Body('refreshToken') refreshToken: string) {
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token is required');
+    }
+    return this.authService.refreshTokens(refreshToken);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  async logout(@Request() req: AuthenticatedRequest) {
+    await this.authService.logout(req.user.id);
+    return { message: 'Successfully logged out' };
   }
 }

@@ -14,6 +14,7 @@ import { environmentValidator } from './config/env.validator';
 import { EnvironmentEnum } from './config/enums/config.enum';
 import { AuthMiddleware } from './common/middleware/auth.middleware';
 import { JwtService } from '@nestjs/jwt';
+import { RefreshToken } from './auth/entities/refresh-token.entity';
 
 @Module({
   imports: [
@@ -31,7 +32,9 @@ import { JwtService } from '@nestjs/jwt';
         username: configService.get(EnvironmentEnum.TYPEORM_USERNAME),
         password: configService.get(EnvironmentEnum.TYPEORM_PASSWORD),
         database: configService.get(EnvironmentEnum.TYPEORM_DATABASE),
-        entities: [User, Project, Sprint, WorkItem],
+        entities: [User, Project, Sprint, WorkItem, RefreshToken],
+        migrations: ['dist/migrations/*.js'],
+        migrationsRun: true,
         synchronize: configService.get(EnvironmentEnum.TYPEORM_SYNCHRONIZE),
       }),
       inject: [ConfigService],

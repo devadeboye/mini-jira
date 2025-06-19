@@ -1,5 +1,5 @@
 import { API_CONFIG } from "@/lib/config/api.config";
-import api from "./axios";
+import { clientApi } from "./axios";
 import {
 	Sprint,
 	SprintStatus,
@@ -14,7 +14,7 @@ export const sprintsAPI = {
 	 * Get all sprints for a project
 	 */
 	getProjectSprints: async (projectId: string): Promise<Sprint[]> => {
-		const response = await api.get(
+		const response = await clientApi.get(
 			`${API_CONFIG.ENDPOINTS.SPRINTS.BASE}/all?projectId=${projectId}`
 		);
 		return response.data;
@@ -24,7 +24,7 @@ export const sprintsAPI = {
 	 * Get a single sprint by ID
 	 */
 	getById: async (id: string): Promise<Sprint> => {
-		const response = await api.get(API_CONFIG.ENDPOINTS.SPRINTS.BY_ID(id));
+		const response = await clientApi.get(API_CONFIG.ENDPOINTS.SPRINTS.BY_ID(id));
 		return response.data;
 	},
 
@@ -37,7 +37,7 @@ export const sprintsAPI = {
 		projectId: string,
 		payload: CreateSprintPayload
 	): Promise<Sprint> => {
-		const response = await api.post(
+		const response = await clientApi.post(
 			`${API_CONFIG.ENDPOINTS.SPRINTS.CREATE}?projectId=${projectId}`,
 			payload
 		);
@@ -48,7 +48,7 @@ export const sprintsAPI = {
 	 * Update an existing sprint
 	 */
 	update: async (id: string, payload: UpdateSprintPayload): Promise<Sprint> => {
-		const response = await api.put(
+		const response = await clientApi.put(
 			API_CONFIG.ENDPOINTS.SPRINTS.UPDATE(id),
 			payload
 		);
@@ -59,14 +59,14 @@ export const sprintsAPI = {
 	 * Delete a sprint
 	 */
 	delete: async (id: string): Promise<void> => {
-		await api.delete(API_CONFIG.ENDPOINTS.SPRINTS.DELETE(id));
+		await clientApi.delete(API_CONFIG.ENDPOINTS.SPRINTS.DELETE(id));
 	},
 
 	/**
 	 * Start a sprint (change status to active)
 	 */
 	start: async (id: string): Promise<Sprint> => {
-		const response = await api.post(
+		const response = await clientApi.post(
 			`${API_CONFIG.ENDPOINTS.SPRINTS.BASE}/start/${id}`
 		);
 		return response.data;
@@ -76,7 +76,7 @@ export const sprintsAPI = {
 	 * Complete a sprint (change status to completed)
 	 */
 	complete: async (id: string): Promise<Sprint> => {
-		const response = await api.post(
+		const response = await clientApi.post(
 			`${API_CONFIG.ENDPOINTS.SPRINTS.BASE}/complete/${id}`
 		);
 		return response.data;
@@ -86,7 +86,7 @@ export const sprintsAPI = {
 	 * Get work items for a sprint
 	 */
 	getWorkItems: async (sprintId: string): Promise<any[]> => {
-		const response = await api.get(
+		const response = await clientApi.get(
 			`${API_CONFIG.ENDPOINTS.SPRINTS.BASE}/work-items/${sprintId}`
 		);
 		return response.data;
@@ -99,7 +99,7 @@ export const sprintsAPI = {
 		sprintId: string,
 		workItemId: string
 	): Promise<Sprint> => {
-		const response = await api.post(
+		const response = await clientApi.post(
 			`${API_CONFIG.ENDPOINTS.SPRINTS.BASE}/work-items/${sprintId}`,
 			{
 				workItemId,
@@ -115,7 +115,7 @@ export const sprintsAPI = {
 		sprintId: string,
 		workItemId: string
 	): Promise<Sprint> => {
-		const response = await api.delete(
+		const response = await clientApi.delete(
 			`${API_CONFIG.ENDPOINTS.SPRINTS.BASE}/${sprintId}/work-items/${workItemId}`
 		);
 		return response.data;
@@ -125,7 +125,7 @@ export const sprintsAPI = {
 	 * Get sprint statistics
 	 */
 	getStats: async (sprintId: string): Promise<SprintStats> => {
-		const response = await api.get(
+		const response = await clientApi.get(
 			`${API_CONFIG.ENDPOINTS.SPRINTS.BASE}/${sprintId}/stats`
 		);
 		return response.data;
@@ -135,7 +135,7 @@ export const sprintsAPI = {
 	 * Get project sprint statistics
 	 */
 	getProjectStats: async (projectId: string): Promise<any> => {
-		const response = await api.get(
+		const response = await clientApi.get(
 			`${API_CONFIG.ENDPOINTS.SPRINTS.BASE}/projects/${projectId}/stats`
 		);
 		return response.data;

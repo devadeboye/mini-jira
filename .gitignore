@@ -63,3 +63,4 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 # Next.js specific
 /mini-jira-frontend/.next
 /mini-jira-frontend/out 
+auth-flow.md

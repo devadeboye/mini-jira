@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useProjects } from "@/lib/hooks/useProjects";
+import { useSession } from "next-auth/react";
 
 interface ProjectCreationGuardProps {
 	children: React.ReactNode;
@@ -13,16 +14,16 @@ export default function ProjectCreationGuard({
 	children,
 	fallbackPath = "/onboarding/create-project",
 }: ProjectCreationGuardProps) {
+	const { data: session, status } = useSession();
 	const router = useRouter();
 	const { data: projects, isLoading } = useProjects();
-	// TODO: Implement auth
-	const isAuthenticated = true;
+
 
 	useEffect(() => {
-		if (!isLoading && isAuthenticated && (!projects || projects.length === 0)) {
+		if (!isLoading && session && (!projects || projects.length === 0)) {
 			router.push(fallbackPath);
 		}
-	}, [isLoading, isAuthenticated, projects, router, fallbackPath]);
+	}, [isLoading, session, projects, router, fallbackPath]);
 
 	if (isLoading) {
 		return (

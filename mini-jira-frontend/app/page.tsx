@@ -1,20 +1,22 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 
 export default function Home() {
 	const router = useRouter();
-	// TODO: Implement auth
-	const isAuthenticated = true;
+	const { data: session, status } = useSession();
 
 	useEffect(() => {
-		if (isAuthenticated) {
+		if (status === "loading") return; // Still loading
+		
+		if (session) {
 			router.push("/projects");
 		} else {
 			router.push("/auth/login");
 		}
-	}, [isAuthenticated, router]);
+	}, [session, status, router]);
 
 	return (
 		<div className="min-h-screen flex items-center justify-center">

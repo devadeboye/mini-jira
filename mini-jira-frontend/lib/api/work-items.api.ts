@@ -1,5 +1,5 @@
 import { API_CONFIG } from "@/lib/config/api.config";
-import api from "./axios";
+import { clientApi } from "./axios";
 import {
 	WorkItem,
 	WorkItemType,
@@ -35,7 +35,7 @@ export const workItemsAPI = {
 	 * Get all work items for a project
 	 */
 	getProjectWorkItems: async (projectId: string): Promise<WorkItem[]> => {
-		const response = await api.get(
+		const response = await clientApi.get(
 			API_CONFIG.ENDPOINTS.WORK_ITEMS.BY_PROJECT(projectId)
 		);
 		return response.data;
@@ -45,7 +45,7 @@ export const workItemsAPI = {
 	 * Get backlog items for a project (work items not assigned to any sprint)
 	 */
 	getBacklogItems: async (projectId: string): Promise<WorkItem[]> => {
-		const response = await api.get(
+		const response = await clientApi.get(
 			`${API_CONFIG.ENDPOINTS.WORK_ITEMS.BACKLOG}/${projectId}`
 		);
 		return response.data;
@@ -55,7 +55,7 @@ export const workItemsAPI = {
 	 * Get work items for a specific sprint
 	 */
 	getSprintWorkItems: async (sprintId: string): Promise<WorkItem[]> => {
-		const response = await api.get(
+		const response = await clientApi.get(
 			API_CONFIG.ENDPOINTS.WORK_ITEMS.BY_SPRINT(sprintId)
 		);
 		return response.data;
@@ -65,7 +65,7 @@ export const workItemsAPI = {
 	 * Get a single work item by ID
 	 */
 	getById: async (id: string): Promise<WorkItem> => {
-		const response = await api.get(API_CONFIG.ENDPOINTS.WORK_ITEMS.BY_ID(id));
+		const response = await clientApi.get(API_CONFIG.ENDPOINTS.WORK_ITEMS.BY_ID(id));
 		return response.data;
 	},
 
@@ -73,7 +73,7 @@ export const workItemsAPI = {
 	 * Create a new work item
 	 */
 	create: async (payload: CreateWorkItemPayload): Promise<WorkItem> => {
-		const response = await api.post(
+		const response = await clientApi.post(
 			API_CONFIG.ENDPOINTS.WORK_ITEMS.CREATE,
 			payload
 		);
@@ -87,7 +87,7 @@ export const workItemsAPI = {
 		id: string,
 		payload: UpdateWorkItemPayload
 	): Promise<WorkItem> => {
-		const response = await api.patch(
+		const response = await clientApi.patch(
 			API_CONFIG.ENDPOINTS.WORK_ITEMS.UPDATE(id),
 			payload
 		);
@@ -98,7 +98,7 @@ export const workItemsAPI = {
 	 * Delete a work item
 	 */
 	delete: async (id: string): Promise<void> => {
-		await api.delete(API_CONFIG.ENDPOINTS.WORK_ITEMS.DELETE(id));
+		await clientApi.delete(API_CONFIG.ENDPOINTS.WORK_ITEMS.DELETE(id));
 	},
 
 	/**
@@ -108,7 +108,7 @@ export const workItemsAPI = {
 		id: string,
 		status: WorkItemStatus
 	): Promise<WorkItem> => {
-		const response = await api.patch(
+		const response = await clientApi.patch(
 			API_CONFIG.ENDPOINTS.WORK_ITEMS.UPDATE(id),
 			{
 				status,
@@ -121,7 +121,7 @@ export const workItemsAPI = {
 	 * Assign work item to a user
 	 */
 	assign: async (id: string, assigneeId: string): Promise<WorkItem> => {
-		const response = await api.patch(
+		const response = await clientApi.patch(
 			API_CONFIG.ENDPOINTS.WORK_ITEMS.UPDATE(id),
 			{
 				assigneeId,
@@ -134,7 +134,7 @@ export const workItemsAPI = {
 	 * Add work item to sprint
 	 */
 	addToSprint: async (id: string, sprintId: string): Promise<WorkItem> => {
-		const response = await api.patch(
+		const response = await clientApi.patch(
 			API_CONFIG.ENDPOINTS.WORK_ITEMS.UPDATE(id),
 			{
 				sprintId,
@@ -147,7 +147,7 @@ export const workItemsAPI = {
 	 * Remove work item from sprint
 	 */
 	removeFromSprint: async (id: string): Promise<WorkItem> => {
-		const response = await api.patch(
+		const response = await clientApi.patch(
 			API_CONFIG.ENDPOINTS.WORK_ITEMS.UPDATE(id),
 			{
 				sprintId: null,
@@ -163,7 +163,7 @@ export const workItemsAPI = {
 		id: string,
 		priority: WorkItemPriority
 	): Promise<WorkItem> => {
-		const response = await api.patch(
+		const response = await clientApi.patch(
 			API_CONFIG.ENDPOINTS.WORK_ITEMS.UPDATE(id),
 			{
 				priority,
@@ -179,7 +179,7 @@ export const workItemsAPI = {
 		projectId: string,
 		status: WorkItemStatus
 	): Promise<WorkItem[]> => {
-		const response = await api.get(
+		const response = await clientApi.get(
 			API_CONFIG.ENDPOINTS.WORK_ITEMS.BY_PROJECT(projectId)
 		);
 		// Filter by status on the client side since backend doesn't have this endpoint
@@ -193,7 +193,7 @@ export const workItemsAPI = {
 		projectId: string,
 		assigneeId: string
 	): Promise<WorkItem[]> => {
-		const response = await api.get(
+		const response = await clientApi.get(
 			API_CONFIG.ENDPOINTS.WORK_ITEMS.BY_PROJECT(projectId)
 		);
 		// Filter by assignee on the client side since backend doesn't have this endpoint
@@ -206,7 +206,7 @@ export const workItemsAPI = {
 	 * Search work items
 	 */
 	search: async (projectId: string, query: string): Promise<WorkItem[]> => {
-		const response = await api.get(
+		const response = await clientApi.get(
 			API_CONFIG.ENDPOINTS.WORK_ITEMS.BY_PROJECT(projectId)
 		);
 		// Filter by search query on the client side since backend doesn't have this endpoint

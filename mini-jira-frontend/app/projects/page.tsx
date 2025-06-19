@@ -1,6 +1,8 @@
 "use client";
 
 import { Suspense } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useProjects } from "@/lib/hooks/useProjects";
 import ProjectCreationGuard from "@/components/guards/ProjectCreationGuard";
 import Link from "next/link";
@@ -15,9 +17,20 @@ function LoadingSpinner() {
 }
 
 function ProjectsList() {
+	const { data: session, status } = useSession();
+	const router = useRouter();
 	const { data: projects, isLoading, error } = useProjects();
-	// TODO: Implement auth
-	const user = { fullName: "User" };
+
+	// Handle loading states
+	if (status === "loading" || !session || isLoading) {
+		return <LoadingSpinner />;
+	}
+
+	// Handle authentication
+	if (!session) {
+		router.push("/auth/login");
+		return null;
+	}
 
 	if (error) {
 		return (
@@ -35,7 +48,7 @@ function ProjectsList() {
 		<div className="max-w-6xl mx-auto p-6">
 			<div className="mb-8">
 				<h1 className="text-3xl font-bold text-gray-900 mb-2">
-					Welcome back, {user?.fullName}!
+					Welcome back, {session.user.name}!
 				</h1>
 				<p className="text-gray-600">
 					Here are all your projects. Click on a project to view its details.

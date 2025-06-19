@@ -1,102 +1,113 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
 import MoreIcon from "@/components/ui/icons/MoreIcon";
 import LogoutIcon from "@/components/ui/icons/LogoutIcon";
-import UserIcon from "@/components/ui/icons/UserIcon";
 import SettingsIcon from "@/components/ui/icons/SettingsIcon";
-import { useNavigationStore } from "@/lib/stores/navigationStore";
+import HelpIcon from "@/components/ui/icons/Help";
+import UserIcon from "@/components/ui/icons/UserIcon";
+import { signOut, useSession } from "next-auth/react";
 
 export default function MoreMenu({ className }: { className?: string }) {
-	const router = useRouter();
-	const menuRef = useRef<HTMLDivElement>(null);
-	const { isMoreMenuOpen, setMoreMenuOpen } = useNavigationStore();
-	// TODO: Implement auth
-	const user = {
-		fullName: "User",
-		email: "user@example.com",
-	};
+	const [isOpen, setIsOpen] = useState(false);
+	const dropdownRef = useRef<HTMLDivElement>(null);
+	const { data: session } = useSession();
 
 	useEffect(() => {
 		function handleClickOutside(event: MouseEvent) {
-			if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-				setMoreMenuOpen(false);
+			if (
+				dropdownRef.current &&
+				!dropdownRef.current.contains(event.target as Node)
+			) {
+				setIsOpen(false);
 			}
 		}
 
-		if (isMoreMenuOpen) {
+		if (isOpen) {
 			document.addEventListener("mousedown", handleClickOutside);
 		}
 
 		return () => {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
-	}, [isMoreMenuOpen, setMoreMenuOpen]);
+	}, [isOpen]);
 
-	const handleLogout = (e: React.MouseEvent) => {
+	const handleLogout = async (e: React.MouseEvent) => {
 		e.preventDefault();
-		// TODO: Implement logout
-		router.push("/auth/login");
+		try {
+			await signOut({ callbackUrl: "/auth/login" });
+		} catch (error) {
+			console.error("Logout error:", error);
+		}
 	};
 
 	return (
-		<div className="relative" ref={menuRef}>
+		<div className={`relative ${className}`} ref={dropdownRef}>
 			<button
-				onClick={() => setMoreMenuOpen(!isMoreMenuOpen)}
-				className={cn(
-					"p-2 rounded-full hover:bg-gray-100 transition-colors duration-200",
-					className
-				)}
-				aria-label="More menu"
+				onClick={() => setIsOpen(!isOpen)}
+				className="flex items-center justify-center w-8 h-8 text-gray-600 hover:bg-gray-100 rounded-md transition-colors duration-200"
+				aria-label="More options"
+				aria-expanded={isOpen}
+				aria-haspopup="true"
 			>
 				<MoreIcon className="w-5 h-5" />
 			</button>
 
-			{isMoreMenuOpen && (
-				<div className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+			{isOpen && (
+				<div className="absolute right-0 top-full mt-1 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
 					{/* User Info */}
-					<div className="px-4 py-3 border-b border-gray-100">
-						<div className="flex items-center space-x-3">
-							<div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center">
-								<span className="font-semibold text-sm">
-									{user.fullName
-										.split(" ")
-										.map((n) => n[0])
-										.join("")
-										.toUpperCase()}
-								</span>
-							</div>
-							<div className="flex-1 min-w-0">
-								<p className="text-sm font-medium text-gray-900 truncate">
-									{user.fullName}
-								</p>
-								<p className="text-sm text-gray-500 truncate">{user.email}</p>
+					{session?.user && (
+						<div className="px-4 py-3 border-b border-gray-100">
+							<div className="flex items-center space-x-3">
+								<div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-semibold text-sm">
+									{session.user.name?.[0]?.toUpperCase() || 'U'}
+								</div>
+								<div>
+									<p className="font-medium text-gray-900 text-sm">
+										{session.user.name}
+									</p>
+									<p className="text-xs text-gray-500">
+										{session.user.email}
+									</p>
+								</div>
 							</div>
 						</div>
-					</div>
+					)}
 
 					{/* Menu Items */}
 					<div className="py-1">
 						<Link
 							href="/profile"
-							className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+							className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+							onClick={() => setIsOpen(false)}
 						>
 							<UserIcon className="w-5 h-5 mr-3 text-gray-400" />
-							Your Profile
+							Profile
 						</Link>
 						<Link
 							href="/settings"
-							className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+							className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+							onClick={() => setIsOpen(false)}
 						>
 							<SettingsIcon className="w-5 h-5 mr-3 text-gray-400" />
 							Settings
 						</Link>
+						<Link
+							href="/help"
+							className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+							onClick={() => setIsOpen(false)}
+						>
+							<HelpIcon className="w-5 h-5 mr-3 text-gray-400" />
+							Help
+						</Link>
+					</div>
+
+					{/* Logout */}
+					<div className="border-t border-gray-100 pt-1">
 						<button
 							onClick={handleLogout}
-							className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+							className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
 						>
 							<LogoutIcon className="w-5 h-5 mr-3 text-gray-400" />
 							Sign out

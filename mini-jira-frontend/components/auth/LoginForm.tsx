@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
-import ErrorAlert from "./ErrorAlert";
+import ErrorAlert from "@/components/auth/ErrorAlert";
 import SocialLoginButtons from "./SocialLoginButtons";
+import { signIn } from 'next-auth/react';
 
 interface LoginCredentials {
 	username: string;
@@ -15,8 +16,10 @@ interface LoginCredentials {
 
 export default function LoginForm() {
 	const router = useRouter();
-	const [isLoading, setIsLoading] = useState(false);
+	const searchParams = useSearchParams();
+	const callbackUrl = searchParams.get('callbackUrl') || '/projects';
 	const [error, setError] = useState<Error | null>(null);
+	const [loading, setLoading] = useState(false);
 	const [formData, setFormData] = useState<LoginCredentials>({
 		username: "",
 		password: "",
@@ -25,17 +28,28 @@ export default function LoginForm() {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		setIsLoading(true);
 		setError(null);
+		setLoading(true);
 
 		try {
-			// TODO: Implement login
-			await new Promise((resolve) => setTimeout(resolve, 1000));
-			router.push("/projects");
+			const result = await signIn('credentials', {
+				username: formData.username,
+				password: formData.password,
+				redirect: false,
+			});
+
+			if (result?.error) {
+				setError(new Error('Invalid username or password'));
+				return;
+			}
+
+			// Successful login - redirect to callback URL or projects page
+			router.push(callbackUrl);
+			router.refresh();
 		} catch (err) {
-			setError(err as Error);
+			setError(new Error('An error occurred during login'));
 		} finally {
-			setIsLoading(false);
+			setLoading(false);
 		}
 	};
 
@@ -113,13 +127,13 @@ export default function LoginForm() {
 				<Button
 					type="submit"
 					className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl"
-					isLoading={isLoading}
-					disabled={isLoading}
+					isLoading={loading}
+					disabled={loading}
 					ariaLabel={
-						isLoading ? "Signing in, please wait" : "Sign in to your account"
+						loading ? "Signing in, please wait" : "Sign in to your account"
 					}
 				>
-					{isLoading ? "Signing in..." : "Sign in"}
+					{loading ? "Signing in..." : "Sign in"}
 				</Button>
 			</form>
 

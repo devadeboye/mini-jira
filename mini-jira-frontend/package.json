@@ -9,7 +9,8 @@
 		"lint": "next lint",
 		"prepare": "husky install",
 		"check-env": "node scripts/check-env.js",
-		"setup": "cp .env.example .env.local && npm run check-env"
+		"setup-env": "node scripts/setup-env.js",
+		"setup": "npm run setup-env && npm run check-env"
 	},
 	"dependencies": {
 		"@tanstack/react-query": "^5.80.7",
@@ -21,9 +22,11 @@
 		"jwt-decode": "^4.0.0",
 		"lucide-react": "^0.515.0",
 		"next": "15.3.3",
+		"next-auth": "5.0.0-beta.28",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"tailwind-merge": "^3.3.1",
+		"zod": "^3.25.67",
 		"zustand": "^5.0.5"
 	},
 	"devDependencies": {

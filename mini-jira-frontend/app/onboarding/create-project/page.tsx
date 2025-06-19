@@ -6,12 +6,13 @@ import { useCreateProject } from "@/lib/hooks/useProjects";
 import type { CreateProjectDto } from "@/lib/api/projects.api";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
+import { useSession } from "next-auth/react";
 
 export default function CreateProjectPage() {
+	const { data: session } = useSession();
 	const router = useRouter();
 	const createProject = useCreateProject();
-	// TODO: Implement auth
-	const user = { fullName: "User" };
+
 
 	const [formData, setFormData] = useState<CreateProjectDto>({
 		name: "",
@@ -45,7 +46,7 @@ export default function CreateProjectPage() {
 				<div className="bg-white rounded-xl shadow-xl border border-gray-100 p-8">
 					<div className="text-center mb-8">
 						<h1 className="text-3xl font-bold text-gray-900">
-							Welcome, {user.fullName}!
+							Welcome, {session?.user.name}!
 						</h1>
 						<p className="mt-2 text-lg text-gray-600">
 							Let's create your first project

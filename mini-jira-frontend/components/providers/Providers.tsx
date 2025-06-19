@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
+import { SessionProvider } from "next-auth/react";
 import { QueryProvider } from "@/contexts/QueryProvider";
 import ConditionalLayout from "@/components/layouts/ConditionalLayout";
 
@@ -10,8 +11,10 @@ interface ProvidersProps {
 
 export function Providers({ children }: ProvidersProps) {
 	return (
-		<QueryProvider>
-			<ConditionalLayout>{children}</ConditionalLayout>
-		</QueryProvider>
+		<SessionProvider>
+			<QueryProvider>
+				<ConditionalLayout>{children}</ConditionalLayout>
+			</QueryProvider>
+		</SessionProvider>
 	);
 }

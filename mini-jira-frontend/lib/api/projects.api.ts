@@ -1,5 +1,5 @@
 import { API_CONFIG } from "@/lib/config/api.config";
-import api from "./axios";
+import { clientApi } from "./axios";
 
 export interface Project {
 	id: string;
@@ -27,22 +27,22 @@ export interface UpdateProjectDto {
 
 export const projectsAPI = {
 	getAll: async (): Promise<Project[]> => {
-		const response = await api.get(API_CONFIG.ENDPOINTS.PROJECTS.BASE);
+		const response = await clientApi.get(API_CONFIG.ENDPOINTS.PROJECTS.BASE);
 		return response.data;
 	},
 
 	getById: async (id: string): Promise<Project> => {
-		const response = await api.get(API_CONFIG.ENDPOINTS.PROJECTS.BY_ID(id));
+		const response = await clientApi.get(API_CONFIG.ENDPOINTS.PROJECTS.BY_ID(id));
 		return response.data;
 	},
 
 	create: async (data: CreateProjectDto): Promise<Project> => {
-		const response = await api.post(API_CONFIG.ENDPOINTS.PROJECTS.CREATE, data);
+		const response = await clientApi.post(API_CONFIG.ENDPOINTS.PROJECTS.CREATE, data);
 		return response.data;
 	},
 
 	update: async (id: string, data: UpdateProjectDto): Promise<Project> => {
-		const response = await api.patch(
+		const response = await clientApi.patch(
 			API_CONFIG.ENDPOINTS.PROJECTS.UPDATE(id),
 			data
 		);
@@ -50,6 +50,6 @@ export const projectsAPI = {
 	},
 
 	delete: async (id: string): Promise<void> => {
-		await api.delete(API_CONFIG.ENDPOINTS.PROJECTS.DELETE(id));
+		await clientApi.delete(API_CONFIG.ENDPOINTS.PROJECTS.DELETE(id));
 	},
 };

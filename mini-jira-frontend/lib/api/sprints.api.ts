@@ -1,6 +1,5 @@
-import axios from "axios";
-import Cookies from "js-cookie";
 import { API_CONFIG } from "@/lib/config/api.config";
+import api from "./axios";
 import {
 	Sprint,
 	SprintStatus,
@@ -10,33 +9,13 @@ import {
 	SprintWithDetails,
 } from "../types/sprint.types";
 
-const TOKEN_COOKIE = "token";
-
-// Create axios instance for sprints
-const sprintsApi = axios.create({
-	baseURL: API_CONFIG.BASE_URL,
-	timeout: API_CONFIG.TIMEOUT,
-	headers: {
-		"Content-Type": "application/json",
-	},
-});
-
-// Request interceptor to add auth token
-sprintsApi.interceptors.request.use((config) => {
-	const token = Cookies.get(TOKEN_COOKIE);
-	if (token) {
-		config.headers.Authorization = `Bearer ${token}`;
-	}
-	return config;
-});
-
 export const sprintsAPI = {
 	/**
 	 * Get all sprints for a project
 	 */
 	getProjectSprints: async (projectId: string): Promise<Sprint[]> => {
-		const response = await sprintsApi.get(
-			`/sprints/all?projectId=${projectId}`
+		const response = await api.get(
+			`${API_CONFIG.ENDPOINTS.SPRINTS.BASE}/all?projectId=${projectId}`
 		);
 		return response.data;
 	},
@@ -45,7 +24,7 @@ export const sprintsAPI = {
 	 * Get a single sprint by ID
 	 */
 	getById: async (id: string): Promise<Sprint> => {
-		const response = await sprintsApi.get(`/sprints/find-by-id/${id}`);
+		const response = await api.get(API_CONFIG.ENDPOINTS.SPRINTS.BY_ID(id));
 		return response.data;
 	},
 
@@ -58,8 +37,8 @@ export const sprintsAPI = {
 		projectId: string,
 		payload: CreateSprintPayload
 	): Promise<Sprint> => {
-		const response = await sprintsApi.post(
-			`/sprints/create?projectId=${projectId}`,
+		const response = await api.post(
+			`${API_CONFIG.ENDPOINTS.SPRINTS.CREATE}?projectId=${projectId}`,
 			payload
 		);
 		return response.data;
@@ -69,7 +48,10 @@ export const sprintsAPI = {
 	 * Update an existing sprint
 	 */
 	update: async (id: string, payload: UpdateSprintPayload): Promise<Sprint> => {
-		const response = await sprintsApi.put(`/sprints/update/${id}`, payload);
+		const response = await api.put(
+			API_CONFIG.ENDPOINTS.SPRINTS.UPDATE(id),
+			payload
+		);
 		return response.data;
 	},
 
@@ -77,14 +59,16 @@ export const sprintsAPI = {
 	 * Delete a sprint
 	 */
 	delete: async (id: string): Promise<void> => {
-		await sprintsApi.delete(`/sprints/delete/${id}`);
+		await api.delete(API_CONFIG.ENDPOINTS.SPRINTS.DELETE(id));
 	},
 
 	/**
 	 * Start a sprint (change status to active)
 	 */
 	start: async (id: string): Promise<Sprint> => {
-		const response = await sprintsApi.post(`/sprints/start/${id}`);
+		const response = await api.post(
+			`${API_CONFIG.ENDPOINTS.SPRINTS.BASE}/start/${id}`
+		);
 		return response.data;
 	},
 
@@ -92,7 +76,9 @@ export const sprintsAPI = {
 	 * Complete a sprint (change status to completed)
 	 */
 	complete: async (id: string): Promise<Sprint> => {
-		const response = await sprintsApi.post(`/sprints/complete/${id}`);
+		const response = await api.post(
+			`${API_CONFIG.ENDPOINTS.SPRINTS.BASE}/complete/${id}`
+		);
 		return response.data;
 	},
 
@@ -100,7 +86,9 @@ export const sprintsAPI = {
 	 * Get work items for a sprint
 	 */
 	getWorkItems: async (sprintId: string): Promise<any[]> => {
-		const response = await sprintsApi.get(`/sprints/work-items/${sprintId}`);
+		const response = await api.get(
+			`${API_CONFIG.ENDPOINTS.SPRINTS.BASE}/work-items/${sprintId}`
+		);
 		return response.data;
 	},
 
@@ -111,9 +99,12 @@ export const sprintsAPI = {
 		sprintId: string,
 		workItemId: string
 	): Promise<Sprint> => {
-		const response = await sprintsApi.post(`/sprints/work-items/${sprintId}`, {
-			workItemId,
-		});
+		const response = await api.post(
+			`${API_CONFIG.ENDPOINTS.SPRINTS.BASE}/work-items/${sprintId}`,
+			{
+				workItemId,
+			}
+		);
 		return response.data;
 	},
 
@@ -124,8 +115,8 @@ export const sprintsAPI = {
 		sprintId: string,
 		workItemId: string
 	): Promise<Sprint> => {
-		const response = await sprintsApi.delete(
-			`/sprints/${sprintId}/work-items/${workItemId}`
+		const response = await api.delete(
+			`${API_CONFIG.ENDPOINTS.SPRINTS.BASE}/${sprintId}/work-items/${workItemId}`
 		);
 		return response.data;
 	},
@@ -134,7 +125,9 @@ export const sprintsAPI = {
 	 * Get sprint statistics
 	 */
 	getStats: async (sprintId: string): Promise<SprintStats> => {
-		const response = await sprintsApi.get(`/sprints/${sprintId}/stats`);
+		const response = await api.get(
+			`${API_CONFIG.ENDPOINTS.SPRINTS.BASE}/${sprintId}/stats`
+		);
 		return response.data;
 	},
 
@@ -142,8 +135,8 @@ export const sprintsAPI = {
 	 * Get project sprint statistics
 	 */
 	getProjectStats: async (projectId: string): Promise<any> => {
-		const response = await sprintsApi.get(
-			`/sprints/projects/${projectId}/stats`
+		const response = await api.get(
+			`${API_CONFIG.ENDPOINTS.SPRINTS.BASE}/projects/${projectId}/stats`
 		);
 		return response.data;
 	},

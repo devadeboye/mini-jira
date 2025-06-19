@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import AuthHeader from "@/components/auth/AuthHeader";
 import AuthLogo from "@/components/auth/AuthLogo";

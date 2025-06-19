@@ -1,8 +1,5 @@
-import axios from "axios";
-import Cookies from "js-cookie";
 import { API_CONFIG } from "@/lib/config/api.config";
-
-const TOKEN_COOKIE = "token";
+import api from "./axios";
 
 export interface Project {
 	id: string;
@@ -28,43 +25,31 @@ export interface UpdateProjectDto {
 	type?: "scrum" | "kanban";
 }
 
-// Create axios instance for projects
-const projectsApi = axios.create({
-	baseURL: API_CONFIG.BASE_URL,
-	timeout: API_CONFIG.TIMEOUT,
-});
-
-// Request interceptor to add auth token
-projectsApi.interceptors.request.use((config) => {
-	const token = Cookies.get(TOKEN_COOKIE);
-	if (token) {
-		config.headers.Authorization = `Bearer ${token}`;
-	}
-	return config;
-});
-
 export const projectsAPI = {
 	getAll: async (): Promise<Project[]> => {
-		const response = await projectsApi.get("/projects/all");
+		const response = await api.get(API_CONFIG.ENDPOINTS.PROJECTS.BASE);
 		return response.data;
 	},
 
 	getById: async (id: string): Promise<Project> => {
-		const response = await projectsApi.get(`/projects/get/${id}`);
+		const response = await api.get(API_CONFIG.ENDPOINTS.PROJECTS.BY_ID(id));
 		return response.data;
 	},
 
 	create: async (data: CreateProjectDto): Promise<Project> => {
-		const response = await projectsApi.post("/projects/create", data);
+		const response = await api.post(API_CONFIG.ENDPOINTS.PROJECTS.CREATE, data);
 		return response.data;
 	},
 
 	update: async (id: string, data: UpdateProjectDto): Promise<Project> => {
-		const response = await projectsApi.patch(`/projects/update/${id}`, data);
+		const response = await api.patch(
+			API_CONFIG.ENDPOINTS.PROJECTS.UPDATE(id),
+			data
+		);
 		return response.data;
 	},
 
 	delete: async (id: string): Promise<void> => {
-		await projectsApi.delete(`/projects/delete/${id}`);
+		await api.delete(API_CONFIG.ENDPOINTS.PROJECTS.DELETE(id));
 	},
 };

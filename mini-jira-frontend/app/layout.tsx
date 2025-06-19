@@ -1,9 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "@/styles/globals.css";
 import { inter } from "@/lib/fonts";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { QueryProvider } from "@/contexts/QueryProvider";
-import ConditionalLayout from "@/components/layouts/ConditionalLayout";
+import { Providers } from "@/components/providers/Providers";
 
 export const metadata: Metadata = {
 	title: {
@@ -82,11 +80,7 @@ export default function RootLayout({
 					Skip to main content
 				</a>
 
-				<QueryProvider>
-					<AuthProvider>
-						<ConditionalLayout>{children}</ConditionalLayout>
-					</AuthProvider>
-				</QueryProvider>
+				<Providers>{children}</Providers>
 
 				{/* Live region for screen reader announcements */}
 				<div

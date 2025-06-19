@@ -4,6 +4,7 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { Response } from 'express';
 import { PasswordService } from '../../user/services/password.service';
 import { UserService } from '../../user/services/user.service';
 import { TokenService } from './token.service';
@@ -20,7 +21,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async register(registerDto: RegisterDto) {
+  async register(registerDto: RegisterDto, res: Response) {
     // Check if username or email already exists
     const existingUser = await this.userService.findByUsernameOrEmail(
       registerDto.username,
@@ -34,18 +35,7 @@ export class AuthService {
     const user = await this.userService.create(registerDto);
 
     // Return tokens and user info
-    const tokens = await this.tokenService.generateTokens(user);
-    return {
-      ...tokens,
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-        fullName: user.fullName,
-        hasCreatedProject: user.hasCreatedProject,
-      },
-    };
+    return this.tokenService.generateTokens(user, res);
   }
 
   async validateUser(
@@ -79,26 +69,15 @@ export class AuthService {
     };
   }
 
-  async login(user: AuthenticatedUser) {
-    const tokens = await this.tokenService.generateTokens(user);
-    return {
-      ...tokens,
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-        fullName: user.fullName,
-        hasCreatedProject: user.hasCreatedProject,
-      },
-    };
+  async login(user: AuthenticatedUser, res: Response) {
+    return this.tokenService.generateTokens(user, res);
   }
 
-  async refreshTokens(refreshToken: string) {
-    return this.tokenService.refreshTokens(refreshToken);
+  async refreshTokens(refreshToken: string, res: Response) {
+    return this.tokenService.refreshTokens(refreshToken, res);
   }
 
-  async logout(userId: string) {
-    await this.tokenService.revokeRefreshTokensForUser(userId);
+  async logout(userId: string, res: Response) {
+    await this.tokenService.revokeRefreshTokensForUser(userId, res);
   }
 }

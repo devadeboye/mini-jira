@@ -14,6 +14,7 @@ import {
 import { User } from '../../user/entities/user.entity';
 import { EnvironmentEnum } from '../../config/enums/config.enum';
 import type { AuthenticatedUser } from '../types/authenticated-user.type';
+import { Response } from 'express';
 
 @Injectable()
 export class TokenService {
@@ -24,15 +25,35 @@ export class TokenService {
     private configService: ConfigService,
   ) {}
 
-  async generateTokens(user: User | AuthenticatedUser): Promise<Tokens> {
+  async generateTokens(
+    user: User | AuthenticatedUser,
+    res?: Response,
+  ): Promise<Tokens> {
     const [accessToken, refreshToken] = await Promise.all([
       this.generateAccessToken(user),
       this.generateRefreshToken(user),
     ]);
 
+    if (res) {
+      res.cookie('refreshToken', refreshToken.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        path: '/',
+      });
+    }
+
     return {
       accessToken: accessToken.token,
-      refreshToken: refreshToken.token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        fullName: user.fullName,
+        hasCreatedProject: user.hasCreatedProject,
+      },
     };
   }
 
@@ -46,7 +67,7 @@ export class TokenService {
 
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get<string>(EnvironmentEnum.JWT_SECRET),
-      expiresIn: '15m', // Short-lived access token
+      expiresIn: '15m', // Increased to 15 minutes
     });
 
     return {
@@ -60,7 +81,6 @@ export class TokenService {
   ): Promise<TokenPayload> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     const jti = uuid.v4();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const payload: RefreshTokenPayload = {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       jti,
@@ -75,7 +95,6 @@ export class TokenService {
     const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
     // Save refresh token to database
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     await this.refreshTokenRepository.save({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       id: jti,
@@ -88,7 +107,7 @@ export class TokenService {
     return { token, expires };
   }
 
-  async refreshTokens(refreshToken: string): Promise<Tokens> {
+  async refreshTokens(refreshToken: string, res?: Response): Promise<Tokens> {
     try {
       // Verify the refresh token
       const payload = await this.jwtService.verifyAsync<RefreshTokenPayload>(
@@ -114,16 +133,28 @@ export class TokenService {
       });
 
       // Generate new tokens
-      return this.generateTokens(tokenDoc.user);
+      return this.generateTokens(tokenDoc.user, res);
     } catch {
       throw new UnauthorizedException('Invalid refresh token');
     }
   }
 
-  async revokeRefreshTokensForUser(userId: string): Promise<void> {
+  async revokeRefreshTokensForUser(
+    userId: string,
+    res?: Response,
+  ): Promise<void> {
     await this.refreshTokenRepository.update(
       { userId, isRevoked: false },
       { isRevoked: true },
     );
+
+    if (res) {
+      res.clearCookie('refreshToken', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+      });
+    }
   }
 }

@@ -1,11 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-	projectsAPI,
-	type Project,
-	type CreateProjectDto,
-	type UpdateProjectDto,
-} from "@/lib/api/projects.api";
-import { authKeys } from "./useAuth";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { projectsAPI } from "@/lib/api/projects.api";
+import type { Project, UpdateProjectDto } from "@/lib/api/projects.api";
 
 // Query keys
 export const projectKeys = {
@@ -21,7 +16,6 @@ export function useProjects() {
 	return useQuery({
 		queryKey: projectKeys.lists(),
 		queryFn: projectsAPI.getAll,
-		staleTime: 5 * 60 * 1000, // 5 minutes
 	});
 }
 
@@ -29,8 +23,6 @@ export function useProject(id: string) {
 	return useQuery({
 		queryKey: projectKeys.detail(id),
 		queryFn: () => projectsAPI.getById(id),
-		enabled: !!id,
-		staleTime: 5 * 60 * 1000, // 5 minutes
 	});
 }
 
@@ -39,53 +31,32 @@ export function useCreateProject() {
 
 	return useMutation({
 		mutationFn: projectsAPI.create,
-		onSuccess: (newProject) => {
-			// Update the projects list cache
-			queryClient.setQueryData<Project[]>(projectKeys.lists(), (old) => {
-				return old ? [...old, newProject] : [newProject];
-			});
-
-			// Invalidate and refetch projects list and user data
-			queryClient.invalidateQueries({
-				queryKey: projectKeys.lists(),
-				exact: true,
-			});
-			queryClient.invalidateQueries({
-				queryKey: authKeys.user(),
-				exact: true,
-			});
-		},
-		onError: (error) => {
-			console.error("Failed to create project:", error);
-			throw error; // Re-throw to be handled by the component
+		onSuccess: (data: Project) => {
+			queryClient.setQueryData(projectKeys.lists(), (old: Project[] = []) => [
+				...old,
+				data,
+			]);
+			queryClient.setQueryData(projectKeys.detail(data.id), data);
 		},
 	});
+}
+
+interface UpdateProjectVariables {
+	id: string;
+	data: UpdateProjectDto;
 }
 
 export function useUpdateProject() {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: ({ id, data }: { id: string; data: UpdateProjectDto }) =>
+		mutationFn: ({ id, data }: UpdateProjectVariables) =>
 			projectsAPI.update(id, data),
-		onSuccess: (updatedProject) => {
-			// Update the specific project cache
-			queryClient.setQueryData(
-				projectKeys.detail(updatedProject.id),
-				updatedProject
+		onSuccess: (data: Project) => {
+			queryClient.setQueryData(projectKeys.lists(), (old: Project[] = []) =>
+				old.map((item) => (item.id === data.id ? data : item))
 			);
-
-			// Update the projects list cache
-			queryClient.setQueryData<Project[]>(projectKeys.lists(), (old) => {
-				return old?.map((project) =>
-					project.id === updatedProject.id ? updatedProject : project
-				);
-			});
-
-			// Invalidate related queries
-			queryClient.invalidateQueries({
-				queryKey: projectKeys.detail(updatedProject.id),
-			});
+			queryClient.setQueryData(projectKeys.detail(data.id), data);
 		},
 	});
 }
@@ -95,17 +66,11 @@ export function useDeleteProject() {
 
 	return useMutation({
 		mutationFn: projectsAPI.delete,
-		onSuccess: (_, deletedId) => {
-			// Remove from projects list cache
-			queryClient.setQueryData<Project[]>(projectKeys.lists(), (old) => {
-				return old?.filter((project) => project.id !== deletedId);
-			});
-
-			// Remove the specific project cache
-			queryClient.removeQueries({ queryKey: projectKeys.detail(deletedId) });
-
-			// Invalidate projects list
-			queryClient.invalidateQueries({ queryKey: projectKeys.lists() });
+		onSuccess: (_, id: string) => {
+			queryClient.setQueryData(projectKeys.lists(), (old: Project[] = []) =>
+				old.filter((item) => item.id !== id)
+			);
+			queryClient.removeQueries({ queryKey: projectKeys.detail(id) });
 		},
 	});
 }

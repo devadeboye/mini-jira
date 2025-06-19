@@ -1,14 +1,11 @@
-import axios from "axios";
-import Cookies from "js-cookie";
 import { API_CONFIG } from "@/lib/config/api.config";
+import api from "./axios";
 import {
 	WorkItem,
 	WorkItemType,
 	WorkItemStatus,
 	WorkItemPriority,
 } from "../stores/workItemStore";
-
-const TOKEN_COOKIE = "token";
 
 // Define payload types locally since they might not exist in the store
 export interface CreateWorkItemPayload {
@@ -33,31 +30,13 @@ export interface UpdateWorkItemPayload {
 	sprintId?: string;
 }
 
-// Create axios instance for work items
-const workItemsApi = axios.create({
-	baseURL: API_CONFIG.BASE_URL,
-	timeout: API_CONFIG.TIMEOUT,
-	headers: {
-		"Content-Type": "application/json",
-	},
-});
-
-// Request interceptor to add auth token
-workItemsApi.interceptors.request.use((config) => {
-	const token = Cookies.get(TOKEN_COOKIE);
-	if (token) {
-		config.headers.Authorization = `Bearer ${token}`;
-	}
-	return config;
-});
-
 export const workItemsAPI = {
 	/**
 	 * Get all work items for a project
 	 */
 	getProjectWorkItems: async (projectId: string): Promise<WorkItem[]> => {
-		const response = await workItemsApi.get(
-			`/work-items/find-by-project/${projectId}`
+		const response = await api.get(
+			API_CONFIG.ENDPOINTS.WORK_ITEMS.BY_PROJECT(projectId)
 		);
 		return response.data;
 	},
@@ -66,8 +45,8 @@ export const workItemsAPI = {
 	 * Get backlog items for a project (work items not assigned to any sprint)
 	 */
 	getBacklogItems: async (projectId: string): Promise<WorkItem[]> => {
-		const response = await workItemsApi.get(
-			`/work-items/backlogs/${projectId}`
+		const response = await api.get(
+			`${API_CONFIG.ENDPOINTS.WORK_ITEMS.BACKLOG}/${projectId}`
 		);
 		return response.data;
 	},
@@ -76,8 +55,8 @@ export const workItemsAPI = {
 	 * Get work items for a specific sprint
 	 */
 	getSprintWorkItems: async (sprintId: string): Promise<WorkItem[]> => {
-		const response = await workItemsApi.get(
-			`/work-items/find-by-sprint/${sprintId}`
+		const response = await api.get(
+			API_CONFIG.ENDPOINTS.WORK_ITEMS.BY_SPRINT(sprintId)
 		);
 		return response.data;
 	},
@@ -86,7 +65,7 @@ export const workItemsAPI = {
 	 * Get a single work item by ID
 	 */
 	getById: async (id: string): Promise<WorkItem> => {
-		const response = await workItemsApi.get(`/work-items/find-by-id/${id}`);
+		const response = await api.get(API_CONFIG.ENDPOINTS.WORK_ITEMS.BY_ID(id));
 		return response.data;
 	},
 
@@ -94,7 +73,10 @@ export const workItemsAPI = {
 	 * Create a new work item
 	 */
 	create: async (payload: CreateWorkItemPayload): Promise<WorkItem> => {
-		const response = await workItemsApi.post("/work-items/create", payload);
+		const response = await api.post(
+			API_CONFIG.ENDPOINTS.WORK_ITEMS.CREATE,
+			payload
+		);
 		return response.data;
 	},
 
@@ -105,8 +87,8 @@ export const workItemsAPI = {
 		id: string,
 		payload: UpdateWorkItemPayload
 	): Promise<WorkItem> => {
-		const response = await workItemsApi.patch(
-			`/work-items/update/${id}`,
+		const response = await api.patch(
+			API_CONFIG.ENDPOINTS.WORK_ITEMS.UPDATE(id),
 			payload
 		);
 		return response.data;
@@ -116,7 +98,7 @@ export const workItemsAPI = {
 	 * Delete a work item
 	 */
 	delete: async (id: string): Promise<void> => {
-		await workItemsApi.delete(`/work-items/delete/${id}`);
+		await api.delete(API_CONFIG.ENDPOINTS.WORK_ITEMS.DELETE(id));
 	},
 
 	/**
@@ -126,9 +108,12 @@ export const workItemsAPI = {
 		id: string,
 		status: WorkItemStatus
 	): Promise<WorkItem> => {
-		const response = await workItemsApi.patch(`/work-items/update/${id}`, {
-			status,
-		});
+		const response = await api.patch(
+			API_CONFIG.ENDPOINTS.WORK_ITEMS.UPDATE(id),
+			{
+				status,
+			}
+		);
 		return response.data;
 	},
 
@@ -136,9 +121,12 @@ export const workItemsAPI = {
 	 * Assign work item to a user
 	 */
 	assign: async (id: string, assigneeId: string): Promise<WorkItem> => {
-		const response = await workItemsApi.patch(`/work-items/update/${id}`, {
-			assigneeId,
-		});
+		const response = await api.patch(
+			API_CONFIG.ENDPOINTS.WORK_ITEMS.UPDATE(id),
+			{
+				assigneeId,
+			}
+		);
 		return response.data;
 	},
 
@@ -146,9 +134,12 @@ export const workItemsAPI = {
 	 * Add work item to sprint
 	 */
 	addToSprint: async (id: string, sprintId: string): Promise<WorkItem> => {
-		const response = await workItemsApi.patch(`/work-items/update/${id}`, {
-			sprintId,
-		});
+		const response = await api.patch(
+			API_CONFIG.ENDPOINTS.WORK_ITEMS.UPDATE(id),
+			{
+				sprintId,
+			}
+		);
 		return response.data;
 	},
 
@@ -156,9 +147,12 @@ export const workItemsAPI = {
 	 * Remove work item from sprint
 	 */
 	removeFromSprint: async (id: string): Promise<WorkItem> => {
-		const response = await workItemsApi.patch(`/work-items/update/${id}`, {
-			sprintId: null,
-		});
+		const response = await api.patch(
+			API_CONFIG.ENDPOINTS.WORK_ITEMS.UPDATE(id),
+			{
+				sprintId: null,
+			}
+		);
 		return response.data;
 	},
 
@@ -169,9 +163,12 @@ export const workItemsAPI = {
 		id: string,
 		priority: WorkItemPriority
 	): Promise<WorkItem> => {
-		const response = await workItemsApi.patch(`/work-items/update/${id}`, {
-			priority,
-		});
+		const response = await api.patch(
+			API_CONFIG.ENDPOINTS.WORK_ITEMS.UPDATE(id),
+			{
+				priority,
+			}
+		);
 		return response.data;
 	},
 
@@ -182,8 +179,8 @@ export const workItemsAPI = {
 		projectId: string,
 		status: WorkItemStatus
 	): Promise<WorkItem[]> => {
-		const response = await workItemsApi.get(
-			`/work-items/find-by-project/${projectId}`
+		const response = await api.get(
+			API_CONFIG.ENDPOINTS.WORK_ITEMS.BY_PROJECT(projectId)
 		);
 		// Filter by status on the client side since backend doesn't have this endpoint
 		return response.data.filter((item: WorkItem) => item.status === status);
@@ -196,8 +193,8 @@ export const workItemsAPI = {
 		projectId: string,
 		assigneeId: string
 	): Promise<WorkItem[]> => {
-		const response = await workItemsApi.get(
-			`/work-items/find-by-project/${projectId}`
+		const response = await api.get(
+			API_CONFIG.ENDPOINTS.WORK_ITEMS.BY_PROJECT(projectId)
 		);
 		// Filter by assignee on the client side since backend doesn't have this endpoint
 		return response.data.filter(
@@ -209,8 +206,8 @@ export const workItemsAPI = {
 	 * Search work items
 	 */
 	search: async (projectId: string, query: string): Promise<WorkItem[]> => {
-		const response = await workItemsApi.get(
-			`/work-items/find-by-project/${projectId}`
+		const response = await api.get(
+			API_CONFIG.ENDPOINTS.WORK_ITEMS.BY_PROJECT(projectId)
 		);
 		// Filter by search query on the client side since backend doesn't have this endpoint
 		const lowerQuery = query.toLowerCase();

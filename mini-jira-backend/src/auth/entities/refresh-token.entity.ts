@@ -1,10 +1,10 @@
 import {
-  Entity,
   Column,
-  PrimaryGeneratedColumn,
   CreateDateColumn,
-  ManyToOne,
+  Entity,
   JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
 
@@ -29,9 +29,12 @@ export class RefreshToken {
   @Column({ type: 'timestamp' })
   expiresAt: Date;
 
+  @Column({ type: 'timestamp', nullable: true })
+  firstUsedAt: Date;
+
+  @Column({ type: 'int', default: 0 })
+  usageCount: number;
+
   @CreateDateColumn()
   createdAt: Date;
-
-  @Column({ nullable: true })
-  replacedByToken?: string;
 }

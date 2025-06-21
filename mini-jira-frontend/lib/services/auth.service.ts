@@ -16,22 +16,34 @@ export interface RegisterCredentials {
 
 export interface AuthResponse {
 	accessToken: string;
+	accessTokenExpiresIn: Date;
+	refreshToken: string;
 	user: {
 		id: string;
 		username: string;
 		email: string;
+		role: string;
 		fullName: string;
+		hasCreatedProject: boolean;
 	};
+}
+
+export interface RefreshTokenResponse {
+	accessToken: string;
+	refreshToken: string;
+	expiresIn: number;
 }
 
 class AuthService {
 	async login(credentials: LoginCredentials): Promise<AuthResponse> {
+		console.log("🔄 Sending login request to backend");
+		console.dir(credentials, {depth: null});
 		try {
 			const response = await serverApi.post(
 				API_CONFIG.ENDPOINTS.AUTH.LOGIN,
 				credentials
 			);
-			return response.data;
+			return response.data as AuthResponse;
 		} catch (error) {
 			if (error instanceof AxiosError) {
 				throw new Error(error.response?.data?.message || "Login failed");
@@ -50,6 +62,32 @@ class AuthService {
 		} catch (error) {
 			if (error instanceof AxiosError) {
 				throw new Error(error.response?.data?.message || "Registration failed");
+			}
+			throw error;
+		}
+	}
+
+	async refreshToken(refreshToken: string): Promise<RefreshTokenResponse> {
+		try {
+			console.log("🔄 Sending refresh token request to backend");
+			
+			const response = await serverApi.post(
+				API_CONFIG.ENDPOINTS.AUTH.REFRESH,
+				{ refreshToken },
+			);
+			
+			console.log("✅ Backend refresh token response received");
+			console.dir(response.data, {depth: null});
+			
+			return response.data;
+		} catch (error) {
+			console.error("❌ Refresh token request failed:", error);
+			if (error instanceof AxiosError) {
+				console.error("❌ Error details:", {
+					status: error.response?.status,
+					message: error.response?.data?.message
+				});
+				throw new Error(error.response?.data?.message || "Token refresh failed");
 			}
 			throw error;
 		}

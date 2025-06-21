@@ -1,20 +1,20 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Response } from 'express';
 import { Repository } from 'typeorm';
 import * as uuid from 'uuid';
+import { EnvironmentEnum } from '../../config/enums/config.enum';
+import { User } from '../../user/entities/user.entity';
 import { RefreshToken } from '../entities/refresh-token.entity';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
 import {
   RefreshTokenPayload,
-  Tokens,
   TokenPayload,
+  Tokens,
 } from '../interfaces/tokens.interface';
-import { User } from '../../user/entities/user.entity';
-import { EnvironmentEnum } from '../../config/enums/config.enum';
 import type { AuthenticatedUser } from '../types/authenticated-user.type';
-import { Response } from 'express';
 
 @Injectable()
 export class TokenService {
@@ -46,6 +46,8 @@ export class TokenService {
 
     return {
       accessToken: accessToken.token,
+      accessTokenExpiresIn: accessToken.expires,
+      refreshToken: refreshToken.token,
       user: {
         id: user.id,
         username: user.username,
@@ -67,22 +69,26 @@ export class TokenService {
 
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get<string>(EnvironmentEnum.JWT_SECRET),
-      expiresIn: '15m', // Increased to 15 minutes
+      expiresIn:
+        this.configService.get<number>(EnvironmentEnum.JWT_EXPIRES_IN)! * 60,
     });
 
     return {
       token,
-      expires: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes
+      expires: new Date(
+        Date.now() +
+          this.configService.get<number>(EnvironmentEnum.JWT_EXPIRES_IN)! *
+            60 *
+            1000,
+      ),
     };
   }
 
   private async generateRefreshToken(
     user: User | AuthenticatedUser,
   ): Promise<TokenPayload> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     const jti = uuid.v4();
     const payload: RefreshTokenPayload = {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       jti,
       sub: user.id,
     };
@@ -96,7 +102,6 @@ export class TokenService {
 
     // Save refresh token to database
     await this.refreshTokenRepository.save({
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       id: jti,
       token,
       userId: user.id,
@@ -108,6 +113,13 @@ export class TokenService {
   }
 
   async refreshTokens(refreshToken: string, res?: Response): Promise<Tokens> {
+    const refreshTokenGracePeriod = this.configService.get<number>(
+      EnvironmentEnum.REFRESH_TOKEN_GRACE_PERIOD,
+    )!;
+    const refreshTokenMaxUsage = this.configService.get<number>(
+      EnvironmentEnum.REFRESH_TOKEN_MAX_USAGE,
+    )!;
+
     try {
       // Verify the refresh token
       const payload = await this.jwtService.verifyAsync<RefreshTokenPayload>(
@@ -123,17 +135,39 @@ export class TokenService {
         relations: ['user'],
       });
 
-      if (!tokenDoc || tokenDoc.isRevoked || new Date() > tokenDoc.expiresAt) {
+      const inValidRefreshToken =
+        !tokenDoc ||
+        tokenDoc.isRevoked ||
+        tokenDoc.usageCount >= refreshTokenMaxUsage;
+
+      const gracePeriodExceeded =
+        tokenDoc && tokenDoc.firstUsedAt
+          ? new Date(Date.now() - tokenDoc.firstUsedAt.getTime()) >
+            new Date(
+              tokenDoc.expiresAt.getTime() + refreshTokenGracePeriod * 1000,
+            )
+          : false;
+
+      if (inValidRefreshToken || gracePeriodExceeded) {
         throw new UnauthorizedException('Invalid refresh token');
       }
+      const newTokens = await this.generateTokens(tokenDoc.user, res);
 
-      // Revoke the current refresh token
-      await this.refreshTokenRepository.update(tokenDoc.id, {
-        isRevoked: true,
-      });
+      tokenDoc.usageCount++;
+      Logger.debug(
+        `Refresh token used ${tokenDoc.usageCount} times`,
+        'TokenService',
+      );
+      if (tokenDoc.usageCount >= refreshTokenMaxUsage) {
+        tokenDoc.isRevoked = true;
+        Logger.debug('Refresh token revoked');
+      } else {
+        tokenDoc.firstUsedAt = new Date();
+        Logger.debug(`Refresh token used ${tokenDoc.usageCount} times`);
+      }
 
-      // Generate new tokens
-      return this.generateTokens(tokenDoc.user, res);
+      await this.refreshTokenRepository.save(tokenDoc);
+      return newTokens;
     } catch {
       throw new UnauthorizedException('Invalid refresh token');
     }

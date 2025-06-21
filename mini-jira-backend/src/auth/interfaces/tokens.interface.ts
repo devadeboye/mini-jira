@@ -5,6 +5,8 @@ export interface TokenPayload {
 
 export interface Tokens {
   accessToken: string;
+  accessTokenExpiresIn: Date;
+  refreshToken: string;
   user: {
     id: string;
     username: string;

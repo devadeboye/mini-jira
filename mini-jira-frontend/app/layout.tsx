@@ -80,7 +80,9 @@ export default function RootLayout({
 					Skip to main content
 				</a>
 
-				<Providers>{children}</Providers>
+				<Providers>
+						{children}
+				</Providers>
 
 				{/* Live region for screen reader announcements */}
 				<div

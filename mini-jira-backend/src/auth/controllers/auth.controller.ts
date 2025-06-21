@@ -1,24 +1,25 @@
 import {
+  Body,
   Controller,
-  Post,
-  Request,
+  Get,
   HttpCode,
   HttpStatus,
   Logger,
-  Body,
-  UnauthorizedException,
+  Post,
+  Request,
   Res,
-  Get,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { AuthService } from '../services/auth.service';
-import { Public } from '../decorators/public.decorator';
+import { UserService } from 'src/user/services/user.service';
 import { ObjectValidationPipe } from '../../common/pipes/joi-validation.pipe';
-import { loginSchema, registerSchema } from '../schemas/auth.schema';
-import { AuthenticatedRequest } from '../types/request.type';
+import { Public } from '../decorators/public.decorator';
 import { LoginDto } from '../dto/login.dto';
 import { RegisterDto } from '../dto/register.dto';
-import { UserService } from 'src/user/services/user.service';
+import { Tokens } from '../interfaces/tokens.interface';
+import { AuthService } from '../services/auth.service';
+import { AuthenticatedRequest } from '../types/request.type';
+import { loginSchema, registerSchema } from '../validators/auth.schema';
 
 @Controller('auth')
 export class AuthController {
@@ -64,8 +65,13 @@ export class AuthController {
   async refresh(
     @Request() req: { cookies: { refreshToken?: string } },
     @Res({ passthrough: true }) res: Response,
-  ) {
-    const refreshToken = req.cookies?.refreshToken;
+    @Body() body: { refreshToken: string },
+  ): Promise<Tokens> {
+    const refreshToken = body.refreshToken || req.cookies?.refreshToken;
+    this.logger.debug(
+      `Refresh token attempt with token: ...${refreshToken?.slice(-15)}`,
+      'AuthController',
+    );
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token is required');
     }

@@ -1,16 +1,17 @@
 import {
+  ConflictException,
   Injectable,
   UnauthorizedException,
-  ConflictException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
+import { UserStatus } from '../../user/enums/user.enum';
 import { PasswordService } from '../../user/services/password.service';
 import { UserService } from '../../user/services/user.service';
-import { TokenService } from './token.service';
-import { UserStatus } from '../../user/enums/user.enum';
-import type { AuthenticatedUser } from '../types/authenticated-user.type';
 import type { RegisterDto } from '../dto/register.dto';
+import { Tokens } from '../interfaces/tokens.interface';
+import type { AuthenticatedUser } from '../types/authenticated-user.type';
+import { TokenService } from './token.service';
 
 @Injectable()
 export class AuthService {
@@ -73,7 +74,7 @@ export class AuthService {
     return this.tokenService.generateTokens(user, res);
   }
 
-  async refreshTokens(refreshToken: string, res: Response) {
+  async refreshTokens(refreshToken: string, res: Response): Promise<Tokens> {
     return this.tokenService.refreshTokens(refreshToken, res);
   }
 

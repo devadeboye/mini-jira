@@ -96,7 +96,7 @@ const BacklogFooter = () => {
 	}
 
 	return (
-		<div className="px-8 p-3 bg-gray-50 rounded-b-lg">
+		<div className="px-8 p-1 bg-gray-50 rounded-b-lg">
 			<button
 				onClick={() => setIsEditing(true)}
 				className="flex items-center gap-2 text-text-subtle hover:text-blue-700 font-medium text-sm"

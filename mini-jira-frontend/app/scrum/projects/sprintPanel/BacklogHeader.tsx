@@ -53,18 +53,25 @@ const BacklogHeader = ({
 	};
 
 	return (
-		<div className="flex items-center justify-between p-4 bg-gray-100 rounded-t-lg">
+		<div className="flex items-center justify-between p-1 bg-gray-100 rounded-t-lg">
 			<div className="flex items-center gap-3">
-				<button
-					onClick={onToggleCollapse}
-					className="p-1 hover:bg-gray-200 rounded"
-				>
-					<DropdownIcon
-						className={`h-4 w-4 text-gray-600 transition-transform ${
-							isCollapsed ? "-rotate-90" : ""
-						}`}
+				<div className="flex items-center gap-1 pl-2">
+					<input
+						type="checkbox"
+						checked={false}
+						onChange={(e) => {}}
+						className="w-3.5 h-3.5 text-blue-600 hover:border-gray-300 outline-none rounded-xs focus:ring-blue-500"
+						aria-label=""
+						onClick={(e) => e.stopPropagation()}
 					/>
-				</button>
+					<button onClick={onToggleCollapse} className="p-1">
+						<DropdownIcon
+							className={`h-4 w-4 text-gray-600 transition-transform ${
+								isCollapsed ? "-rotate-90" : ""
+							}`}
+						/>
+					</button>
+				</div>
 
 				<div className="flex items-center gap-2">
 					<h2 className="text-sm font-semibold text-gray-900">Backlog</h2>

@@ -53,7 +53,7 @@ const BacklogHeader = ({
 	};
 
 	return (
-		<div className="flex items-center justify-between px-2 py-0 bg-gray-100 rounded-t-lg">
+		<div className="flex items-center justify-between px-2 py-2.5 bg-gray-100 rounded-t-lg">
 			<div className="flex items-center gap-3">
 				<div className="flex items-center gap-1 pl-3">
 					<input

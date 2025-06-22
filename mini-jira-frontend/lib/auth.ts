@@ -1,8 +1,8 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { signInSchema } from "./auth/auth-validation";
+import { signInSchema } from "./validators/auth-validation";
 import { ZodError } from "zod";
-import { AuthResponse, authService } from "./services/auth.service";
+import { authService } from "./services/auth.service";
 import { API_CONFIG } from "./config/api.config";
 import axios from "axios";
 
@@ -15,14 +15,56 @@ const refreshApi = axios.create({
 	},
 });
 
-// Function to refresh access token
+// Global refresh lock to prevent concurrent refresh attempts
+let globalRefreshPromise: Promise<any> | null = null;
+
+// Function to refresh access token with global locking
 async function refreshAccessToken(token: any) {
+	// If refresh is already in progress, wait for it
+	if (globalRefreshPromise) {
+		console.log("⏳ NextAuth: Refresh in progress, waiting...");
+		try {
+			return await globalRefreshPromise;
+		} catch (error) {
+			// If the global refresh failed, allow this instance to try
+			console.log("🔄 NextAuth: Global refresh failed, attempting new refresh");
+		}
+	}
+
+	// Start new refresh and store the promise globally
+	globalRefreshPromise = performTokenRefresh(token);
+	
+	try {
+		const result = await globalRefreshPromise;
+		return result;
+	} finally {
+		// Clear the global promise when done
+		globalRefreshPromise = null;
+	}
+}
+
+// Actual refresh logic separated for clarity
+async function performTokenRefresh(token: any) {
 	try {
 		console.log("🔄 NextAuth: Refreshing access token...");
 		console.log("🔑 NextAuth: Using refresh token:", token.refreshToken?.substring(0, 20) + "...");
 		
 		if (!token.refreshToken) {
-			throw new Error("No refresh token available");
+			console.error("❌ NextAuth: No refresh token available");
+			return {
+				...token,
+				error: "RefreshAccessTokenError",
+			};
+		}
+
+		// Check if we've already failed too many times
+		const retryCount = token.refreshRetryCount || 0;
+		if (retryCount >= 3) {
+			console.error("❌ NextAuth: Max refresh retries exceeded, forcing logout");
+			return {
+				...token,
+				error: "RefreshAccessTokenError",
+			};
 		}
 		
 		// Make refresh request with refresh token in body
@@ -48,16 +90,30 @@ async function refreshAccessToken(token: any) {
 				accessToken: response.data.accessToken,
 				refreshToken: newRefreshToken,
 				accessTokenExpires,
+				refreshRetryCount: 0, // Reset retry count on success
 				error: undefined,
 			};
 		} else {
 			throw new Error("No access token in refresh response");
 		}
-	} catch (error) {
-		console.error("❌ NextAuth: Token refresh failed:", error);
+	} catch (error: any) {
+		console.error("❌ NextAuth: Token refresh failed:", error?.response?.status || error?.message);
 		
+		// Don't log the full error object to avoid console spam
+		const isRefreshTokenInvalid = error?.response?.status === 401 || error?.response?.status === 403;
+		
+		if (isRefreshTokenInvalid) {
+			console.error("❌ NextAuth: Refresh token is invalid/expired, forcing logout");
+			return {
+				...token,
+				error: "RefreshAccessTokenError",
+			};
+		}
+
+		// Increment retry count for other errors
 		return {
 			...token,
+			refreshRetryCount: (token.refreshRetryCount || 0) + 1,
 			error: "RefreshAccessTokenError",
 		};
 	}
@@ -149,6 +205,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 		},
 		
 		async session({ session, token }) {
+			// If there's a refresh error, trigger logout
+			if (token.error === "RefreshAccessTokenError") {
+				console.error("❌ NextAuth: Session has refresh error, user will be logged out");
+				// Return null to force logout
+				return null as any;
+			}
+
 			// Send properties to the client
 			return {
 				...session,

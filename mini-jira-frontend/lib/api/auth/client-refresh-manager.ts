@@ -27,19 +27,19 @@ export class ClientRefreshManager {
 			const { getSession } = await import("next-auth/react");
 			const newSession = await getSession();
 			
-			if (newSession?.accessToken) {
+			if (newSession?.accessToken && !newSession?.error) {
 				console.log("✅ CLIENT-API: Got new access token from session");
 				this.processQueue(null, newSession.accessToken);
 				return newSession.accessToken;
 			} else {
-				throw new Error("Failed to refresh session");
+				throw new Error("Failed to refresh session or session has error");
 			}
 		} catch (error) {
-			console.error("❌ CLIENT-API: Refresh failed:", error);
+			console.error("❌ CLIENT-API: Refresh failed, redirecting to login");
 			this.processQueue(error, null);
-			// Redirect to login
-			const { signIn } = await import("next-auth/react");
-			await signIn();
+			// Clear any existing session and redirect to login
+			const { signOut } = await import("next-auth/react");
+			await signOut({ callbackUrl: "/auth/login" });
 			return null;
 		} finally {
 			this.isRefreshing = false;

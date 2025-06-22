@@ -138,7 +138,7 @@ const WorkItemCard = ({ workItem }: WorkItemCardProps) => {
 				type="checkbox"
 				checked={isChecked}
 				onChange={(e) => setIsChecked(e.target.checked)}
-				className="w-3.5 h-3.5 text-blue-600 hover:border-gray-300 outline-none rounded-xs focus:ring-blue-500"
+				className={`${isChecked ? "opacity-100" : "opacity-0"} hover:opacity-100 w-3.5 h-3.5 text-blue-600 hover:border-gray-300 outline-none rounded-xs focus:ring-blue-500 transition-opacity`}
 				aria-label={`Select work item ${workItem.id}`}
 				onClick={(e) => e.stopPropagation()}
 			/>
@@ -168,7 +168,7 @@ const WorkItemCard = ({ workItem }: WorkItemCardProps) => {
 						setIsStatusDropdownOpen(!isStatusDropdownOpen);
 					}}
 					onKeyDown={handleDropdownKeyDown}
-					className={`lg:!min-h-5 lg:!h-5 lg:!max-h-5 px-1 py-0 text-xs font-bold rounded-xs border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center gap-1 transition-colors ${
+					className={`md:!min-h-5 md:!h-5 md:!max-h-5 px-1 py-0 text-xs font-bold rounded-xs border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center gap-1 transition-colors ${
 						currentStatus?.color || "bg-gray-100 text-gray-800"
 					}`}
 					aria-label={`Change status from ${currentStatus?.label}. Current status: ${currentStatus?.label}`}

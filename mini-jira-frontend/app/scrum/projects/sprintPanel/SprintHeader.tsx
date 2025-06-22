@@ -16,18 +16,25 @@ const SprintHeader = ({
 	workItemsCount,
 }: SprintHeaderProps) => {
 	return (
-		<div className="flex items-center justify-between p-4">
+		<div className="flex items-center justify-between px-2 py-0">
 			<div className="flex items-center gap-3">
-				<button
-					onClick={onToggleCollapse}
-					className="p-1 hover:bg-gray-200 rounded"
-				>
-					<DropdownIcon
-						className={`h-4 w-4 text-gray-600 transition-transform ${
-							isCollapsed ? "-rotate-90" : ""
-						}`}
+				<div className="flex items-center gap-1 pl-3">
+					<input
+						type="checkbox"
+						checked={false}
+						onChange={(e) => {}}
+						className="w-3.5 h-3.5 text-blue-600 hover:border-gray-300 outline-none rounded-xs focus:ring-blue-500"
+						aria-label=""
+						onClick={(e) => e.stopPropagation()}
 					/>
-				</button>
+					<button onClick={onToggleCollapse} className="p-1">
+						<DropdownIcon
+							className={`h-4 w-4 text-gray-600 transition-transform ${
+								isCollapsed ? "-rotate-90" : ""
+							}`}
+						/>
+					</button>
+				</div>
 
 				<div className="flex items-center gap-2">
 					<h2 className="text-sm font-semibold text-gray-900">{sprintName}</h2>
@@ -67,7 +74,7 @@ const SprintHeader = ({
 					</div>
 				</div>
 
-				<button className="px-4 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50">
+				<button className="md:!min-h-5 md:!h-6 px-4 py-0 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50">
 					Start sprint
 				</button>
 

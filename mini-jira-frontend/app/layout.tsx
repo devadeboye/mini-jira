@@ -71,7 +71,7 @@ export default function RootLayout({
 					crossOrigin="anonymous"
 				/>
 			</head>
-			<body className={`${inter.className} antialiased`}>
+			<body className={`${inter.className} antialiased h-full`}>
 				{/* Skip to main content for screen readers */}
 				<a
 					href="#main-content"

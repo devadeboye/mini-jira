@@ -29,7 +29,7 @@ export default function ConditionalLayout({
 			</header>
 			<div className="pt-[64px] lg:pt-[50px] flex">
 				<SideNav />
-				<main className="min-h-screen flex-1 lg:ml-[240px] ml-[64px]">
+				<main className="h-full flex-1 lg:ml-[240px] ml-[64px]">
 					{children}
 				</main>
 			</div>

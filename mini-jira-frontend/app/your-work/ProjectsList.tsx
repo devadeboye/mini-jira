@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useProjects } from "@/lib/hooks/useProjects";
 import ProjectCard from "./ProjectCard";
+import Link from "next/link";
 
 // Separate loading component to ensure consistent rendering
 export function LoadingSpinner() {
@@ -46,7 +47,12 @@ export default function ProjectsList({ className }: { className?: string }) {
 			<div className="border-b border-gray-200 lg:py-6">
 				<h1 className="lg:text-2xl font-semibold text-gray-900">For you</h1>
 			</div>
-			<div className="lg:py-4 font-semibold">Recent projects</div>
+			<div className="lg:py-4 flex flex-row justify-between items-center">
+				<div className="font-semibold">Recent projects</div>
+				<Link href="/projects">
+					<div className="text-sm text-primary">View all projects</div>
+				</Link>
+			</div>
 
 			{/* Projects Grid */}
 			<div className="grid grid-cols-1 gap-6 h-full md:grid-cols-2 lg:grid-cols-3 lg:gap-6">

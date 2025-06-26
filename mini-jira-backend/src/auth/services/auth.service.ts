@@ -1,25 +1,31 @@
 import {
   ConflictException,
+  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
+import {
+  TOKEN_SERVICE_TOKEN,
+  USER_SERVICE_TOKEN,
+} from '../../common/constants/injection-tokens';
 import { UserStatus } from '../../user/enums/user.enum';
+import { IUserService as UserService } from '../../user/interfaces/user-service.interface';
 import { PasswordService } from '../../user/services/password.service';
-import { UserService } from '../../user/services/user.service';
 import type { RegisterDto } from '../dto/register.dto';
+import { ITokenService as TokenService } from '../interfaces/token-service.interface';
 import { Tokens } from '../interfaces/tokens.interface';
 import type { AuthenticatedUser } from '../types/authenticated-user.type';
-import { TokenService } from './token.service';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject(USER_SERVICE_TOKEN)
     private readonly userService: UserService,
+    // @Inject(PASSWORD_SERVICE_TOKEN)
     private readonly passwordService: PasswordService,
+    @Inject(TOKEN_SERVICE_TOKEN)
     private readonly tokenService: TokenService,
-    private readonly jwtService: JwtService,
   ) {}
 
   async register(registerDto: RegisterDto, res: Response) {
@@ -64,8 +70,8 @@ export class AuthService {
     const { ...publicFields } = user;
     return {
       ...publicFields,
-      updateLastActivity: () => {
-        this.userService.updateLastActivity(user.id);
+      updateLastActivity: async () => {
+        await this.userService.updateLastActivity(user.id);
       },
     };
   }

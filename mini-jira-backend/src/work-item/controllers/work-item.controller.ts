@@ -1,36 +1,39 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Inject,
+  Param,
+  Patch,
+  Post,
   Req,
 } from '@nestjs/common';
-import { WorkItemService } from '../services/work-item.service';
+import { AuthenticatedRequest } from 'src/auth/types/request.type';
+import { Roles } from '../../auth/decorators/roles.decorator';
 import { ObjectValidationPipe } from '../../common/pipes/joi-validation.pipe';
-import {
-  createWorkItemSchema,
-  updateWorkItemSchema,
-} from '../validation/work-item.schema';
+import { UserRole } from '../../user/enums/user.enum';
 import {
   CreateWorkItemData,
   UpdateWorkItemData,
 } from '../interfaces/work-item.interface';
-import { Roles } from '../../auth/decorators/roles.decorator';
-import { UserRole } from '../../user/enums/user.enum';
-import { AuthenticatedRequest } from 'src/auth/types/request.type';
+import { WorkItemService } from '../services/work-item.service';
+import {
+  createWorkItemSchema,
+  updateWorkItemSchema,
+} from '../validation/work-item.schema';
 
-import { UserService } from 'src/user/services/user.service';
 import { ProjectService } from 'src/project/services/project.service';
 import { SprintService } from 'src/sprint/services/sprint.service';
+import { USER_SERVICE_TOKEN } from '../../common/constants/injection-tokens';
+import { IUserService as UserService } from '../../user/interfaces/user-service.interface';
 
 @Controller('work-items')
 export class WorkItemController {
   constructor(
     private readonly workItemService: WorkItemService,
     private projectService: ProjectService,
+    @Inject(USER_SERVICE_TOKEN)
     private userService: UserService,
     private sprintService: SprintService,
   ) {}
@@ -49,7 +52,7 @@ export class WorkItemController {
     workItem.project = project;
 
     // Set creator
-    const creator = await this.userService.findById(req.user.id);
+    const creator = await this.userService.findByIdAndErrorOut(req.user.id);
     workItem.creator = creator;
 
     return this.workItemService.update(workItem);
@@ -91,7 +94,7 @@ export class WorkItemController {
 
     // Update assignee if provided
     if (assigneeId) {
-      const assignee = await this.userService.findById(assigneeId);
+      const assignee = await this.userService.findByIdAndErrorOut(assigneeId);
       workItem.assignee = assignee;
     } else if (assigneeId === null || assigneeId === undefined) {
       // Remove assignee if explicitly set to null/undefined

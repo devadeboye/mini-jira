@@ -17,7 +17,7 @@ interface LoginCredentials {
 export default function LoginForm() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
-	const callbackUrl = searchParams.get('callbackUrl') || '/projects';
+	const callbackUrl = searchParams.get('callbackUrl') || '/your-work';
 	const [error, setError] = useState<Error | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [formData, setFormData] = useState<LoginCredentials>({

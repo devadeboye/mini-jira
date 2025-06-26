@@ -38,3 +38,5 @@ export class RefreshToken {
   @CreateDateColumn()
   createdAt: Date;
 }
+
+// TODO implement clean up to delete tokens 7 days after expiration

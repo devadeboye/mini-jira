@@ -1,13 +1,15 @@
 import {
   ConflictException,
+  Inject,
   Injectable,
   NotFoundException,
   PipeTransform,
 } from '@nestjs/common';
-import { ProjectService } from '../services/project.service';
-import { Project } from '../entities/project.entity';
+import { USER_SERVICE_TOKEN } from '../../common/constants/injection-tokens';
+import { IUserService as UserService } from '../../user/interfaces/user-service.interface';
 import { AddMemberDto } from '../dtos/project.dto';
-import { UserService } from 'src/user/services/user.service';
+import { Project } from '../entities/project.entity';
+import { ProjectService } from '../services/project.service';
 
 @Injectable()
 export class CreateProjectPipe implements PipeTransform {
@@ -24,7 +26,10 @@ export class CreateProjectPipe implements PipeTransform {
 
 @Injectable()
 export class AddMemberPipe implements PipeTransform {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    @Inject(USER_SERVICE_TOKEN)
+    private readonly userService: UserService,
+  ) {}
 
   async transform(addMemberDto: AddMemberDto) {
     const user = await this.userService.findById(addMemberDto.userId);

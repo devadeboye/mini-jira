@@ -9,6 +9,7 @@ import { EnvironmentEnum } from '../../config/enums/config.enum';
 import { User } from '../../user/entities/user.entity';
 import { RefreshToken } from '../entities/refresh-token.entity';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
+import { ITokenService } from '../interfaces/token-service.interface';
 import {
   RefreshTokenPayload,
   TokenPayload,
@@ -17,7 +18,7 @@ import {
 import type { AuthenticatedUser } from '../types/authenticated-user.type';
 
 @Injectable()
-export class TokenService {
+export class TokenService implements ITokenService {
   constructor(
     @InjectRepository(RefreshToken)
     private refreshTokenRepository: Repository<RefreshToken>,

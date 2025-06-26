@@ -1,0 +1,3 @@
+export const TOKEN_SERVICE_TOKEN = Symbol('TOKEN_SERVICE');
+export const USER_SERVICE_TOKEN = Symbol('USER_SERVICE');
+export const PASSWORD_SERVICE_TOKEN = Symbol('PASSWORD_SERVICE');

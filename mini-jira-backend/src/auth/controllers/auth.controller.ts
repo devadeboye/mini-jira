@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Inject,
   Logger,
   Post,
   Request,
@@ -11,8 +12,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { UserService } from 'src/user/services/user.service';
+import { USER_SERVICE_TOKEN } from '../../common/constants/injection-tokens';
 import { ObjectValidationPipe } from '../../common/pipes/joi-validation.pipe';
+import { IUserService as UserService } from '../../user/interfaces/user-service.interface';
 import { Public } from '../decorators/public.decorator';
 import { LoginDto } from '../dto/login.dto';
 import { RegisterDto } from '../dto/register.dto';
@@ -27,6 +29,7 @@ export class AuthController {
 
   constructor(
     private readonly authService: AuthService,
+    @Inject(USER_SERVICE_TOKEN)
     private readonly userService: UserService,
   ) {}
 

@@ -32,7 +32,10 @@ export default function JiraManagementServiceCard({ className }: { className?: s
 					>
 						<span>Try it now</span>
 					</Button>
-					<Button variant="text" className="text-current text-sm">
+					<Button
+						variant="text"
+						className="text-current text-sm py-0! px-2! h-8"
+					>
 						<span>Learn more</span>
 					</Button>
 				</div>

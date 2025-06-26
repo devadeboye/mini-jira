@@ -2,7 +2,7 @@ import React from "react";
 
 interface ButtonProps
 	extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "className"> {
-	variant?: "primary" | "secondary" | "outline";
+	variant?: "primary" | "secondary" | "outline" | "text";
 	isLoading?: boolean;
 	className?: string;
 	icon?: React.ReactNode;
@@ -37,6 +37,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 				"bg-gray-600 text-white hover:bg-gray-700 disabled:bg-gray-300 focus:ring-gray-500",
 			outline:
 				"border-2 border-blue-600 text-blue-600 hover:bg-blue-50 disabled:border-blue-300 disabled:text-blue-300 focus:ring-blue-500",
+			text: "text-blue-600 hover:text-blue-700 disabled:text-blue-300 focus:ring-blue-500",
 		};
 
 		const renderContent = () => {

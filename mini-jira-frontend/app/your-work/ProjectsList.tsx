@@ -3,7 +3,6 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useProjects } from "@/lib/hooks/useProjects";
 import ProjectCard from "./ProjectCard";
-import NewProjectCard from "./NewProjectCad";
 
 // Separate loading component to ensure consistent rendering
 export function LoadingSpinner() {
@@ -14,7 +13,7 @@ export function LoadingSpinner() {
 	);
 }
 
-export default function ProjectsList() {
+export default function ProjectsList({ className }: { className?: string }) {
 	const { data: session, status } = useSession();
 	const router = useRouter();
 	const { data: projects, isLoading, error } = useProjects();
@@ -43,22 +42,17 @@ export default function ProjectsList() {
 	}
 
 	return (
-		<div className="max-w-6xl mx-auto px-6 pt-6 pb-12">
-			<div className="border-b border-gray-200">
-				<h1 className="lg:text-2xl font-semibold text-gray-900 mb-2">
-					For you
-				</h1>
+		<div className={`px-6 ${className}`}>
+			<div className="border-b border-gray-200 lg:py-6">
+				<h1 className="lg:text-2xl font-semibold text-gray-900">For you</h1>
 			</div>
-			<div className="lg:mb-8 lg:pt-4 font-semibold">Recent projects</div>
+			<div className="lg:py-4 font-semibold">Recent projects</div>
 
 			{/* Projects Grid */}
-			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+			<div className="grid grid-cols-1 gap-6 h-full md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
 				{projects.map((project) => (
 					<ProjectCard key={project.id} project={project} />
 				))}
-
-				{/* Create New Project Card */}
-				<NewProjectCard />
 			</div>
 		</div>
 	);

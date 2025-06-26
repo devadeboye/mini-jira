@@ -26,14 +26,15 @@ export const API_CONFIG = {
 			REGISTER: "/auth/register",
 			LOGOUT: "/auth/logout",
 			REFRESH: "/auth/refresh",
+			ME: "/auth/me",
 		},
 		// Project endpoints
 		PROJECTS: {
-			BASE: "/projects",
+			BASE: "/projects/all",
 			CREATE: "/projects/create",
-			BY_ID: (id: string) => `/projects/${id}`,
-			UPDATE: (id: string) => `/projects/${id}`,
-			DELETE: (id: string) => `/projects/${id}`,
+			BY_ID: (id: string) => `/projects/get/${id}`,
+			UPDATE: (id: string) => `/projects/update/${id}`,
+			DELETE: (id: string) => `/projects/delete/${id}`,
 		},
 		// Sprint endpoints
 		SPRINTS: {
@@ -41,19 +42,21 @@ export const API_CONFIG = {
 			CREATE: "/sprints/create",
 			ALL: "/sprints/all",
 			BY_PROJECT: (projectId: string) => `/sprints/project/${projectId}`,
-			BY_ID: (id: string) => `/sprints/${id}`,
-			UPDATE: (id: string) => `/sprints/${id}`,
-			DELETE: (id: string) => `/sprints/${id}`,
+			BY_ID: (id: string) => `/sprints/find-by-id/${id}`,
+			UPDATE: (id: string) => `/sprints/update/${id}`,
+			DELETE: (id: string) => `/sprints/delete/${id}`,
 		},
 		// Work item endpoints
 		WORK_ITEMS: {
-			BASE: "/work-items",
+			BASE: "/work-items/all",
+			BACKLOG: "/work-items/backlogs",
 			CREATE: "/work-items/create",
-			BY_ID: (id: string) => `/work-items/${id}`,
-			BY_PROJECT: (projectId: string) => `/work-items/project/${projectId}`,
+			BY_ID: (id: string) => `/work-items/find-by-id/${id}`,
+			BY_PROJECT: (projectId: string) =>
+				`/work-items/find-by-project/${projectId}`,
 			BY_SPRINT: (sprintId: string) => `/work-items/find-by-sprint/${sprintId}`,
-			UPDATE: (id: string) => `/work-items/${id}`,
-			DELETE: (id: string) => `/work-items/${id}`,
+			UPDATE: (id: string) => `/work-items/update/${id}`,
+			DELETE: (id: string) => `/work-items/delete/${id}`,
 		},
 	},
 	// Request configuration
@@ -64,22 +67,6 @@ export const API_CONFIG = {
 // Helper function to build full URL
 export const buildApiUrl = (endpoint: string): string => {
 	return `${API_CONFIG.BASE_URL}${endpoint}`;
-};
-
-// Helper function to get headers
-export const getApiHeaders = (includeAuth = true): HeadersInit => {
-	const headers: HeadersInit = {
-		"Content-Type": "application/json",
-	};
-
-	if (includeAuth && typeof window !== "undefined") {
-		const token = localStorage.getItem("token");
-		if (token) {
-			headers.Authorization = `Bearer ${token}`;
-		}
-	}
-
-	return headers;
 };
 
 export default API_CONFIG;

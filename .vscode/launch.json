@@ -1,0 +1,36 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Next.js: Debug Frontend",
+			"type": "chrome",
+			"request": "launch",
+			"url": "http://localhost:3000",
+			"webRoot": "${workspaceFolder}/mini-jira-frontend",
+			"sourceMapPathOverrides": {
+				"webpack://_N_E/*": "${webRoot}/*"
+			},
+			"skipFiles": [
+				"<node_internals>/**",
+				"${workspaceFolder}/mini-jira-frontend/node_modules/**"
+			]
+		},
+		{
+			"name": "Next.js: Debug Full Stack",
+			"type": "node-terminal",
+			"request": "launch",
+			"command": "cd mini-jira-frontend && npm run dev",
+			"serverReadyAction": {
+				"pattern": "started server on .+, url: (https?://.+)",
+				"uriFormat": "%s",
+				"action": "debugWithChrome"
+			}
+		}
+	],
+	"compounds": [
+		{
+			"name": "Debug Full Stack",
+			"configurations": ["Next.js: Debug Frontend"]
+		}
+	]
+}

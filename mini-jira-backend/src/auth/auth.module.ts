@@ -1,15 +1,16 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { TOKEN_SERVICE_TOKEN } from '../common/constants/injection-tokens';
+import { EnvironmentEnum } from '../config/enums/config.enum';
+import { UserModule } from '../user/user.module';
+import { AuthController } from './controllers/auth.controller';
+import { RefreshToken } from './entities/refresh-token.entity';
 import { AuthService } from './services/auth.service';
 import { TokenService } from './services/token.service';
-import { AuthController } from './controllers/auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { UserModule } from '../user/user.module';
-import { RefreshToken } from './entities/refresh-token.entity';
-import { EnvironmentEnum } from '../config/enums/config.enum';
 
 @Module({
   imports: [
@@ -28,7 +29,14 @@ import { EnvironmentEnum } from '../config/enums/config.enum';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, TokenService, JwtStrategy],
-  exports: [AuthService],
+  providers: [
+    AuthService,
+    {
+      provide: TOKEN_SERVICE_TOKEN,
+      useClass: TokenService,
+    },
+    JwtStrategy,
+  ],
+  exports: [AuthService, TOKEN_SERVICE_TOKEN],
 })
 export class AuthModule {}

@@ -1,17 +1,25 @@
 "use client";
 
-import { useState, useId } from "react";
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
-import { useLogin } from "@/lib/hooks/useAuth";
-import type { LoginCredentials } from "@/lib/api/auth.api";
-import ErrorAlert from "./ErrorAlert";
+import ErrorAlert from "@/components/auth/ErrorAlert";
 import SocialLoginButtons from "./SocialLoginButtons";
+import { signIn } from 'next-auth/react';
+
+interface LoginCredentials {
+	username: string;
+	password: string;
+}
 
 export default function LoginForm() {
-	const loginMutation = useLogin();
-	const rememberMeId = useId();
+	const router = useRouter();
+	const searchParams = useSearchParams();
+	const callbackUrl = searchParams.get('callbackUrl') || '/your-work';
+	const [error, setError] = useState<Error | null>(null);
+	const [loading, setLoading] = useState(false);
 	const [formData, setFormData] = useState<LoginCredentials>({
 		username: "",
 		password: "",
@@ -20,7 +28,29 @@ export default function LoginForm() {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		loginMutation.mutate(formData);
+		setError(null);
+		setLoading(true);
+
+		try {
+			const result = await signIn('credentials', {
+				username: formData.username,
+				password: formData.password,
+				redirect: false,
+			});
+
+			if (result?.error) {
+				setError(new Error('Invalid username or password'));
+				return;
+			}
+
+			// Successful login - redirect to callback URL or projects page
+			router.push(callbackUrl);
+			router.refresh();
+		} catch (err) {
+			setError(new Error('An error occurred during login'));
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,7 +66,7 @@ export default function LoginForm() {
 				noValidate
 				aria-label="Sign in to your account"
 			>
-				<ErrorAlert error={loginMutation.error} defaultMessage="Login failed" />
+				<ErrorAlert error={error} defaultMessage="Login failed" />
 
 				<fieldset className="space-y-4">
 					<legend className="sr-only">Account credentials</legend>
@@ -67,7 +97,7 @@ export default function LoginForm() {
 				<div className="flex items-center justify-between">
 					<div className="flex items-center">
 						<input
-							id={rememberMeId}
+							id="remember-me"
 							type="checkbox"
 							checked={rememberMe}
 							onChange={(e) => setRememberMe(e.target.checked)}
@@ -75,7 +105,7 @@ export default function LoginForm() {
 							aria-describedby="remember-me-description"
 						/>
 						<label
-							htmlFor={rememberMeId}
+							htmlFor="remember-me"
 							className="ml-2 text-sm text-gray-600 cursor-pointer"
 						>
 							Remember me
@@ -97,15 +127,13 @@ export default function LoginForm() {
 				<Button
 					type="submit"
 					className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl"
-					isLoading={loginMutation.isPending}
-					disabled={loginMutation.isPending}
+					isLoading={loading}
+					disabled={loading}
 					ariaLabel={
-						loginMutation.isPending
-							? "Signing in, please wait"
-							: "Sign in to your account"
+						loading ? "Signing in, please wait" : "Sign in to your account"
 					}
 				>
-					{loginMutation.isPending ? "Signing in..." : "Sign in"}
+					{loading ? "Signing in..." : "Sign in"}
 				</Button>
 			</form>
 

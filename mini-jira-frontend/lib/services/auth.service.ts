@@ -1,9 +1,6 @@
-import axios, { AxiosError } from "axios";
-import Cookies from "js-cookie";
-import { API_CONFIG, buildApiUrl } from "@/lib/config/api.config";
-
-const TOKEN_COOKIE = "token";
-const USER_STORAGE = "user";
+import { AxiosError } from "axios";
+import { serverApi } from "@/lib/api/axios";
+import { API_CONFIG } from "@/lib/config/api.config";
 
 export interface LoginCredentials {
 	username: string;
@@ -19,23 +16,34 @@ export interface RegisterCredentials {
 
 export interface AuthResponse {
 	accessToken: string;
+	accessTokenExpiresIn: Date;
+	refreshToken: string;
 	user: {
 		id: string;
 		username: string;
 		email: string;
+		role: string;
 		fullName: string;
+		hasCreatedProject: boolean;
 	};
+}
+
+export interface RefreshTokenResponse {
+	accessToken: string;
+	refreshToken: string;
+	expiresIn: number;
 }
 
 class AuthService {
 	async login(credentials: LoginCredentials): Promise<AuthResponse> {
+		console.log("🔄 Sending login request to backend");
+		console.dir(credentials, {depth: null});
 		try {
-			const response = await axios.post(
-				buildApiUrl(API_CONFIG.ENDPOINTS.AUTH.LOGIN),
+			const response = await serverApi.post(
+				API_CONFIG.ENDPOINTS.AUTH.LOGIN,
 				credentials
 			);
-			this.setAuthData(response.data);
-			return response.data;
+			return response.data as AuthResponse;
 		} catch (error) {
 			if (error instanceof AxiosError) {
 				throw new Error(error.response?.data?.message || "Login failed");
@@ -46,11 +54,10 @@ class AuthService {
 
 	async register(credentials: RegisterCredentials): Promise<AuthResponse> {
 		try {
-			const response = await axios.post(
-				buildApiUrl(API_CONFIG.ENDPOINTS.AUTH.REGISTER),
+			const response = await serverApi.post(
+				API_CONFIG.ENDPOINTS.AUTH.REGISTER,
 				credentials
 			);
-			this.setAuthData(response.data);
 			return response.data;
 		} catch (error) {
 			if (error instanceof AxiosError) {
@@ -60,47 +67,30 @@ class AuthService {
 		}
 	}
 
-	async refreshToken(): Promise<AuthResponse> {
+	async refreshToken(refreshToken: string): Promise<RefreshTokenResponse> {
 		try {
-			const response = await axios.post(
-				buildApiUrl(API_CONFIG.ENDPOINTS.AUTH.REFRESH)
+			console.log("🔄 Sending refresh token request to backend");
+			
+			const response = await serverApi.post(
+				API_CONFIG.ENDPOINTS.AUTH.REFRESH,
+				{ refreshToken },
 			);
-			this.setAuthData(response.data);
+			
+			console.log("✅ Backend refresh token response received");
+			console.dir(response.data, {depth: null});
+			
 			return response.data;
 		} catch (error) {
+			console.error("❌ Refresh token request failed:", error);
 			if (error instanceof AxiosError) {
-				throw new Error(
-					error.response?.data?.message || "Token refresh failed"
-				);
+				console.error("❌ Error details:", {
+					status: error.response?.status,
+					message: error.response?.data?.message
+				});
+				throw new Error(error.response?.data?.message || "Token refresh failed");
 			}
 			throw error;
 		}
-	}
-
-	private setAuthData(data: AuthResponse) {
-		Cookies.set(TOKEN_COOKIE, data.accessToken, {
-			secure: true,
-			sameSite: "strict",
-		});
-		localStorage.setItem(USER_STORAGE, JSON.stringify(data.user));
-	}
-
-	clearAuthData() {
-		Cookies.remove(TOKEN_COOKIE);
-		localStorage.removeItem(USER_STORAGE);
-	}
-
-	getToken(): string | undefined {
-		return Cookies.get(TOKEN_COOKIE);
-	}
-
-	getUser() {
-		const userStr = localStorage.getItem(USER_STORAGE);
-		return userStr ? JSON.parse(userStr) : null;
-	}
-
-	isAuthenticated(): boolean {
-		return !!this.getToken();
 	}
 }
 

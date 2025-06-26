@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { type WorkItem, useWorkItemStore } from "@/lib/stores/workItemStore";
 import { useModalStore } from "@/lib/stores/modalStore";
+import Image from "next/image";
 
 interface WorkItemCardProps {
 	workItem: WorkItem;
@@ -122,19 +123,10 @@ const WorkItemCard = ({ workItem }: WorkItemCardProps) => {
 			.slice(0, 2);
 	};
 
-	const priorityColors = {
-		urgent: "border-l-red-500",
-		high: "border-l-orange-500",
-		medium: "border-l-yellow-500",
-		low: "border-l-green-500",
-	};
-
 	return (
 		<div
 			ref={cardRef}
-			className={`flex items-center gap-3 px-3 py-2 bg-white border border-gray-200 border-l-4 ${
-				priorityColors[workItem.priority] || "border-l-gray-300"
-			} rounded-md hover:bg-[#E4EFFE] cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition-colors`}
+			className={`flex items-center gap-3 px-3 py-2 bg-white border border-gray-200 focus:bg-[#E4EFFE] hover:bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition-colors`}
 			onClick={handleCardClick}
 			onKeyDown={handleCardKeyDown}
 			tabIndex={0}
@@ -146,14 +138,21 @@ const WorkItemCard = ({ workItem }: WorkItemCardProps) => {
 				type="checkbox"
 				checked={isChecked}
 				onChange={(e) => setIsChecked(e.target.checked)}
-				className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+				className={`${isChecked ? "opacity-100" : "opacity-0"} hover:opacity-100 w-3.5 h-3.5 text-blue-600 hover:border-gray-300 outline-none rounded-xs focus:ring-blue-500 transition-opacity`}
 				aria-label={`Select work item ${workItem.id}`}
 				onClick={(e) => e.stopPropagation()}
 			/>
+			<Image
+				src="/assets/svg/10318.svg"
+				alt=""
+				height={20}
+				width={20}
+				className="w-4 h-4 rounded-sm"
+			/>
 
 			{/* Work Item ID */}
-			<span className="text-sm font-medium text-blue-600 min-w-fit">
-				{workItem.id}
+			<span className="text-sm min-w-fit">
+				{workItem.id.toLocaleUpperCase().slice(0, 6)}
 			</span>
 
 			{/* Work Item Title */}
@@ -169,7 +168,7 @@ const WorkItemCard = ({ workItem }: WorkItemCardProps) => {
 						setIsStatusDropdownOpen(!isStatusDropdownOpen);
 					}}
 					onKeyDown={handleDropdownKeyDown}
-					className={`px-3 py-1 text-xs font-medium rounded-md border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center gap-1 transition-colors ${
+					className={`md:!min-h-5 md:!h-5 md:!max-h-5 px-1 py-0 text-xs font-bold rounded-xs border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center gap-1 transition-colors ${
 						currentStatus?.color || "bg-gray-100 text-gray-800"
 					}`}
 					aria-label={`Change status from ${currentStatus?.label}. Current status: ${currentStatus?.label}`}

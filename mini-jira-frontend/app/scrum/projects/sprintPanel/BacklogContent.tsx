@@ -87,7 +87,7 @@ const BacklogContent = ({ projectId }: BacklogContentProps) => {
 	// Render backlog items
 	return (
 		<div className="px-2 w-full h-full bg-gray-50">
-			<div className="flex flex-col gap-0 py-4">
+			<div className="flex flex-col gap-0 py-0">
 				{backlogItems.map((item) => (
 					<WorkItemCard key={item.id} workItem={item} />
 				))}

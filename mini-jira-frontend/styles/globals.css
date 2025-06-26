@@ -81,16 +81,7 @@ body {
   outline-offset: 2px;
 }
 
-/* Ensure interactive elements have minimum touch target size */
-button, 
-input[type="button"], 
-input[type="submit"], 
-input[type="reset"],
-[role="button"],
-[role="link"] {
-  min-height: 44px;
-  min-width: 44px;
-}
+
 
 /* Improve text readability */
 p, li, td, th {

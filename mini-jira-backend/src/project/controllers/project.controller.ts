@@ -1,40 +1,43 @@
 import {
-  Controller,
-  Get,
-  Post,
-  Delete,
-  Param,
   Body,
-  UseGuards,
-  Request,
-  UsePipes,
-  NotFoundException,
-  ForbiddenException,
   ConflictException,
+  Controller,
+  Delete,
+  ForbiddenException,
+  Get,
+  Inject,
+  NotFoundException,
+  Param,
+  Post,
+  Request,
+  UseGuards,
+  UsePipes,
 } from '@nestjs/common';
+import { ObjectValidationPipe } from 'src/common/pipes/joi-validation.pipe';
+import { Roles } from '../../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
-import { Roles } from '../../auth/decorators/roles.decorator';
-import { UserRole } from '../../user/enums/user.enum';
-import { Project } from '../entities/project.entity';
-import { User } from '../../user/entities/user.entity';
-import { ProjectService } from '../services/project.service';
-import {
-  CreateProjectDto,
-  AddMemberDto,
-  createProjectSchema,
-  addMemberSchema,
-} from '../dtos/project.dto';
 import { AuthenticatedRequest } from '../../auth/types/request.type';
-import { ObjectValidationPipe } from 'src/common/pipes/joi-validation.pipe';
-import { UserService } from 'src/user/services/user.service';
+import { USER_SERVICE_TOKEN } from '../../common/constants/injection-tokens';
+import { User } from '../../user/entities/user.entity';
+import { UserRole } from '../../user/enums/user.enum';
+import { IUserService as UserService } from '../../user/interfaces/user-service.interface';
+import {
+  AddMemberDto,
+  addMemberSchema,
+  CreateProjectDto,
+  createProjectSchema,
+} from '../dtos/project.dto';
+import { Project } from '../entities/project.entity';
 import { AddMemberPipe, CreateProjectPipe } from '../pipes/project.pipe';
+import { ProjectService } from '../services/project.service';
 
 @Controller('projects')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ProjectController {
   constructor(
     private readonly projectService: ProjectService,
+    @Inject(USER_SERVICE_TOKEN)
     private readonly userService: UserService,
   ) {}
 
@@ -45,7 +48,7 @@ export class ProjectController {
     @Request() req: AuthenticatedRequest,
     @Body() createProjectDto: CreateProjectDto,
   ): Promise<Project> {
-    const owner = await this.userService.findById(req.user.id);
+    const owner = await this.userService.findByIdAndErrorOut(req.user.id);
     return this.projectService.create({
       ...createProjectDto,
       owner,
@@ -100,7 +103,9 @@ export class ProjectController {
       throw new ForbiddenException('Only project owner can add members');
     }
 
-    const user = await this.userService.findById(addMemberDto.userId);
+    const user = await this.userService.findByIdAndErrorOut(
+      addMemberDto.userId,
+    );
     const isAlreadyMember = project.members.some(
       (member) => member.id === addMemberDto.userId,
     );

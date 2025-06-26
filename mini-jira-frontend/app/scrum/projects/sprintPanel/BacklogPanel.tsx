@@ -21,7 +21,7 @@ const BacklogPanel = () => {
 	};
 
 	return (
-		<div className="border border-gray-300 rounded-lg bg-gray-50">
+		<div className="border border-gray-300 rounded-lg bg-[#F6F6F6]">
 			<BacklogHeader
 				isCollapsed={isCollapsed}
 				onToggleCollapse={toggleCollapse}

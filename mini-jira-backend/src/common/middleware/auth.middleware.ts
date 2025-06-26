@@ -1,22 +1,25 @@
 import {
+  Inject,
   Injectable,
   NestMiddleware,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
-import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { UserService } from '../../user/services/user.service';
-import { UserStatus } from '../../user/enums/user.enum';
-import { EnvironmentEnum } from '../../config/enums/config.enum';
-import { AuthenticatedRequest } from 'src/auth/types/request.type';
+import { JwtService } from '@nestjs/jwt';
+import { NextFunction, Request, Response } from 'express';
 import { JwtPayload } from '../../auth/interfaces/jwt-payload.interface';
+import { AuthenticatedRequest } from '../../auth/types/request.type';
+import { EnvironmentEnum } from '../../config/enums/config.enum';
+import { UserStatus } from '../../user/enums/user.enum';
+import { IUserService as UserService } from '../../user/interfaces/user-service.interface';
+import { USER_SERVICE_TOKEN } from '../constants/injection-tokens';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    @Inject(USER_SERVICE_TOKEN)
     private readonly userService: UserService,
   ) {}
 

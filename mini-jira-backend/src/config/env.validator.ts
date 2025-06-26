@@ -14,4 +14,7 @@ export const environmentValidator = Joi.object().keys({
   [EnvironmentEnum.TYPEORM_SSL]: Joi.string().trim().required(),
 
   [EnvironmentEnum.JWT_SECRET]: Joi.string().trim().required(),
+  [EnvironmentEnum.REFRESH_TOKEN_GRACE_PERIOD]: Joi.number().required(),
+  [EnvironmentEnum.REFRESH_TOKEN_MAX_USAGE]: Joi.number().required(),
+  [EnvironmentEnum.JWT_EXPIRES_IN]: Joi.number().required(),
 });

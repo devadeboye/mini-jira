@@ -1,4 +1,4 @@
-import { SvgProp } from "@/types/icons";
+import { SvgProp } from "@/types/icon";
 
 export default function AppsIcon({ className, fill }: SvgProp) { 
   return (

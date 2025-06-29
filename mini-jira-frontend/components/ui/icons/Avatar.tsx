@@ -1,9 +1,10 @@
-import { SvgProp } from "@/types/icons";
+import { SvgProp } from "@/types/icon";
 
 const Avatar = ({ className, fill }: SvgProp) => {
 	return (
 		<svg
 			height="100%"
+			width="100%"
 			fill={fill}
 			viewBox="-4 -4 24 24"
 			role="presentation"

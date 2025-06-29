@@ -1,4 +1,4 @@
-import { SvgProp } from "@/types/icons";
+import { SvgProp } from "@/types/icon";
 
 const ShareIcon = ({ className, fill }: SvgProp) => {
 	return (

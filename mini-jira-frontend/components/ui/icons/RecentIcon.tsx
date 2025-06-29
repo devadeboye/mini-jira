@@ -1,4 +1,4 @@
-import { SvgProp } from "@/types/icons";
+import { SvgProp } from "@/types/icon";
 
 const RecentIcon = ({ className = "", fill }: SvgProp) => {
 	return (

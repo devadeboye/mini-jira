@@ -7,6 +7,9 @@ import AddIcon from "@/components/ui/icons/AddIcon";
 import SidebarIcon from "@/components/ui/icons/SidebarIcon";
 import IconButton from "@/components/ui/IconButton";
 import AppsIcon from "@/components/ui/icons/AppsIcon";
+import NotificationIcon from "@/components/ui/icons/NotificationIcon";
+import HelpIcon from "@/components/ui/icons/Help";
+import SettingsIcon from "@/components/ui/icons/SettingsIcon";
 
 export default function LargeScreenNav({ className }: NavProps) {
 	return (
@@ -55,6 +58,18 @@ export default function LargeScreenNav({ className }: NavProps) {
 			</div>
 
 			<div className="lg:flex lg:items-center lg:w-2/6 lg:justify-end lg:gap-3">
+				<IconButton ariaLabel="Toggle sidebar" className="" size="sm">
+					<NotificationIcon className="w-4" fill="currentColor" />
+				</IconButton>
+
+				<IconButton ariaLabel="Toggle sidebar" className="" size="sm">
+					<HelpIcon className="w-4" fill="currentColor" />
+				</IconButton>
+
+				<IconButton ariaLabel="Toggle sidebar" className="" size="sm">
+					<SettingsIcon className="w-4" fill="currentColor" />
+				</IconButton>
+
 				<MoreMenu className="hidden md:flex" />
 			</div>
 		</div>

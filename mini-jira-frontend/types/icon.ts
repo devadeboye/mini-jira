@@ -1,13 +1,6 @@
-export interface IconProps {
+export interface SvgProp {
 	className?: string;
+	fill?: string;
 	width?: number;
 	height?: number;
-	fill?: string;
 }
-
-export type IconType = React.ComponentType<{
-	width?: number;
-	height?: number;
-	className?: string;
-	fill?: string;
-}>;

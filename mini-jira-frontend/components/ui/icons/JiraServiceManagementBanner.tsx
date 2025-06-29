@@ -1,4 +1,4 @@
-import { SvgProp } from "@/types/icons";
+import { SvgProp } from "@/types/icon";
 
 export default function JiraServiceManagementBanner({ className, fill }: SvgProp) {
 	return (

@@ -1,8 +1,8 @@
-import { SvgProp } from "@/types/icons";
+import { SvgProp } from "@/types/icon";
 
 const NotificationIcon = ({ className, fill }: SvgProp) => {
 	return (
-		<svg fill={fill} viewBox="0 0 16 16" role="presentation">
+		<svg fill={fill} viewBox="0 0 16 16" role="presentation" height="100%" width="100%" className={className}>
 			<path
 				fill={fill}
 				fillRule="evenodd"

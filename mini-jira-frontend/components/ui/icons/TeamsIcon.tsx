@@ -1,4 +1,4 @@
-import { SvgProp } from "@/types/icons";
+import { SvgProp } from "@/types/icon";
 
 const TeamsIcon = ({ className, fill }: SvgProp) => {
 	return (

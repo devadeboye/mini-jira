@@ -1,4 +1,4 @@
-import { SvgProp } from "@/types/icons";
+import { SvgProp } from "@/types/icon";
 
 const JiraLogo = (props: SvgProp) => (
 	<svg height="100%" viewBox="0 0 24 24" {...props}>

@@ -1,4 +1,4 @@
-import { SvgProp } from "@/types/icons";
+import { SvgProp } from "@/types/icon";
 
 export default function HelpIcon({ className, fill }: SvgProp) {
 	return (
@@ -7,6 +7,8 @@ export default function HelpIcon({ className, fill }: SvgProp) {
 			viewBox="0 0 16 16"
 			role="presentation"
 			className={className}
+			height="100%"
+			width="100%"
 		>
 			<path
 				fill={fill}

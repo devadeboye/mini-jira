@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function JiraManagementServiceCard({ className }: { className?: string }) {
 	return (
-		<div className={cn("bg-gray-100 h-full p-4", className)}>
+		<div className={cn("bg-gray-100 h-full p-4 w-full", className)}>
 			<div className="flex flex-col gap-4 shadow-sm rounded-xs bg-white">
 				<Image
 					src="/assets/svg/jsm-crossflow-light.ada078f1.svg"

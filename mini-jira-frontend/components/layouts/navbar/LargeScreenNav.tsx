@@ -4,13 +4,29 @@ import JiraLogo from "@/components/ui/icons/JiraLogo";
 import SearchIcon from "@/components/ui/icons/SearchIcon";
 import Button from "@/components/ui/Button";
 import AddIcon from "@/components/ui/icons/AddIcon";
+import SidebarIcon from "@/components/ui/icons/SidebarIcon";
+import IconButton from "@/components/ui/IconButton";
+import AppsIcon from "@/components/ui/icons/AppsIcon";
+import NotificationIcon from "@/components/ui/icons/NotificationIcon";
+import HelpIcon from "@/components/ui/icons/Help";
+import SettingsIcon from "@/components/ui/icons/SettingsIcon";
 
 export default function LargeScreenNav({ className }: NavProps) {
 	return (
 		<div className={`${className} w-full flex items-center gap-3`}>
-			<div className="flex items-center w-2/6">
-				<JiraLogo className="p-1 w-8" />
-				<span className="font-semibold">Jira</span>
+			<div className="flex items-center w-2/6 gap-2">
+				<IconButton ariaLabel="Toggle sidebar" className="" size="sm">
+					<SidebarIcon className="w-4" fill="currentColor" />
+				</IconButton>
+
+				<IconButton ariaLabel="Toggle sidebar" className="" size="sm">
+					<AppsIcon className="w-4" fill="currentColor" />
+				</IconButton>
+
+				<div className="flex items-center gap-1">
+					<JiraLogo className="w-6" />
+					<span className="font-semibold">Jira</span>
+				</div>
 			</div>
 
 			<div className="lg:flex lg:w-full lg:items-center lg:justify-center lg:gap-2">
@@ -42,6 +58,18 @@ export default function LargeScreenNav({ className }: NavProps) {
 			</div>
 
 			<div className="lg:flex lg:items-center lg:w-2/6 lg:justify-end lg:gap-3">
+				<IconButton ariaLabel="Toggle sidebar" className="" size="sm">
+					<NotificationIcon className="w-4" fill="currentColor" />
+				</IconButton>
+
+				<IconButton ariaLabel="Toggle sidebar" className="" size="sm">
+					<HelpIcon className="w-4" fill="currentColor" />
+				</IconButton>
+
+				<IconButton ariaLabel="Toggle sidebar" className="" size="sm">
+					<SettingsIcon className="w-4" fill="currentColor" />
+				</IconButton>
+
 				<MoreMenu className="hidden md:flex" />
 			</div>
 		</div>

@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 		"task tracking",
 		"team collaboration",
 	],
-	authors: [{ name: "Mini Jira Team" }],
+	authors: [{ name: "Devadeboye" }],
 	creator: "Mini Jira",
 	publisher: "Mini Jira",
 	robots: {
@@ -71,7 +71,7 @@ export default function RootLayout({
 					crossOrigin="anonymous"
 				/>
 			</head>
-			<body className={`${inter.className} antialiased h-full`}>
+			<body className={`${inter.className} antialiased h-full w-svw`}>
 				{/* Skip to main content for screen readers */}
 				<a
 					href="#main-content"

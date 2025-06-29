@@ -12,7 +12,7 @@ export default function Home() {
 		if (status === "loading") return; // Still loading
 		
 		if (session) {
-			router.push("/projects");
+			router.push("/your-work");
 		} else {
 			router.push("/auth/login");
 		}

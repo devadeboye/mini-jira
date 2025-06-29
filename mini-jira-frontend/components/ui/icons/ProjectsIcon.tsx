@@ -1,4 +1,4 @@
-import { SvgProp } from "@/types/icons";
+import { SvgProp } from "@/types/icon";
 
 const ProjectsIcon = ({ className = "", fill }: SvgProp) => {
 	return (

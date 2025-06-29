@@ -20,7 +20,6 @@ export const authCallbacks = {
 
 		// Return previous token if the access token has not expired yet
 		if (Date.now() < (extendedToken.accessTokenExpires as number)) {
-			console.log("🔓 NextAuth: Access token still valid");
 			return extendedToken;
 		}
 

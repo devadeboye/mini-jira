@@ -47,7 +47,7 @@ export default function ProjectsList({ className }: { className?: string }) {
 			<div className="border-b border-gray-200 lg:py-6">
 				<h1 className="lg:text-2xl font-semibold text-gray-900">For you</h1>
 			</div>
-			<div className="lg:py-4 flex flex-row justify-between items-center">
+			<div className="flex flex-row justify-between items-center lg:py-4">
 				<div className="font-semibold">Recent projects</div>
 				<Link href="/projects">
 					<div className="text-sm text-primary">View all projects</div>
@@ -55,7 +55,7 @@ export default function ProjectsList({ className }: { className?: string }) {
 			</div>
 
 			{/* Projects Grid */}
-			<div className="grid grid-cols-1 gap-6 h-full md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+			<div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-4 lg:grid-cols-3 lg:gap-6 lg:h-full">
 				{projects.map((project) => (
 					<ProjectCard key={project.id} project={project} />
 				))}

@@ -7,7 +7,7 @@ import SideNavProjectsDropdown from "./SideNavProjectsDropdown";
 import Avatar from "@/components/ui/icons/Avatar";
 import RecentIcon from "@/components/ui/icons/RecentIcon";
 import StarIcon from "@/components/ui/icons/StarIcon";
-import AppsIcon from "@/components/ui/icons/AppsIcon";
+import AppsCreateIcon from "@/components/ui/icons/AppsCreateIcon";
 import PlanIcon from "@/components/ui/icons/PlanIcon";
 import TeamsIcon from "@/components/ui/icons/TeamsIcon";
 import FeedbackIcon from "@/components/ui/icons/FeedbackIcon";
@@ -52,7 +52,7 @@ const SideNav = () => {
 
 					<SideNavNavItem
 						href="/apps"
-						icon={AppsIcon}
+						icon={AppsCreateIcon}
 						active={pathname === "/apps"}
 					>
 						Apps

@@ -8,6 +8,7 @@ interface ConditionalLayoutProps {
 	children: React.ReactNode;
 }
 
+/** ConditionalLayout is a layout component that renders the navbar and sidenav if the user is not on an authentication page. */
 export default function ConditionalLayout({
 	children,
 }: ConditionalLayoutProps) {

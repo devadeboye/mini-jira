@@ -5,6 +5,7 @@ export default function JiraServiceManagementBanner({ className, fill }: SvgProp
 		<svg
 			fill="none"
 			height="24"
+			width="100%"
 			viewBox="0 0 362 32"
 			focusable="false"
 			aria-hidden="true"

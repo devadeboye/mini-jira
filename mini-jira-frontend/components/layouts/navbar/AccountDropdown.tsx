@@ -1,16 +1,17 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
-import MoreIcon from "@/components/ui/icons/MoreIcon";
 import LogoutIcon from "@/components/ui/icons/LogoutIcon";
 import SettingsIcon from "@/components/ui/icons/SettingsIcon";
 import HelpIcon from "@/components/ui/icons/Help";
 import UserIcon from "@/components/ui/icons/UserIcon";
 import { signOut, useSession } from "next-auth/react";
 import Avatar from "@/components/ui/icons/Avatar";
+import AccountDropdownMenuItem from "./AccountDropdownMenuItem";
+import AccountDropdownUserInfo from "./AccountDropdownUserInfo";
+import IconButton from "@/components/ui/IconButton";
 
-export default function MoreMenu({ className }: { className?: string }) {
+export default function AccountDropdown({ className }: { className?: string }) {
 	const [isOpen, setIsOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const { data: session } = useSession();
@@ -45,66 +46,53 @@ export default function MoreMenu({ className }: { className?: string }) {
 
 	return (
 		<div className={`relative ${className}`} ref={dropdownRef}>
-			<button
-				onClick={() => setIsOpen(!isOpen)}
-				className="flex items-center justify-center w-8 h-8 text-gray-600 hover:bg-gray-100 rounded-md transition-colors duration-200"
-				aria-label="More options"
+			<IconButton
+				ariaLabel="Account dropdown"
 				aria-expanded={isOpen}
 				aria-haspopup="true"
+				className=""
+				size="sm"
+				blurOnClick={true}
+				onClick={() => setIsOpen(!isOpen)}
 			>
 				<Avatar className="w-6 h-6" />
-			</button>
+			</IconButton>
 
 			{isOpen && (
 				<div className="absolute right-0 top-full mt-1 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
 					{/* User Info */}
 					{session?.user && (
-						<div className="px-4 py-3 border-b border-gray-100">
-							<div className="flex items-center space-x-3">
-								<div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-semibold text-sm">
-									{session.user.name?.[0]?.toUpperCase() || "U"}
-								</div>
-								<div>
-									<p className="font-medium text-gray-900 text-sm">
-										{session.user.name}
-									</p>
-									<p className="text-xs text-gray-500">{session.user.email}</p>
-								</div>
-							</div>
-						</div>
+						<AccountDropdownUserInfo
+							email={session.user.email}
+							name={session.user.name}
+						/>
 					)}
 
 					{/* Menu Items */}
 					<div className="py-1">
-						{/* Profile */}
-						<Link
+						<AccountDropdownMenuItem
 							href="/profile"
-							className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 gap-4"
 							onClick={() => setIsOpen(false)}
+							icon={<UserIcon className="w-4 h-4" />}
 						>
-							<UserIcon className="w-4 h-4" />
 							Profile
-						</Link>
+						</AccountDropdownMenuItem>
 
-						{/* Account settings */}
-						<Link
+						<AccountDropdownMenuItem
 							href="/settings"
-							className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 gap-4"
 							onClick={() => setIsOpen(false)}
+							icon={<SettingsIcon className="w-4 h-4" />}
 						>
-							<SettingsIcon className="w-4 h-4" />
 							Account settings
-						</Link>
+						</AccountDropdownMenuItem>
 
-						{/* Help */}
-						<Link
+						<AccountDropdownMenuItem
 							href="/help"
-							className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 gap-4"
 							onClick={() => setIsOpen(false)}
+							icon={<HelpIcon className="w-4 h-4" />}
 						>
-							<HelpIcon className="w-4 h-4" />
 							Help
-						</Link>
+						</AccountDropdownMenuItem>
 					</div>
 
 					{/* Logout */}

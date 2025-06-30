@@ -9,6 +9,7 @@ interface IconButtonProps
 	className?: string;
 	ariaLabel: string; // Required for accessibility
 	ariaDescribedBy?: string;
+	blurOnClick?: boolean; // Remove focus ring after click
 }
 
 const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
@@ -22,6 +23,8 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
 			disabled,
 			ariaLabel,
 			ariaDescribedBy,
+			blurOnClick = false,
+			onClick,
 			...props
 		},
 		ref
@@ -44,6 +47,13 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
 			sm: "h-8 w-8 text-sm",
 			md: "h-10 w-10 text-base",
 			lg: "h-12 w-12 text-lg",
+		};
+
+		const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+			if (blurOnClick) {
+				e.currentTarget.blur();
+			}
+			onClick?.(e);
 		};
 
 		const renderContent = () => {
@@ -84,6 +94,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
 				aria-label={ariaLabel}
 				aria-describedby={ariaDescribedBy}
 				aria-busy={isLoading}
+				onClick={handleClick}
 				{...props}
 			>
 				{renderContent()}

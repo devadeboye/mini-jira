@@ -39,7 +39,7 @@ export default function SideNavProjectsDropdown() {
 			{isProjectsDropdownOpen && (
 				<div className="space-y-0.5">
 					<SideNavNavItem
-						href="/projects/all"
+						href="#"
 						icon={ViewAllProjects}
 						className="pl-12"
 						active={pathname === "/projects/all"}

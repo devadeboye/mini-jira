@@ -1,5 +1,5 @@
 import { NavProps } from "@/types/nav";
-import MoreMenu from "./MoreMenu";
+import AccountDropdown from "./AccountDropdown";
 import JiraLogo from "@/components/ui/icons/JiraLogo";
 import SearchIcon from "@/components/ui/icons/SearchIcon";
 import Button from "@/components/ui/Button";
@@ -10,23 +10,36 @@ import AppsIcon from "@/components/ui/icons/AppsIcon";
 import NotificationIcon from "@/components/ui/icons/NotificationIcon";
 import HelpIcon from "@/components/ui/icons/Help";
 import SettingsIcon from "@/components/ui/icons/SettingsIcon";
+import Link from "next/link";
 
 export default function LargeScreenNav({ className }: NavProps) {
 	return (
 		<div className={`${className} w-full flex items-center gap-3`}>
 			<div className="flex items-center w-2/6 gap-2">
-				<IconButton ariaLabel="Toggle sidebar" className="" size="sm">
+				<IconButton
+					ariaLabel="Toggle sidebar"
+					className=""
+					size="sm"
+					blurOnClick={true}
+				>
 					<SidebarIcon className="w-4" fill="currentColor" />
 				</IconButton>
 
-				<IconButton ariaLabel="Toggle sidebar" className="" size="sm">
+				<IconButton
+					ariaLabel="Toggle sidebar"
+					className=""
+					size="sm"
+					blurOnClick={true}
+				>
 					<AppsIcon className="w-4" fill="currentColor" />
 				</IconButton>
 
-				<div className="flex items-center gap-1">
-					<JiraLogo className="w-6" />
-					<span className="font-semibold">Jira</span>
-				</div>
+				<Link href="/your-work" className="no-underline!">
+					<div className="flex items-center gap-1">
+						<JiraLogo className="w-6" />
+						<span className="font-semibold">Jira</span>
+					</div>
+				</Link>
 			</div>
 
 			<div className="lg:flex lg:w-full lg:items-center lg:justify-center lg:gap-2">
@@ -58,19 +71,34 @@ export default function LargeScreenNav({ className }: NavProps) {
 			</div>
 
 			<div className="lg:flex lg:items-center lg:w-2/6 lg:justify-end lg:gap-3">
-				<IconButton ariaLabel="Toggle sidebar" className="" size="sm">
+				<IconButton
+					ariaLabel="Toggle sidebar"
+					className=""
+					size="sm"
+					blurOnClick={true}
+				>
 					<NotificationIcon className="w-4" fill="currentColor" />
 				</IconButton>
 
-				<IconButton ariaLabel="Toggle sidebar" className="" size="sm">
+				<IconButton
+					ariaLabel="Toggle sidebar"
+					className=""
+					size="sm"
+					blurOnClick={true}
+				>
 					<HelpIcon className="w-4" fill="currentColor" />
 				</IconButton>
 
-				<IconButton ariaLabel="Toggle sidebar" className="" size="sm">
+				<IconButton
+					ariaLabel="Toggle sidebar"
+					className=""
+					size="sm"
+					blurOnClick={true}
+				>
 					<SettingsIcon className="w-4" fill="currentColor" />
 				</IconButton>
 
-				<MoreMenu className="hidden md:flex" />
+				<AccountDropdown className="hidden md:flex" />
 			</div>
 		</div>
 	);

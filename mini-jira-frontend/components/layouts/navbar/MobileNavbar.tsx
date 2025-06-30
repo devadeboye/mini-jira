@@ -7,7 +7,7 @@ import Button from "@/components/ui/Button";
 import AddIcon from "@/components/ui/icons/AddIcon";
 import MoreIcon from "@/components/ui/icons/MoreIcon";
 import MenuIcon from "@/components/ui/icons/MenuIcon";
-import MoreMenu from "./MoreMenu";
+import AccountDropdown from "./AccountDropdown";
 import { useNavigationStore } from "@/lib/stores";
 
 export default function MobileNavbar({ className }: NavProps) {
@@ -66,11 +66,11 @@ export default function MobileNavbar({ className }: NavProps) {
 
 				{isMoreMenuOpen && (
 					<div className="absolute top-12 right-0 bg-white shadow-md px-3 py-1">
-						<MoreMenu className="flex md:hidden" />
+						<AccountDropdown className="flex md:hidden" />
 					</div>
 				)}
 
-				<MoreMenu className="hidden md:flex" />
+				<AccountDropdown className="hidden md:flex" />
 			</div>
 		</div>
 	);

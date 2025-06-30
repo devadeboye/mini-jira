@@ -35,7 +35,7 @@ const SideNav = () => {
 					</SideNavNavItem>
 
 					<SideNavNavItem
-						href="/recent"
+						href="#"
 						icon={RecentIcon}
 						active={pathname === "/recent"}
 					>
@@ -43,7 +43,7 @@ const SideNav = () => {
 					</SideNavNavItem>
 
 					<SideNavNavItem
-						href="/starred"
+						href="#"
 						icon={StarIcon}
 						active={pathname === "/starred"}
 					>
@@ -51,7 +51,7 @@ const SideNav = () => {
 					</SideNavNavItem>
 
 					<SideNavNavItem
-						href="/apps"
+						href="#"
 						icon={AppsCreateIcon}
 						active={pathname === "/apps"}
 					>
@@ -59,7 +59,7 @@ const SideNav = () => {
 					</SideNavNavItem>
 
 					<SideNavNavItem
-						href="/plans"
+						href="#"
 						icon={PlanIcon}
 						active={pathname === "/plans"}
 					>
@@ -75,7 +75,7 @@ const SideNav = () => {
 				{/* Teams Section */}
 				<SideNavSection>
 					<SideNavNavItem
-						href="/teams"
+						href="#"
 						icon={TeamsIcon}
 						active={pathname === "/teams"}
 					>
@@ -86,7 +86,7 @@ const SideNav = () => {
 
 			<div className="flex flex-col border-t border-gray-300">
 				<SideNavNavItem
-					href="/feedback"
+					href="#"
 					icon={FeedbackIcon}
 					active={pathname === "/feedback"}
 				>

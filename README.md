@@ -1,106 +1,156 @@
-# Mini Jira - Modern Project Management Made Simple
+# Mini Jira - A Slimmed-Down Jira Clone for My Portfolio
 
-Welcome to Mini Jira! We've built a streamlined project management solution that brings the power of Jira to your team, without the complexity. Our stack combines Next.js 15 for a smooth frontend experience with a robust NestJS backend, delivering enterprise-grade features in a developer-friendly package.
+Ever tried using Jira and felt like you needed a PhD just to create a simple task? Yeah, I've been there too. That's why I built Mini Jira - a project management tool that gives you the core power of Jira without the overwhelming complexity.
 
-## ✨ What's Inside
+## What This Project Is
 
-- **Smart Authentication** - Secure, hassle-free login with JWT tokens
-- **Project Command Center** - Your central hub for managing multiple projects
-- **Agile Sprint Management** - Run your sprints with confidence, from planning to completion
-- **Intuitive Work Tracking** - Handle stories, tasks, and bugs with natural workflow states
-- **Dynamic Backlog** - Keep your project organized with flexible backlog management
-- **Modern Interface** - Beautiful, responsive design that works everywhere
-- **Real-time Updates** - Stay in sync with instant updates using React Query
+This is a portfolio project - a full-stack Jira clone I built from scratch to demonstrate my skills in modern web development. It's a slimmed-down version that focuses on the essential features you actually need for project management: user authentication, project creation, sprint planning, backlog management, and work item tracking. But here's the thing: it's actually intuitive to use.
 
-## 🏗 Architecture
+## Project Structure
 
-### Frontend Experience
-- Built on **Next.js 15** with the latest App Router
-- Styled with **Tailwind CSS** for a modern look and feel
-- State handled by **Zustand + React Query** for seamless updates
-- Secure auth with **HTTP-only JWT cookies**
-- Fully accessible (WCAG 2.1 AA compliant)
+The project is split into two main parts:
 
-### Backend Power
-- **NestJS** with TypeScript for type-safe development
-- **PostgreSQL + TypeORM** for reliable data management
-- Role-based access control with JWT
-- Request validation using Joi
-- Clean, modular architecture for maintainability
+```
+mini-jira/
+├── mini-jira-frontend/    # The React/Next.js frontend application
+├── mini-jira-backend/     # The NestJS backend API
+└── README.md              # This file you're reading right now
+```
 
-## 🚀 Getting Started
+**mini-jira-frontend/** - This is where the magic happens for users. I built it with Next.js 15, creating a beautiful interface that makes project management feel effortless. Think clean dashboards, drag-and-drop functionality, and responsive design that works on any device.
 
-### Before You Begin
-Make sure you have:
-- Node.js 18 or newer
-- PostgreSQL 14+
+**mini-jira-backend/** - The engine room. This NestJS-powered API handles all the heavy lifting - authentication, data management, business logic, and everything else that keeps the frontend running smoothly.
+
+## What You Can Do With It
+
+### Project Management
+- Create and manage multiple projects (Scrum or Kanban style)
+- Add team members and manage permissions
+- Get a bird's eye view of all your projects from one dashboard
+
+### Sprint Planning
+- Plan your work in manageable sprints
+- Set sprint goals and timelines
+- Track progress with real-time updates
+- Start and complete sprints with proper workflows
+
+### Work Item Tracking
+- Create stories, tasks, and bugs with detailed descriptions
+- Set priorities and story points
+- Assign work to team members
+- Track status from "To Do" to "Done"
+- Move items between backlog and active sprints
+
+### User Experience
+- Clean, modern interface that doesn't get in your way
+- Responsive design that works on desktop, tablet, and mobile
+- Keyboard shortcuts for power users
+- Accessibility features for everyone
+
+## The Tech Stack
+
+I chose technologies that are both powerful and developer-friendly:
+
+### Frontend (mini-jira-frontend)
+- **Next.js 15** - React framework with App Router for modern web development
+- **Tailwind CSS** - Utility-first CSS for rapid UI development
+- **TypeScript** - Type safety that catches bugs before they happen
+- **Zustand + React Query** - State management that just works
+- **NextAuth.js** - Authentication that's secure by default
+
+### Backend (mini-jira-backend)
+- **NestJS** - Scalable Node.js framework with TypeScript
+- **PostgreSQL** - Robust relational database
+- **TypeORM** - Database ORM that makes queries readable
+- **JWT Authentication** - Secure token-based authentication
+- **Joi Validation** - Input validation that prevents bad data
+
+## Getting Started
+
+### Prerequisites
+Before you dive in, make sure you have:
+- Node.js 18 or higher
+- PostgreSQL 14 or higher
 - pnpm (recommended) or npm
 
-### 1. Set Up Your Project
-```bash
-# Clone the repository
-git clone https://github.com/devadeboye/mini-jira.git
-cd mini-jira
-```
+### Quick Setup
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/devadeboye/mini-jira.git
+   cd mini-jira
+   ```
 
-### 2. Launch the Backend
-```bash
-cd mini-jira-backend
+2. **Set up the backend**
+   ```bash
+   cd mini-jira-backend
+   pnpm install
+   cp .env.example .env
+   # Edit .env with your database credentials
+   pnpm run start:dev
+   ```
 
-# Install your dependencies
-pnpm install
+3. **Set up the frontend**
+   ```bash
+   cd mini-jira-frontend
+   pnpm install
+   cp .env.example .env.local
+   # Edit .env.local with your API URL
+   pnpm run dev
+   ```
 
-# Set up your environment
-cp .env.example .env     # Then edit .env with your database details
+4. **Visit your app**
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:4000
 
-# Fire up the development server
-pnpm run start:dev
-```
+## Key Features
 
-### Database Management
-```bash
-# Create a new migration
-pnpm run migration:create src/migrations/DescriptiveName
+### Authentication & Security
+- User registration and login
+- JWT-based session management
+- Protected routes and API endpoints
+- Role-based access control
 
-# Generate migration from your changes
-pnpm run migration:generate src/migrations/DescriptiveName
+### Project Dashboard
+- Overview of all your projects
+- Quick access to recent work
+- Project creation wizard
+- Team member management
 
-# Apply migrations
-pnpm run migration:run
+### Sprint Management
+- Create and configure sprints
+- Sprint planning with story points
+- Sprint burndown tracking
+- Start/complete sprint workflows
 
-# Need to roll back? No problem
-pnpm run migration:revert
-```
+### Backlog Management
+- Drag-and-drop work items
+- Priority management
+- Story point estimation
+- Bulk operations
 
-> 💡 **Production Migration Tips**:
-> - Always backup your data first
-> - Test migrations in staging
-> - Review migration SQL for safety
+### Work Item Details
+- Rich text descriptions
+- Comment system
+- File attachments
+- Activity history
 
-### 3. Launch the Frontend
-```bash
-cd mini-jira-frontend
+## What Makes This Different
 
-# Install dependencies
-pnpm install
+Unlike other project management tools that try to do everything, I focused Mini Jira on doing the core things really well:
 
-# Configure your environment
-cp .env.example .env.local    # Then set your API URL
+- **Simplicity** - No overwhelming menus or confusing workflows
+- **Speed** - Fast loading times and responsive interactions
+- **Flexibility** - Works for both Scrum and Kanban methodologies
+- **Accessibility** - Built with screen readers and keyboard navigation in mind
+- **Modern** - Uses the latest web technologies for a smooth experience
 
-# Start development
-pnpm run dev
-```
+## Environment Setup
 
-### 4. You're All Set!
-Visit your running application:
-- Frontend: http://localhost:3000
-- API: http://localhost:4000
+Each application has its own environment configuration:
 
-## ⚙️ Configuration
-
-### Backend (.env)
+### Backend Environment
 ```env
-# Database Settings
+# Database
 DB_HOST=localhost
 DB_PORT=5432
 DB_USERNAME=your_username
@@ -116,95 +166,51 @@ PORT=4000
 NODE_ENV=development
 ```
 
-### Frontend (.env.local)
+### Frontend Environment
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:4000
+NEXTAUTH_SECRET=your_generated_secret
+NEXTAUTH_URL=http://localhost:3000
 ```
 
-## 🔌 API Reference
+## Deployment
 
-### Authentication
-- `POST /auth/login` - Sign in
-- `POST /auth/register` - Create account
-- `POST /auth/refresh` - Refresh session
+Ready to go live? Here's the general process:
 
-### Projects
-- `GET /projects/all` - Get all projects
-- `GET /projects/get/:id` - Get project by ID
-- `POST /projects/create` - Create new project
-- `PATCH /projects/update/:id` - Update project
-- `DELETE /projects/delete/:id` - Delete project
+1. **Database Setup** - Set up PostgreSQL in your production environment
+2. **Backend Deployment** - Deploy the NestJS API to your server of choice
+3. **Frontend Deployment** - Deploy the Next.js app to Vercel, Netlify, or similar
+4. **Configuration** - Update environment variables for production
+5. **Database Migration** - Run migrations to set up your production database
 
-### Sprints
-- `GET /sprints/all?projectId=:id` - Get project sprints
-- `GET /sprints/find-by-id/:id` - Get sprint by ID
-- `POST /sprints/create?projectId=:id` - Create new sprint
-- `PUT /sprints/update/:id` - Update sprint
-- `DELETE /sprints/delete/:id` - Delete sprint
-- `POST /sprints/start/:id` - Start sprint
-- `POST /sprints/complete/:id` - Complete sprint
-- `GET /sprints/work-items/:id` - Get sprint work items
-- `POST /sprints/work-items/:id` - Add work item to sprint
-- `DELETE /sprints/:id/work-items/:workItemId` - Remove work item from sprint
+## Contributing
 
-### Work Items
-- `GET /work-items/find-by-project/:projectId` - Get project work items
-- `GET /work-items/backlogs/:projectId` - Get backlog items
-- `GET /work-items/find-by-sprint/:sprintId` - Get sprint work items
-- `GET /work-items/find-by-id/:id` - Get work item by ID
-- `POST /work-items/create` - Create new work item
-- `PATCH /work-items/update/:id` - Update work item
-- `DELETE /work-items/delete/:id` - Delete work item
+Found a bug? Have an idea for a new feature? I'd love your help!
 
-## 🛡️ Security First
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Write tests if needed
+5. Submit a pull request
 
-We take security seriously:
-- Robust JWT authentication
-- Role-based access control
-- Input validation & sanitization
-- Secure CORS configuration
-- Protected environment variables
+## What's Next
 
-## 🔧 Development Tools
+I'm constantly improving Mini Jira. Here's what's on my roadmap:
 
-### Backend Commands
-```bash
-pnpm run start:dev    # Launch development
-pnpm run build        # Build for production
-pnpm run start:prod   # Run production server
-pnpm run test         # Run test suite
-```
+- **Real-time Collaboration** - See changes as they happen
+- **Advanced Reporting** - Charts and analytics for project insights
+- **Dark Mode** - For those late-night coding sessions
 
-### Frontend Commands
-```bash
-pnpm run dev          # Start development
-pnpm run build        # Build for production
-pnpm run start        # Launch production
-pnpm run lint         # Check code quality
-```
+## Need Help?
 
-## 🚀 Deployment Guide
+- Check out the detailed README files in each folder (`mini-jira-frontend/` and `mini-jira-backend/`)
+- Look at the API documentation in the backend folder
+- Open an issue if you run into problems
 
-### Deploying the Backend
-1. Configure production environment variables
-2. Build: `pnpm run build`
-3. Launch: `pnpm run start:prod`
+## License
 
-### Deploying the Frontend
-1. Set production environment variables
-2. Build: `pnpm run build`
-3. Deploy the built assets
-
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Developer
-
-**Devadeboye**
-- GitHub: [@devadeboye](https://github.com/devadeboye)
-- Email: emmanueladeboye2017@gmail.com
+This project is licensed under the MIT License - use it, modify it, make it your own!
 
 ---
 
-*Built with ❤️ using Next.js and NestJS*
+Built with care by a developer who actually uses project management tools and got tired of the complexity. I hope you find Mini Jira as useful as I do, and that it demonstrates my ability to build full-stack applications with modern technologies.

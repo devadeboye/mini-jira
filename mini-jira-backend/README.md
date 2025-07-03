@@ -1,98 +1,191 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Mini Jira Backend - The Engine Room
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This is the backend service for my Mini Jira portfolio project, built with NestJS and TypeScript. It handles all the heavy lifting - authentication, project management, sprint tracking, and work item operations. Think of it as the brain behind the beautiful frontend you see.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## What I'm Working With
 
-## Description
+- **NestJS** - My main framework for building scalable Node.js applications
+- **TypeScript** - Because I like my code type-safe and predictable
+- **PostgreSQL** - Reliable database that won't let you down
+- **TypeORM** - Makes database operations feel like a breeze
+- **JWT Authentication** - Secure token-based auth that just works
+- **Joi Validation** - Input validation that catches errors before they become problems
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Getting Your Environment Ready
 
-## Project setup
+Before you jump in, make sure you have:
+- Node.js 18 or higher
+- PostgreSQL 14 or newer
+- pnpm (I recommend this) or npm
 
+## Setting Up Shop
+
+### 1. Install Dependencies
 ```bash
-$ pnpm install
+pnpm install
 ```
 
-## Compile and run the project
-
+### 2. Configure Your Database
+Copy the example environment file and fill in your details:
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+cp .env.example .env
 ```
 
-## Run tests
+Your `.env` file should look something like this:
+```env
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+DB_NAME=mini_jira
+
+# Security Settings
+JWT_SECRET=your_super_secure_secret_key
+JWT_EXPIRES_IN=1h
+
+# Server Configuration
+PORT=4000
+NODE_ENV=development
+```
+
+### 3. Fire Up the Server
+```bash
+# Development mode with hot reload
+pnpm run start:dev
+
+# Production mode
+pnpm run start:prod
+```
+
+Your API will be running at `http://localhost:4000`
+
+## Database Management
+
+I use TypeORM migrations to keep your database schema in sync. Here's how to work with them:
+
+### Creating Migrations
+```bash
+# Create a new empty migration
+pnpm run migration:create src/migrations/YourMigrationName
+
+# Generate migration from entity changes
+pnpm run migration:generate src/migrations/YourMigrationName
+```
+
+### Running Migrations
+```bash
+# Apply pending migrations
+pnpm run migration:run
+
+# Rollback last migration (if something goes wrong)
+pnpm run migration:revert
+```
+
+Pro tip: Always test your migrations in a development environment first. Nobody likes surprises in production.
+
+## API Endpoints
+
+### Authentication
+- `POST /auth/register` - Create a new user account
+- `POST /auth/login` - Sign in with credentials
+- `POST /auth/refresh` - Refresh your access token
+- `POST /auth/logout` - Sign out securely
+
+### Projects
+- `GET /projects/all` - Get all your projects
+- `GET /projects/get/:id` - Get specific project details
+- `POST /projects/create` - Create a new project
+- `PATCH /projects/update/:id` - Update project information
+- `DELETE /projects/delete/:id` - Delete a project
+
+### Sprints
+- `GET /sprints/all?projectId=:id` - Get all sprints for a project
+- `GET /sprints/find-by-id/:id` - Get sprint details
+- `POST /sprints/create?projectId=:id` - Create a new sprint
+- `PUT /sprints/update/:id` - Update sprint information
+- `DELETE /sprints/delete/:id` - Delete a sprint
+- `POST /sprints/start/:id` - Start a sprint
+- `POST /sprints/complete/:id` - Complete a sprint
+
+### Work Items
+- `GET /work-items/find-by-project/:projectId` - Get all work items for a project
+- `GET /work-items/backlogs/:projectId` - Get backlog items
+- `GET /work-items/find-by-sprint/:sprintId` - Get work items in a sprint
+- `POST /work-items/create` - Create a new work item
+- `PATCH /work-items/update/:id` - Update work item
+- `DELETE /work-items/delete/:id` - Delete work item
+
+## Security Features
+
+I take security seriously around here:
+- JWT-based authentication with refresh tokens
+- Role-based access control (RBAC)
+- Input validation on all endpoints
+- Secure password hashing
+- CORS protection
+- Environment variable protection
+
+## Development Commands
 
 ```bash
-# unit tests
-$ pnpm run test
+# Start development server
+pnpm run start:dev
 
-# e2e tests
-$ pnpm run test:e2e
+# Build for production
+pnpm run build
 
-# test coverage
-$ pnpm run test:cov
+# Run production server
+pnpm run start:prod
+
+# Run tests
+pnpm run test
+
+# Run end-to-end tests
+pnpm run test:e2e
+
+# Check test coverage
+pnpm run test:cov
+```
+
+## Project Structure
+
+```
+src/
+├── auth/           # Authentication module
+├── project/        # Project management
+├── sprint/         # Sprint functionality
+├── work-item/      # Work item operations
+├── user/           # User management
+├── common/         # Shared utilities
+├── config/         # Configuration files
+└── migrations/     # Database migrations
 ```
 
 ## Deployment
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+When you're ready to go live:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+1. Set up your production environment variables
+2. Run database migrations: `pnpm run migration:run`
+3. Build the application: `pnpm run build`
+4. Start the production server: `pnpm run start:prod`
 
-```bash
-$ pnpm install -g mau
-$ mau deploy
-```
+## Troubleshooting
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Having issues? Here are some common fixes:
 
-## Resources
+- **Database connection errors**: Check your database credentials in `.env`
+- **Port already in use**: Change the PORT in your `.env` file
+- **Migration errors**: Make sure your database exists and is accessible
 
-Check out a few resources that may come in handy when working with NestJS:
+## Contributing
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Found a bug or want to add a feature? I'd love your help! Just make sure to:
+- Write tests for new features
+- Follow the existing code style
+- Update documentation as needed
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is licensed under the MIT License.
